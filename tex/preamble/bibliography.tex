@@ -1,0 +1,161 @@
+\usepackage[                 % !! what about the ``biblatex.cfg''?
+        backend=bibtex,      % (bibtex), bibtex8, biber
+%        %
+        style=numeric-comp,
+%        bibstyle=,          % should not be used without citestyle and vice versa
+%        citestyle=,
+%        natbib=true,
+        %
+%        sorting=nty,        % (nty), nyt, nyvt, anty, anyt, anyvt, debug, none
+%        sortlos=los,        % bib, (los)
+%        sortcites=false,    % false
+%        maxnames=3,         % <integer> (3)
+%        minnames=1,         % (1)
+%        maxitems=3,         % (3)
+%        minitems=1,         % (1)
+%        autocite=,          % inline, footnote, superscript, ...
+%        autopunct=true,     % true
+%        babel=none,         % (none), hyphen, other, other*
+%        block=none,         % (none), space, par, nbpar, ragged
+        hyperref=true,      % false
+%        backref=false,      % false
+%        indexing=false,     % true, (false), cite, bib
+%        refsection=none,    % (none), part, chapter, section, subsection
+%        refsegment=none,    % (none), part, chapter, section, subsection
+%        citereset=none,     % (none), part, chapter, section, subsection
+%        abbreviate=true,    % true
+%        date=long,          % short, (long)
+%        urldate=short,      % (short), long
+%        defernums=false,    % false
+%        punctfont=false,    % false
+        %
+%        mincrossrefs=2,     % 2
+        bibencoding=inputenc,   % (ascii), inputenc, <encoding>
+        %%
+%        keywsort=false,     % false
+    %
+%     useauthor=false,   % true
+%     useeditor=false,   % true
+%        useprefix=true,     % false
+    %
+%        pagetracker=true,   % true, (false), page, spread
+%     citetracker=true,   % true, (false), context, strict, constrict
+%     ibidtracker=true,   % true, (false), context, strict, constrict
+%     opcittracker=true,   % true, (false), context, strict, constrict
+%     loccittracker=true, % true, (false), context, strict, constrict
+%        terseinits=true,    % false
+%     labelalpha=true,   % false
+%     labelnumber=true,   % false
+%     labelyear=true,   % false
+%     singletitle=true,   % false
+%     uniquename=true,   % true, (false), init
+%
+        doi=false,
+        url=false,
+        firstinits=true, % render first/middle names as initals
+            ]{biblatex}
+            
+   \bibliography{bib/literature}
+   
+      %  \DefineBibliographyStrings{ngerman}{%
+         %   bibliography     = {Literaturverzeichnis},  % = \bibname
+         %   references       = {Literatur},             % = \refname
+     %   }
+        \defbibnote{alphabetic}{%
+            Die Literaturangaben sind alphabetisch nach den Namen
+            der Autoren sortiert. Bei mehreren Autoren wird nach
+            dem ersten Autor sortiert.\par
+            Und mit dem neuen \LPack{biblatex}-Paket funktioniert
+            das auch, wie man unschwer erkennen kann.\par\bigskip
+        }
+
+
+% -------------------------------------------------------------------------------------------------
+%% declare author names as "last, first".
+%% Either for the first author only or for all authors
+%\DeclareNameFormat{author}{%
+%    \ifthenelse{\value{listcount}=1}
+%        {#1%                                            % first author
+%            \ifblank{#3}{}{\addcomma\space #3}}
+%        {#1%                                            % all the other authors (last, first)
+%            \ifblank{#3}{}{\addcomma\space #3}}%
+%%        {\ifblank{#3}{}{#3\space}%                      % all the other authors (first last)
+%%            #1}%
+%    \ifthenelse{\value{listcount}<\value{liststop}}
+%        {,\space}
+%            {}
+%}
+%
+%%http://projekte.dante.de/DanteFAQ/BiblatexReihenfolgeAutoren
+%\DeclareNameFormat{last-first}{%
+%  \iffirstinits
+%    {\usebibmacro{name:last-first}{#1}{#4}{#5}{#7}}
+%    {\usebibmacro{name:last-first}{#1}{#3}{#5}{#7}}%
+%  \usebibmacro{name:andothers}}
+%\DeclareNameFormat{labelname}{%
+%   \ifuseprefix
+%     {\usebibmacro{name:last-first}{#1}{#4}{#5}{#8}}
+%     {\usebibmacro{name:last-first}{#1}{#4}{#6}{#8}}%
+%   \usebibmacro{name:andothers}}
+
+%  \DefineBibliographyStrings{english}{%
+%    typeeditor = {{}{}},
+%    typeeditors = {{}{}},
+%    in = {{}{}},
+%    inseries = {{}{}},
+%    byeditor = {{}{}}
+%  }
+
+%-------------------------------------------------------------------------------------------------
+
+%% http://www.golatex.de/biblatex-anpassen-die-x-te-frage-t4657.html
+\renewbibmacro*{journal+issuetitle}{%
+  \usebibmacro{journal}%
+  \setunit*{\addcomma\space}%
+  \iffieldundef{series}
+    {}
+    {\newunit
+     \printfield{series}%
+     \setunit{\addcomma\space}}%
+  \printfield{volume}%
+  \setunit*{\addcomma\space}%
+  \printfield{number}%
+  \setunit{\addcomma\space}%
+  \printfield{eid}%
+  \setunit{\addspace}%
+  \usebibmacro{issue+date}%
+  \setunit{\addcolon\space}%
+  \usebibmacro{issue}%
+  \newunit}
+
+\DeclareFieldFormat[article]{volume}{\bibstring{jourvol}~#1}
+\DeclareFieldFormat[article]{number}{\bibstring{number}~#1} 
+%\DeclareFieldFormat[article]{edition}{\bibstring{edition}~#1} 
+
+%% http://mrunix.de/forums/showthread.php?t=67386
+\DefineBibliographyStrings{english}{jourvol={Vol\adddot}} 
+\DefineBibliographyStrings{english}{number={No\adddot}} 
+\DefineBibliographyStrings{english}{edition={Ed\adddot}} 
+
+\AtBeginBibliography{%
+  % Setzt die Autoren-Vornamen auf Kapitälchen 
+  \renewcommand*{\mkbibnamefirst}{\textsc}
+  \renewcommand*{\mkbibnamelast}{\textsc}
+  \renewcommand*{\mkbibnameprefix}{\textsc}
+  \renewcommand*{\mkbibnameaffix}{\textsc}
+  
+  %%Doppelpunkt nach Namen, kein Punkt
+  %\renewcommand*{\labelnamepunct}{\addcolon\space} 
+  
+  \DeclareFieldFormat{name}{\textsc{#1\isdot}}
+  \DeclareFieldFormat{title}{\mkbibemph{#1\isdot}}
+  
+  %%\DeclareFieldFormat[article]{title}{#1}
+  %%\DeclareFieldFormat[article]{title}{\mkbibquote{#1}}
+  \renewcommand*{\mkbibquote}[1]{\mkbibemph{#1\isdot}}
+ 
+  % http://tex.stackexchange.com/ ...
+  % questions/16716/spell-out-volume-and-edition-in-words-biblatex-in-german
+  %\renewcommand*{\mkbibordedition}[1]{\Ordinalstringnum{#1}[f]}
+  \renewcommand*{\mkbibordedition}[1]{\ordinalnum{#1}}
+}

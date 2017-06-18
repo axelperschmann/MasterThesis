@@ -1,0 +1,19 @@
+%%% Listen ===============================================================
+%
+%
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/paralist/paralist.pdf
+% \usepackage{paralist}
+%
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/enumitem/enumitem.pdf
+% Better than 'paralist' and 'enumerate' because it uses a keyvalue interface !
+% Do not load together with enumerate.
+\IfPackageNotLoaded{enumerate}{
+  \usepackage{enumitem} %[shortlabels]
+    \setlist{itemsep=0ex plus0.2ex}
+    \setenumerate{label=(\arabic*),font=\sffamily\upshape}
+    \setdescription{font=\sffamily\bfseries\upshape}
+}
+%
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/ncctools/doc/desclist.pdf
+% Improved description environment
+%\usepackage{declist}

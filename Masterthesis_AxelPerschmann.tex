@@ -1,0 +1,45 @@
+\newcommand\thesistypedebug{}
+\newcommand\thesistitle{Masterthesis}
+%\newcommand\thesissubtitle{Orderbook Agent}
+\newcommand\thesisdate{July 31, 2017}
+
+\input{tex/macros}
+\input{tex/preamble}
+
+%%Für scrartcl --> alternativ jeweils eine ebene tiefer
+\let\chapter\section 
+\let\section\subsection 
+\let\subsection\subsubsection 
+
+\begin{document}
+	\frontmatter	
+		\pagestyle{empty}	
+			\input{content/diverse/TitlePage} 
+			\input{content/diverse/Declaration}
+			\input{content/diverse/Acknowledgements}
+			\input{content/diverse/abstract}
+			\input{content/diverse/toc} 
+		
+	\mainmatter
+		\pagestyle{scrheadings}
+			\input{content/chapters}
+
+
+	\appendix
+	\pagestyle{scrheadings}
+		\settocdepth{section}
+			\input{content/diverse/appendix}
+			\clearpage
+				 
+	\backmatter
+		\pagestyle{empty}
+			\chapter{Glossary}
+				\begin{acronym}
+					\acro{CRAN}{Comprehensive R Archive Network}
+					\acro{HDFS}{Hadoop Distributed File System}	
+					\acro{GFS}{Google File System}
+				\end{acronym}
+			\input{tex/generic/bibliography}
+			\input{content/diverse/lists}
+			
+\end{document}

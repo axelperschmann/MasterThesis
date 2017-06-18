@@ -1,0 +1,158 @@
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Math Packages
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+% *** Mathematik **************************************
+%
+% amsmath schon vorher geladen da es vor pst-pdf geladen werden muss
+ 
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/mh/doc/mathtools.pdf
+% Erweitert amsmath und behebt einige Bugs
+\usepackage[fixamsmath,disallowspaces]{mathtools}
+
+ 
+%%% Doc: http://www.ctan.org/info?id=fixmath
+% LaTeX's default style of typesetting mathematics does not comply
+% with the International Standards ISO31-0:1992 to ISO31-13:1992
+% which indicate that uppercase Greek letters always be typset
+% upright, as opposed to italic (even though they usually
+% represent variables) and allow for typsetting of variables in a
+% boldface italic style (even though the required fonts are
+% available). This package ensures that uppercase Greek be typeset
+% in italic style, that upright $\Delta$ and $\Omega$ symbols are
+% available through the commands \upDelta and \upOmega; and
+% provides a new math alphabet \mathbold for boldface
+% italic letters, including Greek.
+% \usepackage{fixmath}
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/onlyamsmath/onlyamsmath.dvi
+% Warnt bei Benutzung von Befehlen die mit amsmath inkompatibel sind.
+%\usepackage[
+  %all,
+  %warning
+%]{onlyamsmath}
+ 
+ 
+%------------------------------------------------------
+
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/misc/braket.sty
+\usepackage{braket}  % Quantenmechanik Bracket Schreibweise
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/misc/cancel.sty
+%\usepackage{cancel}  % Durchstreichen
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/mh/doc/empheq.pdf
+%\usepackage{empheq}  % Hervorheben
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/info/math/voss/mathmode/Mathmode.pdf
+%\usepackage{exscale} % Skaliert Mathe-Modus Ausgaben in allen Umgebungen richtig.
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/was/icomma.dtx
+% Erlaubt die Benutzung von Kommas im Mathematikmodus
+\usepackage{icomma}
+
+%%% Doc: http://www.ctex.org/documents/packages/special/units.pdf
+% \usepackage[nice]{nicefrac}
+
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/numprint/numprint.pdf
+% Modify printing of numbers
+%\usepackage{numprint}
+
+%------------------------------------------------------
+
+% For nice arrows over vectors
+% \usepackage{esvect}
+
+% Using bold greek letters with \bf
+\usepackage{bm}
+
+% Allows arrows in matrices: ldelim, rdelim
+\usepackage{bigdelim}
+
+\usepackage[amsmath,hyperref,framed]{ntheorem} %,thmmarks <--endmark
+  \theoremstyle{plain}
+    %% Update \crefname for cleveref
+     \newtheorem{theorem}{Theorem}[section]
+%    \newtheorem{lemma}[theorem]{Lemma}
+%    \newtheorem{proposition}[theorem]{Proposition}
+%    \newtheorem{corollary}[theorem]{Corollary}
+%    \newtheorem{remark}[theorem]{Remark}
+%     \newtheorem{definition}[theorem]{Definition}
+%    \newtheorem{example}[theorem]{Example}
+%    \newtheorem{conjecture}[theorem]{Conjecture}
+  
+  %Proof environment
+  \theoremstyle{nonumberplain}
+    \theoremseparator{.}
+    \theoremheaderfont{\bfseries}
+    \theorembodyfont{\normalfont}
+    \theoremsymbol{$\blacksquare$}
+      \RequirePackage{amssymb}
+    \newtheorem{proof}{Proof}
+    
+  %Fix to Definition as math is not in bold in "`Def. 1 ($s$-step)"'
+      \makeatletter
+    \let\copy@theorem@headerfont=\theorem@headerfont
+    \newcommand{\my@theorem@headerfont}{%
+        \boldmath\copy@theorem@headerfont\unboldmath
+      }
+    \let\theorem@headerfont=\my@theorem@headerfont
+      \makeatother
+   
+%\usepackage{framed}
+%\usepackage{thmbox}
+\theoremstyle{nonumberplain}
+\theoremseparator{:}
+\setlength\theorempreskipamount{0.8cm}\setlength\theorempostskipamount{0.8cm}
+
+\newtheorem{definition}[theorem]{Definition}
+
+
+
+\usepackage{siunitx}
+    \sisetup{
+        %color=UnitColor,       %% Prüfen, ob alle Einheiten mit siunitx erstellt wurden; vor Druck auskommentieren
+        %forbid-literal-units,
+        input-signs={+-<>\leq\geq\pm\mp\approx\sim},
+        %per-mode=symbol-or-fraction,
+        %retain-explicit-plus,
+        %
+        load-configurations={
+            abbreviations,
+        },
+        %
+				group-separator={,},
+				detect-all,
+				round-mode=places,round-precision=4,
+				exponent-product=\cdot,
+        retain-zero-exponent=true,
+    }
+    %\addto\extrasngerman{\sisetup{locale = DE}}
+
+% Defines \Ordinalstringnum to convert number "2" to literal expression "second"
+\usepackage{fmtcount}
+
+% Allows page breaks in mathemaical environments
+\allowdisplaybreaks
+
+%------------------------------------------------------
+
+ 
+%%% Tauschen von Epsilon und andere:
+% \let\ORGvarrho=\varrho
+% \let\varrho=\rho
+% \let\rho=\ORGvarrho
+%
+\let\ORGvarepsilon=\varepsilon
+\let\varepsilon=\epsilon
+\let\epsilon=\ORGvarepsilon
+%
+% \let\ORGvartheta=\vartheta
+% \let\vartheta=\theta
+% \let\theta=\ORGvartheta
+%
+% \let\ORGvarphi=\varphi
+% \let\varphi=\phi
+% \let\phi=\ORGvarphi

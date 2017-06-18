@@ -1,0 +1,149 @@
+% -- Vektor fett darstellen -----------------
+% \let\oldvec\vec
+% \def\vec#1{{\boldsymbol{#1}}} %Fetter Vektor
+% \newcommand{\ve}{\vec} %
+% -------------------------------------------
+
+\newcommand{\itemmath}[1]{$\bm{\mathsf{#1}}$}
+\newcommand{\captionmath}[1]{$\protect\captionmathfont{#1}$}
+  \newcommand{\captionmathfonttoc}[1]{\mathsf{#1}}
+  \newcommand{\captionmathfonttext}[1]{\bm{\mathsf{#1}}}
+  \let\captionmathfont=\captionmathfonttext
+\newcommand{\sectionmath}[1]{$\protect\sectionmathfont{#1}$}
+  \newcommand{\sectionmathfonttoc}[1]{#1}
+  \newcommand{\sectionmathfonttext}[1]{\mathsf{#1}}
+  \let\sectionmathfont=\sectionmathfonttext
+
+%% from package braket
+{\catcode`\|=\active
+  \xdef\Concat{\protect\expandafter\noexpand\csname Concat \endcsname}
+  \expandafter\gdef\csname Concat \endcsname#1{\begingroup
+     \ifx\SavedDoubleVert\relax
+       \let\SavedDoubleVert\|\let\|\BraDoubleVert
+     \fi
+     \mathcode`\|32768\let|\BraVert
+     \left[{#1}\right]\endgroup}
+}
+
+\newcommand{\mathup}[1]{\mathrm{#1}}
+
+\newcommand\eref[1]{\tag*{\ref{#1}}} % Formel erscheint erneut und soll gleiche Formelnummer wie beim ersten Auftreten erhalten
+
+\newcommand\const{\mathrm{const}}
+\newcommand\rp{^{-1}}
+\newcommand\rps{^{-2}}
+\newcommand\rpc{^{-3}}
+
+\newcommand\transpose{^T} %{^\top}
+\newcommand\rptranspose{^{-T}} %^{^{-\top}}
+\newcommand\pseudoinverse{^{+}}
+
+\newcommand\define{:=} % :=, \ensuremath{\mathrel{\stackrel{\mathrm{def}}{=}}}
+\newcommand\ldefine{=:}
+\newcommand{\setsep}{\, | \,}
+%\newcommand\set[1]{\left{#1\right}}
+%\newcommand\set*[2]{\left{ #1 \setsep #2 \right}}
+%\newcommand{\set}[2][]{%
+%    \ifthenelse{\equal{#1}{}}{\left\{ #2 \right\}}{\left\{ #1 \setsep #2 \right\}}%
+%  }
+
+\newcommand{\norm}[1]{\left\Vert #1 \right\Vert_2}
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil #1 \right\rceil}
+
+%\newcommand{\vecval}[1]{\mathbf{#1}}
+\newcommand{\vecval}[1]{{\color{MathsVectorColor}\bm{#1}}}
+\newcommand{\matval}[1]{{\color{MathsMatrixColor}#1}}
+  %\newcommand{\vecval}[1]{\bm{#1}}
+  %\newcommand{\matval}[1]{#1}
+
+\newcommand{\sspace}{\quad}
+\newcommand{\wspace}{\qquad}
+
+\newcommand{\sand}{\sspace\text{and}\sspace}
+\newcommand{\wand}{\wspace\text{and}\wspace}
+\newcommand{\for}{\text{for }}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+
+\newcommand{\unitvec}[2]{{\vecval{u}_{#1}^{(#2)}}}
+\newcommand{\identitymat}[1]{\matval{\mathup{I}}_{#1,#1}}
+\newcommand{\permutemat}{\matval{\Pi}}
+\newcommand{\zerovec}[1]{\vecval{0}_{#1}}
+\newcommand{\zeromat}[2]{\matval{0}_{#1,#2}}
+
+\newcommand{\eqnannotate}[1]{\tag*{\color{AnnotationColor} #1}}
+\newcommand{\eqnannotatefrom}[2][]{\eqnannotate{#1 from \Cref{#2}}}
+\newcommand{\eqnannotatecf}[1]{\eqnannotate{\cf (\explicitref{#1})}}
+\newcommand{\equalref}[1]{\,\stackrel{\text{\footnotesize(\explicitref{#1})}}{=}\,}
+
+\newcommand{\fulfill}{\stackrel{!}{=}}
+\newcommand{\inlineortho}{\bot}
+\newcommand{\ortho}{\,\, \inlineortho \,\,}
+\newcommand{\iszero}[1]{\underbrace{#1}_{=0}}
+
+\newcommand{\vecsize}[1]{\in\R^{#1}}
+\newcommand{\matsize}[2]{\in\R^{#1 \times #2}}
+
+\newcommand{\Tsstep}[1]{\matval{\overline{#1}}}
+\newcommand{\sstep}[1]{\matval{\overline{#1}}}
+\newcommand{\Sstep}[1]{\matval{\ddot{#1}}}
+\newcommand{\dual}[1]{\matval{\hat{#1}}}
+\newcommand{\dualvec}[1]{\hat{#1}}
+\newcommand{\append}[1]{\underline{#1}}
+
+%\newcommand{\ATpower}[1]{{\left( \matval{A}\transpose \right)}^{#1}}
+\newcommand{\ATpower}[1]{{( \matval{A}\transpose )}^{#1}}
+\newcommand{\bracketT}[1]{{\left( #1 \right)}\transpose}
+
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\linearspan}[1]{\mathrm{span}\left( #1 \right)}
+\newcommand{\conj}[1]{\overline{#1}}
+
+\newcommand{\concatmat}[1]{\Concat{#1}}
+\newcommand{\concatvec}[1]{\left[#1\right]}
+\newcommand{\concatmatsep}{\, | \,}
+%\newcommand{\lincomb}[1]{\left\langle #1 \right\rangle}
+\newcommand{\lincomb}[1]{\linearspan{#1}}
+%\newcommand{\vecprod}[2]{\left( #1, #2 \right)}
+\newcommand{\vecprod}[2]{\left\langle #1, #2 \right\rangle}
+
+%\newcommand{\sign}[1]{\mathrm{sign}\left( #1 \right)}
+%\newcommand{\ssign}{\mathrm{sign}}
+\newcommand{\diag}{\operatorname{diag}}
+%\renewcommand\Re[1][]{\mathrm{Re}\,#1}
+%\renewcommand\Im[1][]{\mathrm{Im}\,#1}
+
+\newcommand{\vvector}[2]{\left[\begin{array}{c} #1 \\ #2 \end{array} \right]}
+\newcommand{\vvvector}[3]{\left[\begin{array}{c} #1 \\ #2 \\ #3 \end{array} \right]}
+
+\newcommand{\intervaloo}[2]{\left(#1,#2\right)}
+\newcommand{\intervaloc}[2]{\left(#1,#2\right]}
+\newcommand{\intervalco}[2]{\left[#1,#2\right)}
+\newcommand{\intervalcc}[2]{\left[#1,#2\right]}
+
+\newenvironment{mmatrix}{\begin{bmatrix}}{\end{bmatrix}}
+
+\newcommand{\Oh}[1]{\mathrm{O}\left(#1\right)}
+
+\newcommand{\e}[1]{\mathup{e}^{#1}}
+
+\newcommand{\dd}{\mathop{}\!\mathrm{d}}
+\newcommand{\Laplace}{\mathrm{\Delta}}
+
+\newcommand\op[1]{{\hat{\mathrm{#1}}}}  % Operator
+
+\newcommand\imaginary{\mathup{i}}
+
+% use together with long limits in \sum, \prod, etc
+% from mathmode, p. 63
+  \def\clap#1{\hbox to 0pt{\hss#1\hss}}
+  \def\mathclap{\mathpalette\mathclapinternal}
+  \def\mathclapinternal#1#2{%
+    \clap{$\mathsurround=0pt#1{#2}$}
+  }
+	
+	
+\newcommand{\argmax}{\operatornamewithlimits{arg \, max}}
+

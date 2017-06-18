@@ -1,0 +1,95 @@
+
+% Quotes =================================================================
+% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/csquotes/csquotes.pdf
+% Advanced features for clever quotations
+\usepackage[%
+   babel=true,            % the style of all quotation marks will be adapted
+%   german=quotes                 % to the document language as chosen by 'babel'
+%   german=guillemets,    % Styles of quotes in each language
+%   english=british,
+%   french=guillemets
+%   style=guillemets
+]{csquotes}
+
+
+  %\MakeAutoQuote{\guillemotright}{\guillemotleft}                % ALT+174, ALT+175
+  %\MakeAutoQuote{{\guillemotright}}{{\guillemotleft}}
+  %\MakeAutoQuote{»}{«}
+ 
+% All facilities which take a 'cite' argument will not insert
+% it directly. They pass it to an auxiliary command called \mkcitation
+% which  may be redefined to format the citation.
+\renewcommand*{\mkcitation}[1]{{\,}#1}
+\renewcommand*{\mkccitation}[1]{ #1}
+ 
+\SetBlockThreshold{2} % Anzahl von Zeilen
+ 
+\newenvironment{myquote}%
+  {\begin{quote}\small}%
+  {\end{quote}}%
+\SetBlockEnvironment{myquote}
+%\SetCiteCommand{} % Changes citation command 
+
+\usepackage[%
+  %capitalize,
+  sort&compress,
+	%german
+]{cleveref}
+  \crefname{subsection}{section}{sections}
+	\Crefname{subsection}{Section}{Sections}
+	\crefname{lemma}{lemma}{lemmas}
+  \Crefname{lemma}{Lemma}{Lemmas}  
+	\crefname{equation}{equation}{equations}  
+	\Crefname{equation}{Equation}{Equations}  
+  \crefname{proposition}{proposition}{propositions}
+  \Crefname{proposition}{Proposition}{Propositions}
+  \crefname{corollary}{corollary}{corollaries}
+  \Crefname{corollary}{Corollary}{Corollaries}
+  \crefname{remark}{remark}{remarks}
+  \Crefname{remark}{Remark}{Remarks}
+  \crefname{definition}{definition}{definitions}
+  \Crefname{definition}{Definition}{Definitions}
+  \crefname{example}{example}{examples}
+  \Crefname{example}{Example}{Examples}
+  \crefname{conjecture}{conjecture}{conjectures}
+  \Crefname{conjecture}{Conjecture}{Conjectures}
+  \crefname{proof}{proof}{proofs}
+  \Crefname{proof}{Proof}{Proofs}
+	\crefname{enumi}{task}{tasks}
+	\Crefname{enumi}{Task}{Tasks}
+	%\Crefname{enumi}{Regel}{Regel}
+		\IfPackageLoaded{algorithmic}{%
+    \crefname{ALC@unique}{step}{steps}
+    \Crefname{ALC@unique}{Step}{Steps}
+    \crefname{ALC@line}{step}{steps}
+    \Crefname{ALC@line}{Step}{Steps}
+  }
+
+%%Custom enumerate	
+\makeatletter
+\newcommand{\labitem}[2]{%
+\def\@itemlabel{\textbf{#1}}
+\item
+\def\@currentlabel{#1}\label{#2}}
+\makeatother
+
+%% Adds info boxes on the margin with the name of \label, \ref and \cite
+%% Works only in draft mode!
+\usepackage[
+    notref,
+    notcite
+  ]{showkeys}
+  \providecommand*\showkeyslabelformat[1]{%
+\fbox{\tiny\ttfamily#1}}
+  
+%\usepackage[english]{varioref}                  % cooles Zeug auf S. 72/73
+%    \labelformat{table}{\tablename~#1}
+%    \labelformat{figure}{\figurename~#1}
+%    \labelformat{chapter}{\chaptername~#1}
+%    \labelformat{section}{Section~#1}
+%    \labelformat{subsection}{Section~#1}
+%    \labelformat{subsubsection}{Section~#1}
+%    \labelformat{equation}{(#1)}
+%%    \labelformat{footnote}{Fußnote~#1\protect\iscurrentchapter{\thechapter}}
+%%        \newcommand\iscurrentchapter[1]{%
+%%            \ifthenelse{\equal{#1}{\thechapter}}{}{\space in Kapitel~#1}}

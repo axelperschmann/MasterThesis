@@ -1,0 +1,115 @@
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% PDF related packages
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/microtype/microtype.pdf
+% Optischer Randausgleich mit pdfTeX
+\ifpdf
+\usepackage[%
+  expansion=true, % better typography, but with much larger PDF file.
+  protrusion=true
+]{microtype}
+\fi
+ 
+ 
+%% Use only instead of hyperref !
+% \usepackage[%
+%    %ref,     % verweist auf Abschnitte
+%    pageref, % verweist auf Seiten
+% ]{backref} % Links in BiB back to Citation page/section (can be loaded by hyperref too)
+ 
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/hyperref/doc/manual.pdf
+% Ä=\304; Ö=\326; Ü=\334; ä=\344; ö=\366; ü=\374; ß=\377
+\usepackage[
+   % Farben fuer die Links
+   colorlinks=true,         % Links erhalten Farben statt Kaeten
+   urlcolor=LinkColor,    % \href{...}{...} external (URL)
+   filecolor=LinkColor,  % \href{...} local file
+   linkcolor=LinkColor,  %\ref{...} and \pageref{...}
+	 menucolor=LinkColor,
+   citecolor=LinkColor,
+   % Links
+   raiselinks=true,       % calculate real height of the link
+   breaklinks,              % Links berstehen Zeilenumbruch
+   %backref=page,            % Backlinks im Literaturverzeichnis (section, slide, page, none)
+   %pagebackref=true,        % Backlinks im Literaturverzeichnis mit Seitenangabe
+   verbose,
+   hyperindex=true,         % backlinkex index
+   linktocpage=true,        % Inhaltsverzeichnis verlinkt Seiten
+   hyperfootnotes=false,     % Keine Links auf Fussnoten
+   % Bookmarks
+   bookmarks=true,          % Erzeugung von Bookmarks fuer PDF-Viewer
+   bookmarksopenlevel=1,    % Gliederungstiefe der Bookmarks
+   bookmarksopen=false,      % Expandierte Untermenues in Bookmarks
+   bookmarksnumbered=true,  % Nummerierung der Bookmarks
+   bookmarkstype=toc,       % Art der Verzeichnisses
+	 bookmarksdepth=2,				%Tiefe Lesezeichen	
+   % Anchors
+   plainpages=false,        % Anchors even on plain pages ?
+   pageanchor=true,         % Pages are linkable
+   % PDF Informationen
+   pdftitle={\thesistitle},             % Titel
+   pdfauthor={John Doe},            % Autor
+   pdfcreator={LaTeX, hyperref, KOMA-Script, pdfeTeX-0.\the\pdftexversion\pdftexrevision}, % Ersteller
+   %pdfproducer={pdfeTeX 1.10b-2.1} %Produzent
+   pdfstartview=Fit,       % Dokument wird Fit Height geaefnet
+   pdffitwindow=true,
+   pdfpagemode=UseOutlines, % Bookmarks im Viewer anzeigen
+   pdfpagelabels=true,      % set PDF page labels
+	% draft=true								%Draft-Mode für Druck
+]{hyperref}
+ 
+\IfPackageLoaded{backref}{
+   % % Change Layout of Backref
+   \renewcommand*{\backref}[1]{%
+     % default interface
+     % #1: backref list
+     %
+     % We want to use the alternative interface,
+     % therefore the definition is empty here.
+   }%
+   \renewcommand*{\backrefalt}[4]{%
+     % alternative interface
+     % #1: number of distinct back references
+     % #2: backref list with distinct entries
+     % #3: number of back references including duplicates
+     % #4: backref list including duplicates
+     \mbox{(Zitiert auf %
+     \ifnum#1=1 %
+       Seite~%
+     \else
+       Seiten~%
+     \fi
+     #2)}%
+   }
+}
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/oberdiek/hypcap.pdf
+% Links auf Gleitumgebungen springen nicht zur Beschriftung,
+% sondern zum Anfang der Gleitumgebung
+\IfPackageLoaded{hyperref}{%
+  \usepackage[figure]{hypcap}
+}
+ 
+% Auch Abbildung und nicht nur die Nummer wird zum Link (abgeleitet
+% aus Posting von Heiko Oberdiek (d09n5p$9md$1@news.BelWue.DE);
+% Verwendung: In \abbvref{label} ist ein Beispiel dargestellt
+\providecommand*{\abbvrefname}{Abbildung}
+\newcommand*{\abbvref}[1]{%
+  \hyperref[#1]{\abbvrefname}\vref{#1}%
+}
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/pdfpages/pdfpages.pdf
+\usepackage{pdfpages} % Include pages from external PDF documents in LaTeX documents
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/oberdiek/pdflscape.sty
+%\usepackage{pdflscape} %  Querformat mit PDF
+%
+% Pakete Laden die nach Hyperref geladen werden sollen
+\LoadPackagesNow % (ltxtable, tabularx)
+
+%% Komprimierung von Bildern in PDF ausschalten
+% \ifpdf
+%    \pdfcompresslevel=0
+% \fi

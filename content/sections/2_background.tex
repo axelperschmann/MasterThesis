@@ -1,0 +1,124 @@
+\chapter{Background}
+\label{chap:background}
+bla
+
+\section{Exchange Markets, Bitcoins and Trading Basics}
+An exchange is a market, where financial instruments are sold and bought. It is typically organized by a broker, which can be both, an individual or a firm, executing buy and sell orders on behalf of dealers for a certain fee or commission. The respective prices are determined by the current market situations, in particular by supply and demand.\\
+
+Specialized exchanges concentrate on certain sub-types of financial instruments and offer a trading venue for those willing to buy and sell these instruments. Some of them are listed below:
+ 
+\begin{description}
+\item[Stock Exchange Market] A stock exchange or bourse provides companies access to investment capital in exchange to a share of ownership. Especially in times with notoriously low interest rates, investors tend to accept the greater risk of business development over a risk free, but faint investment, to grow their assets.\\
+\Eg NASDAQ, Deutsche Börse, \dots{}
+\item[Commodity exchange market] Commodity exchange markets allow for speculations with goods like oil, gold, corn, \dots{} \\
+\Eg Eurex, \dots{}
+\item[Foreign exchange market] Foreign exchange (short: forex) is considered the largest financial market in the world. The forex market is responsible for determining currency exchange rates.
+\item[Bitcoin exchange market] x\\
+\Eg Poloniex, \dots{}
+\end{description}
+
+Most modern markets are usually fully electronic{\color{red} .......}
+
+\subsection{Ask and Bid}
+Most exchange markets function after the so called auction market model, where the exchange acts as a mediator between buyers and sellers to ensure fair trading. Here buyers can \emph{bid} a price they are willing to pay for a certain number of shares and sellers can \emph{ask} a price they are aiming to make with a number of shares.
+The highest of all bids is called the \emph{bid price}, the lowest of all offers ist called the \emph{ask price}. Together they represent the current price at which an instrument is traded.\\
+
+\subsection{Limit Order Book and Market Depth}
+A limit orderbook reflects supply (asks) and demand (bids) for a particular financial instrument. It is usually maintained by the trading venue and lists the number of shares being bid or offered, organized by price levels. Incoming orders are constantly appended to this highly dynamic list, while a matching engine cautiously resolves any inconsistencies (\ie overlaps) between asks and bids by mediating between the involved parties.\\
+
+It is usually not before the matching engine has arranged an actual trade, that a trading venue claims a certain percentage of the turnover as a service fee. To encourage active market participation, the pure submission, revision and cancelation of orders is typically free of charge.
+
+\begin{table}
+\centering
+\begin{tabular}{lrlrrr}
+\toprule
+{} &  Amount &    Type &  Volume &  VolumeAcc &  norm\_Price \\
+\midrule
+31.00 &   \color{mymauve}200.0 &     ask &  6200.0 &     8425.0 &    1.074533 \\
+30.00 &    \color{mygreen}50.0 &     ask &  1500.0 &     2225.0 &    1.039871 \\
+29.00 &    \color{red}25.0 &     ask &   725.0 &      725.0 &    1.005208 \\
+28.85 &     NaN &  center &     NaN &        NaN &         NaN \\
+28.70 &   200.0 &     bid &  5740.0 &     5740.0 &    0.994810 \\
+28.50 &   100.0 &     bid &  2850.0 &     8590.0 &    0.987877 \\
+28.00 &   300.0 &     bid &  8400.0 &    16990.0 &    0.970546 \\
+\bottomrule
+\end{tabular}
+\caption[Exemplary snapshot of a limit orderbook]{Exemplary snapshot of a limit orderbook for stocks of AIWC\protect\footnotemark}
+\label{table:orderbook:example}
+\end{table}
+\footnotetext{Acme Internet Widget Company}
+
+\Cref{table:orderbook:example} shows a limit orderbook snapshot up to a market depth of 3, as seen by market participants. Here Alice offers {\color{red}25} shares per 29\$, Bob and Cedar offer {\color{mygreen}20 and 30} shares respectively per 30\$ and David offers {\color{mymauve}200} shares per 31\$.\\
+
+Based on their trading needs, traders can typically choose between multiple levels of real-time market data.
+
+\begin{description}
+\item[Level 1 Market Data] Basic informations only:\\
+Bid price + size, Ask price + size, Last price + size
+\item[Level 2 Market Data] Additional access to the orderbook.\\
+Usually data providers display the orderbook only up to a certain market depth $m$, \ie the lowest $m$ asks and the highest $m$ bids.
+\item[Level 3 Market Data] Full data access.\\
+Typically only accessible for the market maker.
+
+\end{description}
+
+
+\subsection{Trading}
+Ordertypes
+
+Limit Order
+Market Order
+
+
+
+
+\subsection{Supply and demand}
+-> Orderbooks
+
+
+\subsection{Slippage}
+
+\vspace{2mm}
+
+
+\section{Bitcoin}
+\subsection{Marktreaktionen}
+"Bitcoin ist eine Währung, die äußerst sensibel auf Nachrichten reagiert. Begründet wird dies vor allem durch die Möglichkeit, ständig am Markt teilnehmen zu können: Es gibt keine zentrale Ausgabestelle mit geregelten Handelszeiten, an die man gebunden ist."
+
+"Auch die Tatsache, dass viele Anfänger in Bitcoins investieren, führte bereits in der Vergangenheit zu den ein oder anderen Panikverkäufen. Wer sein Geld in Bitcoins investieren möchte, kann die meist lukrative Möglichkeit nutzen, sollte sich jedoch regelmäßig über Marktveränderungen informieren.
+
+Da viele Investoren schnell auf Meldungen reagieren, kann es innerhalb von Stunden zu großen Kursverlusten oder Gewinnen kommen."
+\url{https://www.btc-echo.de/bitcoin-trading-tipps-prinzipien-des-bicoin-handels_2015022502/}
+
+
+\section{Supervised Learning}
+bla
+
+\subsection{Logistic Regression}
+bla
+
+\subsection{Random Forest}
+bla
+
+
+
+\section{Reinforcement Learning}
+bla
+
+\subsection{Tree-Based Batch Mode Reinforcement Learning}
+bla
+
+\subsection{Kernel-Based Reinforcement Learning}
+necessary?
+
+
+
+
+
+\section{Python}
+bla
+
+\subsection{Jupyter notebook}
+bla
+
+\clearpage{}

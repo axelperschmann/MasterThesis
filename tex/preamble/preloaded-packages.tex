@@ -1,0 +1,117 @@
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Einige Pakete muessen unbedingt vor allen anderen geladen werden
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+%%% Doc: www.cs.brown.edu/system/software/latex/doc/calc.pdf
+% Calculation with LaTeX
+\usepackage{calc}
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/required/babel/babel.pdf
+% Languagesetting
+\usepackage[
+%  german,
+%  ngerman,
+  english,
+%  frensh,
+]{babel}
+
+%%% Info: http://www.mail-archive.com/ctan-ann@dante.de/msg01512.html
+% For adding/using translations like "Theorem/Satz" inside babel, especially for beamer
+\usepackage{translator}
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/xcolor/xcolor.pdf
+% Farben
+% Incompatible: Do not load when using pstricks !
+\usepackage[
+  dvipsnames,
+  table % Load for using rowcolors command in tables
+]{xcolor}
+ 
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/required/graphics/grfguide.pdf
+% Bilder
+\usepackage[%
+  %final,
+  %draft % do not include images (faster)
+]{graphicx}
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/oberdiek/epstopdf.pdf
+%% If an eps image is detected, epstopdf is automatically called to convert it to pdf format.
+%% Requires: graphicx loaded
+\usepackage{epstopdf}
+ 
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/required/amslatex/math/amsldoc.pdf
+% Amsmath - Mathematik Basispaket
+%
+% fuer pst-pdf displaymath Modus vor pst-pdf benoetigt.
+\usepackage[
+   centertags, % (default) center tags vertically
+   %tbtags,    % 'Top-or-bottom tags': For a split equation, place equation numbers level
+               % with the last (resp. first) line, if numbers are on the right (resp. left).
+   sumlimits,  %(default) Place the subscripts and superscripts of summation
+               % symbols above and below
+   %nosumlimits, % Always place the subscripts and superscripts of summation-type
+               % symbols to the side, even in displayed equations.
+   intlimits,  % Like sumlimits, but for integral symbols.
+   %nointlimits, % (default) Opposite of intlimits.
+   namelimits, % (default) Like sumlimits, but for certain 'operator names' such as
+               % det, inf, lim, max, min, that traditionally have subscripts placed underneath
+               % when they occur in a displayed equation.
+   %nonamelimits, % Opposite of namelimits.
+   %leqno,     % Place equation numbers on the left.
+   %reqno,     % Place equation numbers on the right.
+   %fleqn,     % Position equations at a fixed indent from the left margin rather than
+               % centered in the text column.
+]{amsmath} %
+% eqnarray nicht zusammen mit amsmath benutzen, siehe l2tabu.pdf für Hintergruende.
+ 
+%%% Doc: http://www.ctan.org/tex-archive/macros/latex/contrib/pst-pdf/pst-pdf-DE.pdf
+% Used to automatically integrate eps graphics in an pdf document using pdflatex.
+% Requires ps4pdf macro !!!
+% Download macro from http://www.ctan.org/tex-archive/macros/latex/contrib/pst-pdf/scripts/
+%
+\usepackage[%
+   %active,       % Aktiviert den Extraktionsmodus (DVI-Ausgabe). Die explizite Angabe ist
+                  % normalerweise unnötig (Standard im LATEX-Modus).
+   %inactive,     % Das Paket wird deaktiviert, Zuätzlich werden die Pakete pstricks und
+                  % graphicx geladen
+   nopstricks,    % Das Paket pstricks wird nicht geladen.
+   %draft,        % Im pdfLATEX-Modus werden aus der Containerdatei eingefügte Grafiken nur
+                  % als Rahmen dargestellt.
+   %final,        % Im pdfLATEX-Modus werden aus der Containerdatei eingefügte Grafiken
+                  % vollständig dargestellt (Standard).
+   %tightpage,    % Die Abmessung Grafiken in der Containerdatei entsprechen denen der
+                  % zugehörigen TEX-Boxen (Standard).
+   %notightpage,  % die Grafiken in der Containerdatei nehmen
+                  % mindestens die Größe des gesamten Blattes einnehmen.
+   displaymath,   %  Es werden zusätzlich die mathematischen Umgebungen displaymath,
+                  % eqnarray und $$ extrahiert und im pdf-Modus als Grafik eingefügt.
+]{pst-pdf}
+%
+% Notwendiger Bugfix für natbib Paket bei Benutzung von pst-pdf (Version <= v1.1o)
+\IfPackageLoaded{pst-pdf}{
+   \providecommand\makeindex{}
+   \providecommand\makeglossary{}
+}{}
+ 
+ 
+%% Doc: ftp://tug.ctan.org/pub/tex-archive/graphics/pstricks/README
+% load before graphicx
+% \usepackage{pstricks}
+% \usepackage{pst-plot, pst-node, pst-coil, pst-eps}
+ 
+% This package implements a workaround for the LaTeX bug that marginpars
+% sometimes appear on the wrong margin.
+% \usepackage{mparhack}
+% in some case this causes an error in the index together with package pdfpages
+% the reason is unkown. Therefore I recommend to use the margins of marginnote
+  
+%% Doc: (inside relsize.sty )
+%% ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/misc/relsize.sty
+%  Set the font size relative to the current font size
+\usepackage{relsize}
+ 
+%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/ms/ragged2e.pdf
+% Besserer Flatternsatz (Linksbuendig, statt Blocksatz)
+\usepackage{ragged2e}

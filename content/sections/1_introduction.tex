@@ -1,0 +1,38 @@
+\chapter{Introduction}
+\label{chap:introduction}
+\section{Motivation} 
+\label{sec:motivation}
+In the domain of computational finance, much research is performed to find and improve algorithms that help maximize revenue. One possibility to maximize revenue is to minimize inevitably occurring costs. \\
+
+In the first place, investors participating in stock exchange, must expect fees, charged by the respective market place organizer in return for granting access to their infrastructure. Additionally, there are hidden costs to be considered as well. Most markets function after the microeconomic supply and demand \cite{todo} model, where a universe of opposing trading interests determines the current price of a commodity.\\
+
+While trades with little capital (relative to the whole market liquidity) usually cause minor impact on the current market situation, large-scale investors must be cautious when it comes to order placement. Large orders can have a major impact on supply and demand, which leads to diminishing availability, worsening prices and as such this so called slippage must be seen as hidden costs. \\
+
+Well considered trading strategies help large-scale investors to reduce their impact and avoid costly market turbulences by unwinding large orders of shares over time. 
+Nevmyvaka et al. \cite{Nevmyvaka:2006} applied reinforcement learning to optimally distribute the trading activity over a fixed time horizon.\\
+
+\section{Objectives}
+\label{sec:objectives}
+The scope of this thesis is to transfer Nevmyvakas \cite{Nevmyvaka:2006} reinforcement learning approach from traditional stock markets with expensive, proprietary data sources, to the relatively young market of bitcoin trading and to improve it's general ability to solve the important problem of optimized trade execution. In contrast to their experiments this thesis builds on inexpensive, publicly retrievable stock exchange data. Snapshots of the current market situation are retrieved on a low-resolution, minute-scale basis from the open bitcoin exchange platform Poloniex. As such the usability of the retrieved dataset remains to be shown. \\
+
+Additional market features, describing the current market situation as well as historic market performance, are evaluated in terms of cost impact. An Orderbook Trading Simulator (OTS), which simulates the individual traders influence on the current market situation, is implemented and used in order to learn and evaluate various trading strategies.
+
+
+\section{Related Work}
+\label{sec:relatedwork}
+x
+
+\section{Contributions}
+\label{sec:contributions}
+\begin{itemize}
+\item An orderbook trading simulator framework is presented which takes into account the individual traders influence on the current market situation.
+
+\end{itemize}
+
+\section{Outline of Contents}
+\label{sec:outline}
+The remainder of this thesis is structured as follows:\\
+\Cref{chap:background} gives a general introduction into the vocabulary of financial computing and the machine learning techniques employed, \Cref{chap:simulator} describes the Orderbook Trading  Simulator, developed within the scope of this thesis, and \Cref{chap:reinforcementlearning} covers the machine learning part. \Cref{chap:conclusion} closes with a conclusion and discussion.
+
+
+\clearpage{}

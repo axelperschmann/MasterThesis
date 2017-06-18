@@ -1,0 +1,133 @@
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% verbatim packages
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/upquote/upquote.sty
+\usepackage{upquote} % Setzt "richtige" Quotes in verbatim-Umgebung
+ 
+%%% Doc: No Documentation;
+  \usepackage{verbatim} %Reimplemntation of the original verbatim
+ 
+%%% Doc: http://www.cs.brown.edu/system/software/latex/doc/fancyvrb.pdf
+% \usepackage{fancyvrb} % Superior Verbatim Class
+
+\IfPackageLoaded{fancyvrb}{
+  \DefineShortVerb{\|} % Nur mit fancyvrb zusammen laden!
+}
+ 
+%% Listings Paket ------------------------------------------------------
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/listings/listings-1.3.pdf
+% für source code listings; verwenden mit \lstinline|...|, \begin{lstlisting}...\end{lstlisting} oder \lstinputlisting{file}
+\usepackage{listings}
+  \lstset{%
+    language=Python,
+		basicstyle=\scriptsize\ttfamily,
+    tabsize=3,
+    showtabs=false,
+    showspaces=false,
+    showstringspaces=false,
+    tab=\rightarrowfill,
+    keywordstyle=\color{ListingsKeywordColor},
+    identifierstyle=\color{ListingsIdentifierColor},
+    commentstyle=\color{ListingsCommentColor},
+    stringstyle=\color{ListingsStringColor},
+    emphstyle=\color{ListingsEmphColor}\bfseries\underbar,
+    frame=none,
+    rulesepcolor=\color{ListingsRuleSepColor},
+    numbers=left, 
+    numberstyle=\tiny, 
+    numbersep=5pt,
+    captionpos=top,
+    frame=single, %tb,
+    firstnumber=1,
+    stepnumber=5,
+    numberfirstline=false,
+    breaklines=true,
+    breakatwhitespace=true,
+    prebreak=\mbox{\,$\color{ListingsBreakSymbolColor}\mathbf{\hookleftarrow}$},
+    mathescape=false,
+    morekeywords={},
+}
+%  \lstset{%
+%         basicstyle=\small\ttfamily, % Standardschrift
+%         numbers=left,               % Ort der Zeilennummern
+%         numberstyle=\tiny,          % Stil der Zeilennummern
+%         stepnumber=2,               % Abstand zwischen den Zeilennummern
+%         numbersep=5pt,              % Abstand der Nummern zum Text
+%         tabsize=2,                  % Groesse von Tabs
+%         extendedchars=true,         %
+%         breaklines=true,            % Zeilen werden Umgebrochen
+% %        keywordstyle=[1]\textbf,    % Stil der Keywords
+% %        keywordstyle=[2]\textbf,    %
+% %        keywordstyle=[3]\textbf,    %
+% %        keywordstyle=[4]\textbf,    %
+%         stringstyle=\color{stringcolor}, % Farbe der String
+%         showspaces=false,           % Leerzeichen anzeigen ?
+%         showtabs=false,             % Tabs anzeigen ?
+%         showstringspaces=false      % Leerzeichen in Strings anzeigen ?
+%  }
+  \lstloadlanguages{% Check Dokumentation for further languages ...
+          % [Sharp]C
+%         [Visual]Basic
+%         %Pascal
+%         %C
+%         %C++
+%         %XML
+%         %HTML
+					R
+  }
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/examplep/eurotex_2005_examplep.pdf
+% LaTeX Code und Ergebnis nebeneinander darstellen
+%\usepackage{examplep}
+%\usepackage[boxed,ruled]{algorithm2e}
+%\usepackage[chapter]{algorithm}
+
+%\usepackage{algorithmic}        % für Pseudo-Code-Algorithmen
+%  \renewcommand{\algorithmicrequire}{\reallynopagebreak\textbf{Input:}}
+%  \renewcommand{\algorithmicensure}{\reallynopagebreak\textbf{Output:}}
+  
+\usepackage[ruled]{algorithm2e}    %,algochapter      % für Algorithmus-Einbettungs-Umgebung
+
+  \makeatletter
+	%\newcommand\AND{\FuncSty{ AND }}
+	\SetKw{AND}{and}
+	\SetKw{not}{not}
+	\DontPrintSemicolon%
+\newenvironment{inlinealgorithm}[1]{%
+  \medskip%
+  \noindent\parbox{\linewidth}{\def\@fs@cfont{\bfseries}%
+  \let\@fs@capt\relax%
+  \par\noindent%
+  \rule{\linewidth}{.8pt}%
+  \vspace{-10pt}%
+  \noindent\captionof{algorithm}{#1}%
+  \vspace{-0.7\baselineskip}%
+  \noindent\rule{\linewidth}{.4pt}%
+  \vspace{0.2\baselineskip}}%
+%  \vspace{-1.3\baselineskip}\reallynopagebreak%
+%% My hack, as algorithmic uses the overall number of lines in the whole document for labels, instead of using the description from within a single algorithm
+  \renewcommand*\theALC@unique{\theALC@line}%
+  \reallynopagebreak%
+}{%
+  \vspace{-.75\baselineskip}%
+  \rule{\linewidth}{.4pt}%
+  \medskip%
+	
+}
+
+
+\newenvironment{inlinelisting}[1]{%
+  \def\@fs@cfont{\bfseries}%
+  \let\@fs@capt\relax%
+  \par\noindent%
+  %\medskip%
+  \rule{\linewidth}{.8pt}%
+  \vspace{-10pt}%
+%  \noindent\captionof{algorithm}{#1}%
+  \vspace{-0.35\baselineskip}%
+}{}
+\makeatother
+
+
+\usepackage{lipsum}

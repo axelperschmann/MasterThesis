@@ -1,0 +1,38 @@
+%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/isodate/README
+%%% Incompatible: draftcopy
+% Tune the output format of dates.
+%\usepackage{isodate}
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% fancy packages
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ 
+%%% Doc: No documentation - documented in 'The LaTeX Companion'
+% \usepackage{fancybox}   % for shadowbox, ovalbox
+ 
+%%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/misc/framed.sty
+% \usepackage{framed}
+% \renewcommand\FrameCommand{\fcolorbox{black}{shadecolor}}
+ 
+ 
+%%% Doc: No documentation - documented in 'The LaTeX Companion'
+% \usepackage{boxedminipage}
+
+\usepackage[
+%  footnote,  % Full names appear in the footnote
+%  smaller,    % Print acronym in smaller fontsize
+  printonlyused %
+]{acronym}
+
+
+%% Doc: ftp://tug.ctan.org/pub/tex-archive/macros/latex/contrib/marginnote/marginnote.pdf
+% Summary description: marginnote allows margin note, where \marginpar fails
+\usepackage{marginnote}
+  \renewcommand*{\marginfont}{\noindent\scriptsize\color{MarginNoteColor}}
+  
+\usepackage[
+    colorinlistoftodos,
+%    disable,
+    textsize=footnotesize,
+        ]{todonotes}
+%    \newcommand\todosp[2][]{\todo[color=blue!40,#1]{#2}}
