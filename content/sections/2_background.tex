@@ -24,7 +24,7 @@ Most exchange markets function after the so called auction market model, where t
 The highest of all bids is called the \emph{bid price}, the lowest of all offers ist called the \emph{ask price}. Together they represent the current price at which an instrument is traded.\\
 
 \subsection{Limit Order Book and Market Depth}
-A limit orderbook reflects supply (asks) and demand (bids) for a particular financial instrument. It is usually maintained by the trading venue and lists the number of shares being bid or offered, organized by price levels. Incoming orders are constantly appended to this highly dynamic list, while a matching engine cautiously resolves any inconsistencies (\ie overlaps) between asks and bids by mediating between the involved parties.\\
+A limit orderbook reflects supply (asks) and demand (bids) for a particular financial instrument. It is usually maintained by the trading venue and lists the number of shares being bid or offered, organized by price levels in two opposing books. Incoming orders are constantly appended to this highly dynamic list, while a matching engine cautiously resolves any inconsistencies (\ie overlaps) between asks and bids by mediating between the involved parties.\\
 
 It is usually not before the matching engine has arranged an actual trade, that a trading venue claims a certain percentage of the turnover as a service fee. To encourage active market participation, the pure submission, revision and cancelation of orders is typically free of charge.
 
@@ -62,21 +62,25 @@ Typically only accessible for the market maker.
 
 \end{description}
 
+\subsection{Slippage}
+Slippage is defined as the difference between expected and achieved price at which a trade is executed. Slippage may occur due to delayed trade execution. Especially during periods of high volatility, markets might change faster than the order takes to be executed. Slippage is also liked to the order size, as larger orders tend to \emph{eat} into the opposing book and are fulfilled at successively worse price levels.\\
+Slippage can be both positive or negative, depending on the current market movements and must be taken into account by serious investors.
+
 
 \subsection{Trading}
-Ordertypes
+Investors can execute orders of different types, of which the most common ones are described below:
 
-Limit Order
-Market Order
+\begin{description}
+\item[Market Orders] are the most simple form of orders. Here, the investor only specifies the number of shares he want's to buy/sell and the full order is executed immediately, at any price. Especially for large-scale traders or traders with level 1 data access only, these simple market orders are rather hazardous, since the achieved price can significantly differ from the expected price due to sparse supply and demand.
 
+\item[Limit Orders] additionally feature a worst price, \ie the highest price a buyer is willing to pay per share or, respectively the lowest price a seller is willing to make per share. Limit orders are immediately placed into the orderbook and (partially) executed, once the matching engine finds a corresponding trade in the opposing book.\\
+Limit orders reduce the risk of slippage, but do not guarantee execution.
 
+\item[Hidden Orders] are placed into the market makers internal orderbook, but not displayed to other market participants with level 2 market data access. They are a simple solution to large-scale investors seeking anonymity in the market, aiming to obfuscate their trading intention from other market participants.
 
-
-\subsection{Supply and demand}
--> Orderbooks
-
-
-\subsection{Slippage}
+By helping the investor to maintain anonymity in the market, they obfuscate large-scale orders from other 
+They help to maintain anonymity in the market
+\end{description}
 
 \vspace{2mm}
 
