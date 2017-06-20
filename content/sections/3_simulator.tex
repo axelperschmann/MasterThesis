@@ -17,7 +17,7 @@ On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots 
 \begin{figure}[ht]
 	\centering
    \includegraphics[width=0.7\textwidth]{content/drawings/bitcoin_historicPrices}
-	\caption{Historic center prices between Nov, 10th 2016 and Mar, 31 2017, as fetched from Poloniex}
+	\caption{Historic center prices between Nov, 10th 2016 and Mar, 31 2017, as fetched from Poloniex.}
 	\label{fig:ploniexPriceHistory}
 \end{figure}
 
@@ -93,6 +93,8 @@ Defines the number of trade reviews, that can be made within the time horizon $H
 Defines which of multiple cost functions to use in the returned reports. 
 \end{description}
 
+\subsection{Orderbook and strategy visualization}
+
 \Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook windows, where the solid red lines mark the \emph{average} (a) and \emph{worst} (b) price, that has to be paid at a given time point, in case of an immediate market order of 100, 75, 50 and 25 bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of -25, -50, -75 and -100 bitcoins.\\
 
 As can be seen in this graph, ask prices deviate more from the center price than bid prices. An plausible inference might be, that imbalances between demand and supply might serve as a valuable indicator for future price trends.
@@ -104,13 +106,32 @@ As can be seen in this graph, ask prices deviate more from the center price than
 	\label{fig:orderbookwindow}
 \end{figure}
 
-\subsection{Internal Masterbook}
-bla
+\subsection{Masterbook}
+During instantiation, the \ac{OTS} creates a copy of the first orderbook, called the \emph{masterbook}. Hereinafter executed trades do only affect this internal \emph{masterbook}, which can be reset to it's initial state at any time. This avoids overhead, when testing multiple strategies, since the same instance can be used again and again.\\
+
+The remaining orderbooks are then converted into \emph{deltabooks}, containing only changes between subsequent orderbooks. In case of an \ac{OTS} reset, these \emph{deltabooks} need not be recomputed, avoiding another overhead, while the original orderbooks are kept in memory as well.
 
 \subsection{Trade execution}
 bla
 
 \section{Evaluation / Comparison of strategies}
+\begin{figure}[ht]
+	\centering
+   \includegraphics[width=0.8\textwidth]{content/drawings/trading_example17_good}
+	\caption{An orderbook window over a period of 60 minutes.}
+	\label{fig:tradingstrategy17good}
+\end{figure}
+
+\begin{figure}[ht]
+	\centering
+   \includegraphics[width=0.8\textwidth]{content/drawings/trading_example17_bad}
+	\caption{This strategy placed bad limits, resulting in a high slippage of 136.98}
+	The largest portion of the order is executed as a costly market order and after the prices have risen to the worse.
+	\label{fig:tradingstrategy17bad}
+\end{figure}
+
+
+
 bla
 
 
