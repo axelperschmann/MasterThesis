@@ -23,7 +23,7 @@ On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots 
 
 \section{Data preprocessing}
 \label{chap:preprocessing}
-The python \lstinline!class OrderbookContainer! aggregates all informations contained in an individual orderbook snapshot. It enforces correct price ordering in the two opposing bid and ask books and provides additional methods for market visualization and feature extraction. To restrict wasteful memory usage, orderbook snapshots are condensed in two ways:
+The python \lstinline!class OrderbookContainer! aggregates all informations contained in an individual orderbook snapshot. It enforces correct price ordering in the two opposing bid and ask books and provides additional methods for market visualization and feature extraction. To restrict wasteful memory usage, orderbook snapshots are condensed in several ways:
 
 \begin{itemize}
 \item Almost identically price levels are round to the second decimal and their respective order volumes merged.
@@ -37,11 +37,13 @@ The python \lstinline!class OrderbookContainer! aggregates all informations cont
 \]
 \item Market depth is capped just above the threshold of 100 bitcoins, roughly corresponding to a market depth of 100-140 prices levels in both books. This threshold allows to simulate trades up to a market order price of 70.000 \$ at any time throughout the whole recording period.
 
-\item Erroneous orderbook snapshots have been discarded.
+\item Erroneous orderbook snapshots have been discarded. Occasional errors may occur, due to Poloniex API failures.
 
 \end{itemize}
 
-\Cref{lst:OrderbookContainer} shows the most important functions, provided by the OrderbookContainer class. OrderbookContainer instances are vigorously used by the \ac{OTS}.
+These measurements reduce the average individual orderbook snapshots size from 30KB to approximately 6.6KB. As for the december 2016, this results into 44.640 snapshots with a total size of 295MB instead of 1.35GB, clearly reducing the memory consumption.\\
+
+\Cref{lst:OrderbookContainer} shows the most important functions, provided by the OrderbookContainer class. OrderbookContainer instances are vigorously used by the \ac{OTS}. \Cref{fig:orderbook} shows a plain visualization of an individual orderbook snapshot.
 
 \begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=OrderbookContainer, label=lst:OrderbookContainer]
 ob = OrderbookContainer(timestamp="2016-11-08T10:00",
@@ -66,7 +68,7 @@ ob.plot()
 
 \begin{figure}[ht]
 	\centering
-   \includegraphics[width=0.9\textwidth]{content/drawings/orderbook}
+   \includegraphics[width=0.7\textwidth]{content/drawings/orderbook}
 	\caption{A simple visualization of an limit orderbook.}
 	\label{fig:orderbook}
 \end{figure}
@@ -74,12 +76,14 @@ ob.plot()
 
 \section{Simulator}
 The \ac{OTS} framework serves as basis for all preceding experiments and evaluations.
-Each simulator instance is fed with an array of subsequent OrderbookContainers (\emph{orderbook windows}) and a targeted trading volume $V$, which it pretends to trade into cash or visa versa within a fixed time horizon $H$, according to an external strategy. In the rare case of missing orderbook snapshots (see \Cref{chap:preprocessing}), the \emph{real} time horizon may be larger than usual, since always $H$ subsequent orderbooks are selected.\\
+Each simulator instance is fed with an array of subsequent OrderbookContainers (\emph{orderbook windows}) and a targeted trading volume $V$, which it pretends to trade into cash or visa versa within a fixed time horizon $H$, according to an external strategy.\\
 
-Limit orders may be placed at predefined, discrete time steps within the trading horizon $H$. The simulator is done, once the remaining trading volume is zero, which is enforced at the very last time point. Any remaining volume at \emph{H-1} is transformed into a simple market order and executed immediately, at any price. Additional parameters control the simulators behavior, when its main function \lstinline!trade(limit=...)! is called:
+In the rare case of missing orderbook snapshots (see \Cref{chap:preprocessing}), the \emph{real} time horizon may be larger than usual, since always $H$ subsequent orderbooks are selected. The \ac{OTS} refuses to work with orderbook windows, whose actual length differs from the presumed length by more than two minutes.\\
+
+Limit orders may be placed at predefined, discrete time steps within the trading horizon $H$. This is done though the simulators main interface method \lstinline!trade(limit=...)!. The simulator is done, once the remaining trading volume is zero, which is enforced at the very last time point. Any remaining volume at \emph{H-1} is transformed into a simple market order and executed immediately, at any price. Additional parameters control the simulators precise behavior:
 
 \begin{description}
-\item[volume $$] : The targeted trading volume $V$.\\
+\item[volume] : The targeted trading volume $V$.\\
 Positive values indicate buy orders, negative values indicate sell orders.
 \item[consume] : \lstinline!'cash'! or \lstinline!'volume'!\\
 Defines whether \lstinline!volume! should be interpreted as \emph{cash} (goal: buy/sell shares for $V$ dollars), or as \emph{sharecount} (goal: buy/sell $V$ shares).
@@ -89,8 +93,11 @@ Defines the duration at which a limit order is executed. After a trade has been 
 \item[tradingperiods] : \lstinline!default=4!\\
 Defines the number of trade reviews, that can be made within the time horizon $H =$ \lstinline!period_length * tradingperiods!.
 
+\item[max\_lengh\_tolerance] : \lstinline!default=2!\\
+Defines the accepted tolerance between actual and presumed trading horizon in minutes.
+
 \item[costtype] : \lstinline!default='slippage'!\\
-Defines which of multiple cost functions to use in the returned reports. 
+Defines which of multiple cost functions to use in the reports returned. 
 \end{description}
 
 \subsection{Orderbook and strategy visualization}
@@ -107,36 +114,53 @@ As can be seen in this graph, ask prices deviate more from the center price than
 \end{figure}
 
 \subsection{Masterbook}
-During instantiation, the \ac{OTS} creates a copy of the first orderbook, called the \emph{masterbook}. Hereinafter executed trades do only affect this internal \emph{masterbook}, which can be reset to it's initial state at any time. This avoids overhead, when testing multiple strategies, since the same instance can be used again and again.\\
+During instantiation, the \ac{OTS} creates a copy of the first orderbook, called the \emph{masterbook}. Hereinafter executed trades do only affect this internal \emph{masterbook}. The remaining orderbooks are then converted into \emph{deltabooks}, containing only changes between subsequent orderbooks.\\
 
-The remaining orderbooks are then converted into \emph{deltabooks}, containing only changes between subsequent orderbooks. In case of an \ac{OTS} reset, these \emph{deltabooks} need not be recomputed, avoiding another overhead, while the original orderbooks are kept in memory as well.
+The \ac{OTS} may be reset to its initial state at any time via \lstinline!ots.reset()!. This avoids computational overhead, when testing out multiple strategies on the same \emph{window}, as only \emph{masterbook} and \emph{history} are reset, while \emph{deltabooks} need not be recomputed and \emph{orderbooks} need not be retransferred. \lstinline!ots.reset()! provides optional parameters for modifying the simulators start conditions. As such the simulator might be instructed to start at a \lstinline!custom_starttime! or with a \lstinline!custom_startvolume!, to simplify the exploration of possible strategies.
 
 \subsection{Trade execution}
-bla
+The simulated trade execution is triggered by an external call to \lstinline!trade(limit=...)!. The \ac{OTS} expects a \lstinline!limit! and iterates over the next \lstinline!period_length! orderbooks, matching all eligible orders. The \lstinline!limit! represents the highest accepted price level for buy orders and the lowest accepted price level for sell orders respectively. If \lstinline!limit=None!, a simple market order is performed.\\
 
-\section{Evaluation / Comparison of strategies}
+In a first step, all eligible orders, bound by the given limit and the total trade\_volume, are cut from the internal masterbook and pasted into the \lstinline!ots.trade_history!, as such these orders are assumed be fulfilled. The \lstinline!volume! and \lstinline!cash! variables are updated accordingly.
+The simulator then moves to the next time point and adds the corresponding \emph{deltabook} to the masterbook.\\
+
+In case of order size reductions\footnote{order size may be reduced, due to order fulfillment, order updates or order cancelations through the other market participants}, negative order sizes may appear in the masterbook. They are silently dropped, assuming they where matched, before they actually vanished from the market. This is a possible source of trouble, as this assumption can not be proven to be valid. As such, matching orders that are simultaneously updated to another price level, are virtually doubled. They are perceived as a new order, even though the responsible market participant has already realized an execution and no basis to submit another one.\\
+
 \begin{figure}[ht]
 	\centering
-   \includegraphics[width=0.8\textwidth]{content/drawings/trading_example17_good}
-	\caption{An orderbook window over a period of 60 minutes.}
+	[placeholder]
+	\caption{Figure describing the masterbook adjustments as a graph?!}
 	\label{fig:tradingstrategy17good}
 \end{figure}
 
+The masterbook is then ready to be queried again. Any eligible \emph{new} orders are cut from the masterbook and past into the \lstinline!ots.trade_history!. After \lstinline!period_length! steps, a detailed trading report, as shown in \Cref{tab:tradinghistory} is returned. The upper case columns represent internal variables and orderbook statistics observed at the particular period start. The lower case columns summarize the actual trade in terms of highest, lowest and average price achieved, traded volume and cash and observed costs.\\
+
+\begin{table}
+\centering
+\scalebox{0.44}{
+\begin{tabular}{lrrrrrrrrrrrrlrrrr}
+\toprule
+{} &     ASK &     BID &  CENTER &  SPREAD &  LIMIT &   T &  VOLUME &  volume\_traded &      CASH &  cash\_traded & ... &     avg & forced &  initialMarketAvg &     low &    high &  cost \\
+\midrule
+03:01 &  711.42 &  709.74 &  710.58 &    1.68 &  713.0 &  15 &  100.00 &          46.77 &      0.00 &    -33280.72 & ... &  711.51 &  False &            718.42 &  711.42 &  713.00 &     43.48 \\
+03:16 &  712.52 &  711.86 &  712.19 &    0.66 &  715.0 &  15 &   53.23 &          28.90 & -33280.72 &    -20630.99 & ... &  713.99 &  False &            718.42 &  712.52 &  715.00 &     98.53 \\
+03:31 &  715.10 &  712.98 &  714.04 &    2.12 &  717.5 &  15 &   24.33 &           6.68 & -53911.71 &     -4780.95 & ... &  716.16 &  False &            718.42 &  715.10 &  717.41 &     37.28 \\
+03:46 &  718.60 &  717.77 &  718.18 &    0.83 &  720.0 &  15 &   17.65 &          17.65 & -58692.66 &    -12706.15 & ... &  719.73 &  False &            718.42 &  718.60 &  720.00 &    161.57 \\
+\bottomrule
+\end{tabular}}
+\caption{Trading history, as returned after four consecutive calls of \lstinline!ots.trade()!.}
+\label{tab:tradinghistory}
+\end{table}
+
+\subsection{Visualization}
+A visual representation of the same trading strategy which underlies \Cref{tab:tradinghistory}, is shown in \Cref{fig:tradingstrategy17good}. Here, the \ac{OTS} was instructed to buy 100 bitcoins within a period of 60 minutes and called with the four consecutive limits prices 713, 715, 717.5 and 720, which are shown as grey step function in the upper subplot.
+
 \begin{figure}[ht]
 	\centering
-   \includegraphics[width=0.8\textwidth]{content/drawings/trading_example17_bad}
-	\caption{This strategy placed bad limits, resulting in a high slippage of 136.98}
-	The largest portion of the order is executed as a costly market order and after the prices have risen to the worse.
-	\label{fig:tradingstrategy17bad}
+   \includegraphics[width=0.8\textwidth]{content/drawings/trading_example17_good}
+	\caption{Visualization of an exemplary trading strategy.}
+	\label{fig:tradingstrategy17good}
 \end{figure}
-
-
-
-bla
-
-
-
-
 
 
 
