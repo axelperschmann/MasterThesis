@@ -168,15 +168,15 @@ A visual representation of the same trading strategy, which underlies \Cref{tab:
 The presented model does not account for market reactions, induced by the currently executed trading strategy. It moronically follows the market trend, as it would have evolved without any intervention. Some sources of troubles are pictures below:
 
 \begin{itemize}
-\item As stated in \Cref{chap:tradeexecution}, the presented model can not distinguish between a limit order being removed from the market makers orderbook and a limit order being moved to another price level. In the latter case, the order presumably wouldn't have reappeared in the orderbooks after the simulator matched it.
-\item Other market participants typically monitor market activity thoroughly, which is particularly true for purely electronic market of digital assets like bitcoins. It is delusive to assume, that no other market participants or trading bots react to large orders, eating significantly into the orderbook.
+\item As stated in \Cref{chap:tradeexecution}, the presented model can not distinguish between a limit order being removed from the market makers orderbook and a limit order essentially only being updated to another price level. In the latter case, the order presumably wouldn't have reappeared in the orderbooks after the simulator matched it.
+\item Other market participants typically monitor market activity thoroughly, which is particularly true for purely electronic markets of digital assets, like bitcoins. It is delusive to assume, that no other market participants or trading bots react to large orders, that eat significantly into the orderbook.\\
+x
 \item Orderbooks on a minutely basis miss a great part of the markets volatility. \\
 In addition to orderbook snapshots, professional data providers typically grant access to market level 2 data (see \Cref{sec:marketdata:levels}) in form of log files as well. The log files consist of timestamped orderbook updates (typically of type \emph{remove} and \emph{modify}), which allow the reconstruction of the orderbook for an arbitrary time point. As mentioned in \Cref{chap:dataorigin}, Poloniex push API, to receive live order book updates and trades, was rather error-prone and occasionally failed to report important orderbook updates. As the valid reconstruction of orderbooks is highly vulnerable to missing logs, inconsistencies arose and the decision was made, to query orderbooks on a minutely basis only.
 \item Hidden Orders, as introduced in \Cref{chap:tradingtypes}, are not accounted for.
-\item 
 \end{itemize}
 
-As a consequence, the decision was made to 
+As a consequence, trading on the masterbook can only be seen as an rough approximation of true market behaviour. Curious masterbook shapes, resulting from the described simulation process, encourage to perform actual feature extraction on the original orderbooks, examining the market as it would have evolved without any interventions.
 
 
 
