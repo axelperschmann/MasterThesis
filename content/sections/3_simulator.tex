@@ -17,7 +17,7 @@ On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots 
 
 \begin{figure}[ht]
 	\centering
-   \includegraphics[width=0.7\textwidth]{content/drawings/bitcoin_historicPrices}
+   \includegraphics[width=1.\textwidth]{content/drawings/bitcoin_historicPrices}
 	\caption{Historic center prices between Nov, 10th 2016 and Mar, 31 2017, as fetched from Poloniex.}
 	\label{fig:ploniexPriceHistory}
 \end{figure}
@@ -95,7 +95,7 @@ Defines the duration at which a limit order is executed. After a trade has been 
 Defines the number of trade reviews, that can be made within the time horizon $H =$ \lstinline!period_length * tradingperiods!.
 
 \item[max\_lengh\_tolerance] : \lstinline!default=2!\\
-Defines the accepted tolerance between actual and presumed trading horizon in minutes.
+Defines the accepted tolerance between actual and presumed trading horizon in minutes. Throws \lstinline!ValueError!, if exceeded.
 
 \item[costtype] : \lstinline!default='slippage'!\\
 Defines which of multiple cost functions to use in the reports returned. 
@@ -103,7 +103,7 @@ Defines which of multiple cost functions to use in the reports returned.
 
 \subsection{Orderbook and strategy visualization}
 
-\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook windows, where the solid red lines mark the \emph{average} (a) and \emph{worst} (b) price, that has to be paid at a given time point, in case of an immediate market order of 100, 75, 50 and 25 bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of -25, -50, -75 and -100 bitcoins.\\
+\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (a) and \emph{worst} (b) price, that has to be paid at a given time point, in case of an immediate market order of 100, 75, 50 and 25 bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of -25, -50, -75 and -100 bitcoins.\\
 
 As can be seen in this graph, ask prices deviate more from the center price than bid prices. An plausible inference might be, that imbalances between demand and supply might serve as a valuable indicator for future price trends.
 
@@ -130,7 +130,12 @@ In case of order size reductions\footnote{order size may be reduced, due to orde
 
 \begin{figure}[ht]
 	\centering
-	[placeholder]
+	\begin{enumerate}
+	\item $master += diff(ob[t] - ob[t-1])$
+	\item perform trade: buy until given limit
+	\item $master -= bought bitcoins$
+	\item done if \lstinline!volume==0! or $t==T-1$ (\lstinline!forced=True! a)
+	\end{enumerate}
 	\caption{Figure describing the masterbook adjustments as a graph?!}
 	\label{fig:masterbookadjustments}
 \end{figure}
@@ -155,7 +160,7 @@ The masterbook is then ready to be queried again. Any eligible \emph{new} orders
 \end{table}
 
 \subsection{Visualization}
-A visual representation of the same trading strategy, which underlies \Cref{tab:tradinghistory}, is shown in \Cref{fig:tradingstrategy17good}. Here, the \ac{OTS} was instructed to buy 100 bitcoins within a period of 60 minutes and called with the four consecutive limits prices 713, 715, 717.5 and 720, which are shown as grey step function in the upper subplot.
+A visual representation of the same trading strategy, which underlies \Cref{tab:tradinghistory}, is shown in \Cref{fig:tradingstrategy17good}. Here, the \ac{OTS} was instructed to buy 100 bitcoins within a period of 60 minutes and called with four consecutive limits prices 713, 715, 717.5 and 720, which are shown as grey step function in the upper subplot.
 
 \begin{figure}[ht]
 	\centering
@@ -181,7 +186,7 @@ The presented model does not account for market reactions, induced by the curren
 
 \item Orderbooks on a minutely basis miss a great part of the markets volatility. \\
 In addition to orderbook snapshots, professional data providers typically grant access to market level 2 data (see \Cref{sec:marketdata:levels}) in form of log files as well. The log files consist of timestamped orderbook updates (typically of type \emph{remove} and \emph{modify}), which allow the reconstruction of the orderbook for an arbitrary time point. As mentioned in \Cref{chap:dataorigin}, Poloniex push API, to receive live order book updates and trades, was rather error-prone and occasionally failed to report important orderbook updates. As the valid reconstruction of orderbooks is highly vulnerable to missing logs, inconsistencies arose and the decision was made, to query orderbooks on a minutely basis only.
-\item Hidden Orders, as introduced in \Cref{chap:tradingtypes}, are not accounted for.
+\item Hidden Orders, as introduced in \Cref{chap:ordertypes}, are not accounted for.
 \end{itemize}
 
 As a consequence, trading on the masterbook can only be seen as an rough approximation of true market behaviour. Curious masterbook shapes, resulting from the described simulation process, encourage to perform actual feature extraction on the original orderbooks, examining the market as it would have evolved without any interventions.
