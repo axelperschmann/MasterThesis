@@ -48,22 +48,68 @@ The employed number of selectable actions and their actual value range is not fu
 
 
 \subsection{Costs}
-Costs are basically defined as the slippage induced from the previously chosen action. The baseline is given by the initial center price. The following formula is used to compute (partial) costs in terms of price deviation from the idealized case of buying all shares at the initial center price:
+Costs are defined as the slippage induced from the previously chosen action. The baseline is given by the initial center price. The following formula is used to compute (partial) costs in terms of price deviation from the idealized case of buying all shares at the initial center price:
 \begin{equation}
    cost = (avg\_paid - initial\_center) * volume\_traded
 \end{equation}
 \begin{equation}
-   initial\_center = (ask_t+bid_t)/2 | t=0
+   initial\_center = (\dfrac{ask_t+bid_t)}{2} | t=0
 \end{equation}
 
-Since the complete trade execution happens within a finite time horizon and full execution of the \emph{trading volume} is mandatory, partial costs, observed in individual \lstinline!trading_periods!, can simply be summed up without any discounting.
+Since the complete trade execution happens within a finite time horizon and full execution of the \lstinline!volume! is mandatory, partial costs, as observed after the individual \lstinline!trading_periods!, can simply be summed up without any discounting.
 
 
 \subsection{Learning Algorithm}
-bla
+In order to learn the optimal limit for each situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{lst:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.
+
+\begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Brute-Force strategy learning approach as described in \Cite{Nevmyvaka:2006}., label=lst:bruteforce:pseudocode]
+Optimal_strategy(V, H, T, I, L)
+    For t=T to 0
+        While(not end of data)
+            Transform (orderbook) -> o_1 ... o_R
+            For i =0 to I
+                For a = 0 to L
+                    Set x = [t, i, o_1, ..., o_R]
+                    Simulate transition x -> y
+                    Calculate cost(x, a)
+                    Look up argmax cost(y, p)
+                    Update cost([t, v, o_1, ..., o_R], a)
+    Select the highest-payout action argmax cost(y, p) in every state y to output optimal policy
+\end{lstlisting}
+
+While the running time depends only on the resolution of the private variables and the chosen action space, it is approximately independent of the number of market variables. 
 
 \subsection{Discussion}
-bla
+\begin{itemize}
+\item Discrete Actions / Lookup-table
+\item Vulnerable to seldom observed market states
+\item Why crossing the spread?! Start from ask, rather than bid!
+\end{itemize}
+
+
+\subsection{Improvements tried}
+\begin{itemize}
+\item Forward Sampling
+\begin{itemize}
+\item Markov Property violated
+\item Realistic samples, no rounding.
+\end{itemize}
+\item Function Approximation
+\begin{itemize}
+\item RandomForest (BatchTree Agent)
+\item NN Agent
+\end{itemize}
+\item Different Market Variables:
+\begin{itemize}
+\item Immediate Slippage/MarketPrice Imbalance
+\item MarketPrice Spread (buy vs. sell)
+\end{itemize}
+\item Cost function
+\begin{itemize}
+\item Slippage based on initial\_center
+\item Improvement over MarketPrice??
+\end{itemize}
+\end{itemize}
 
 \section{RL Agents}
 Various type
