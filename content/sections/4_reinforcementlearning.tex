@@ -1,9 +1,33 @@
 \chapter{Reinforcement Learning}
 \label{chap:reinforcementlearning}
-This chapter describes the \ac{RL} approach, used to approach the important problem of optimized trade execution. To a large extend, it is based on the \ac{RL} formulation, as described by Nevmyvaka \etal \cite{Nevmyvaka:2006}, but modified in detail. 
+This chapter describes an \ac{RL} approach, used to tackle the important problem of optimized trade execution. To a large extend, it is based on the \ac{RL} formulation, as described by Nevmyvaka \etal \cite{Nevmyvaka:2006}, but modified in detail.\\
 
 \section{Original Algorithm}
-The underlying 
+The original algorithm claims to find optimal limits from a discretized state space, representing trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) and additional market variables. While they achieved an impressive 50\% gain over more simple trading strategies, they left some room for improvements. As their work was based on a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from NASDAQ, it was furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.\\
+
+Nevmyvaka \etal \cite{Nevmyvaka:2006} fused Q-learning and dynamic programming to learn a state-based strategy over the first year of their data in a brute force manner.
+
+\subsection{State space}
+The state space consists of various discrete variables, describing the current trade progress (\emph{private variables}) and the current market situation as observable from orderbook data (\emph{market variables}). The two private variables \lstinline!time! and \lstinline!volume! make the base for all subsequent experiments, while various additional market variables were enclosed to examine their impact on a valuable decision making.\\
+
+As such, each \lstinline!state! $s \in <time, volume ,o_1, o_2, ...>$ forms a vector of at least two private variables, plus a variable number of market variables. More specifically, the following market variables were evaluated in terms of improvement over a state space based on two private variables only.
+\begin{description}
+\item[Bid-Ask Spread]: spread between best bid price and best ask price.
+\item[Bid-Ask Volume Misbalance]: volume imbalance between orders at the best bid price and the best ask price.
+\item[Immediate Market Order Cost]: costs, if remaining volume would be executed immediately, at the current market price.
+\item[Signed Transaction Volume]: signed volume of all trades executed within last 15 seconds. A positive value indicates more buy orders, while a negative value complies to more sell orders being executed.
+\end{description}
+
+All market variables were discretized into 0 (low), 1 (medium) and 2 (high), while the concrete category mapping process was not further described.
+
+\subsection{Action space}
+bla
+
+\subsection{Costs}
+bla
+
+\subsection{Learning Algorithm}
+bla
 
 \section{RL Agents}
 Various type
