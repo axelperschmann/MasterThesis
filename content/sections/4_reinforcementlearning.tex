@@ -21,7 +21,29 @@ As such, each \lstinline!state! $s \in <time, volume ,o_1, o_2, ...>$ forms a ve
 All market variables were discretized into 0 (low), 1 (medium) and 2 (high), while the concrete category mapping process was not further described.
 
 \subsection{Action space}
-bla
+Actions define the level of trading aggression to be performed. An action $a \in \mathbb{R}$ defines the deviation between current best price and chosen limit price, as $bid + a$ (for buy orders) and $ask - a$ (for sell orders).\\
+
+In case of the market situation as shown in \Cref{table:orderbook:example:again}, a buy order with an aggressive action $a=1.4$ would translate into $limit=28.7+1.4=30.1$. This limit would allow trading up to 75 shares instantaneously.
+
+\begin{table}
+\centering
+\begin{tabular}{lrlrrr}
+\toprule
+{} &  Amount &    Type &  Volume &  VolumeAcc &  norm\_Price \\
+\midrule
+31.00 &   200.0 &     ask &  6200.0 &     8425.0 &    1.074533 \\
+30.00 &    50.0 &     ask &  1500.0 &     2225.0 &    1.039871 \\
+29.00 &    25.0 &     ask &   725.0 &      725.0 &    1.005208 \\
+28.85 &     NaN &  center &     NaN &        NaN &         NaN \\
+28.70 &   200.0 &     bid &  5740.0 &     5740.0 &    0.994810 \\
+28.50 &   100.0 &     bid &  2850.0 &     8590.0 &    0.987877 \\
+28.00 &   300.0 &     bid &  8400.0 &    16990.0 &    0.970546 \\
+\bottomrule
+\end{tabular}
+\caption{Action $a=1.4$ translates into $limit=28.7 + 1.4 = 30.1$.}
+\label{table:orderbook:example:again}
+\end{table}
+
 
 \subsection{Costs}
 bla
