@@ -8,6 +8,7 @@ The original algorithm claims to find optimal limits from a discretized state sp
 Nevmyvaka \etal \cite{Nevmyvaka:2006} fused Q-learning and dynamic programming to learn a state-based strategy over the first year of their data in a brute force manner.
 
 \subsection{State space}
+\label{chap:statespace}
 The state space consists of various discrete variables, describing the current trade progress (\emph{private variables}) and the current market situation as observable from orderbook data (\emph{market variables}). The two private variables \lstinline!time! and \lstinline!volume! make the base for all subsequent experiments, while various additional market variables were enclosed to examine their impact on a valuable decision making.\\
 
 As such, each \lstinline!state! $s \in <time, volume ,o_1, o_2, ...>$ forms a vector of at least two private variables, plus a variable number of market variables. More specifically, the following market variables were evaluated in terms of improvement over a state space based on two private variables only.
@@ -21,6 +22,7 @@ As such, each \lstinline!state! $s \in <time, volume ,o_1, o_2, ...>$ forms a ve
 All market variables were discretized into 0 (low), 1 (medium) and 2 (high), while the concrete category mapping process was not further described.
 
 \subsection{Action space}
+\label{chap:actionspace}
 Actions define the level of trading aggression to be performed. An action $a \in \mathbb{R}$ defines the deviation between current best price and chosen limit price, as $bid + a$ (for buy orders) and $ask - a$ (for sell orders).\\
 
 In case of the market situation as shown in \Cref{table:orderbook:example:again}, a buy order with an aggressive action $a=1.4$ would translate into $limit=28.7+1.4=30.1$. This limit would allow trading up to 75 shares instantaneously.\\
@@ -48,6 +50,7 @@ The employed number of selectable actions and their actual value range is not fu
 
 
 \subsection{Costs}
+\label{chap:costs}
 Costs are defined as the slippage induced from the previously chosen action. The baseline is given by the initial center price. The following formula is used to compute (partial) costs in terms of price deviation from the idealized case of buying all shares at the initial center price:
 \begin{equation}
    cost = (avg\_paid - initial\_center) * volume\_traded
@@ -59,8 +62,9 @@ Costs are defined as the slippage induced from the previously chosen action. The
 Since the complete trade execution happens within a finite time horizon and full execution of the \lstinline!volume! is mandatory, partial costs, as observed after the individual \lstinline!trading_periods!, can simply be summed up without any discounting.
 
 
-\subsection{Learning Algorithm}
-In order to learn the optimal limit for each situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{lst:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.
+\subsection{Backward learning}
+\label{chap:backwardlearning}
+In order to learn the optimal limit for each possible situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{lst:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.
 
 \begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Brute-Force strategy learning approach as described in \Cite{Nevmyvaka:2006}., label=lst:bruteforce:pseudocode]
 Optimal_strategy(V, H, T, I, L)
@@ -77,17 +81,41 @@ Optimal_strategy(V, H, T, I, L)
     Select the highest-payout action argmax cost(y, p) in every state y to output optimal policy
 \end{lstlisting}
 
+While the algorithms running time depends solely on the resolution of the two private variables, the chosen action space and the size of the training data, it is approximately independent of the number of market variables chosen. The transition simulation was not further described, but for this thesis the model described in \Cref{chap:tradeexecution} is utilized. The cost update rule is given below: 
+\begin{equation}\label{eq:costfunction}
+   cost(x_t, a) = \dfrac{n}{n+1} cost(x_t, a) + \dfrac{1}{n+1} [cost_{im}(x_t,a) + \arg\min_{p}cost(x_{t-1}, p)]
+\end{equation}
+
+The algorithm assumes the individual trading\_periods to be of an (approximately) Markovian nature, where the optimal action to choose at a state with $t = \tau$ is completely independent of actions chosen previously ($t \geq \tau$).\\
+
+As such the state-action function can be computed inductively via dynamic programming. In a first round, expected costs for all actions in states being immediate predecessors of end states (\ie $t=1$) are computed according to \Cref{eq:costfunction}. \Cref{fig:heatmap:t1} visualizes the resulting optimal costs (right) and corresponding actions (left) after the first round has finished.
+
+\begin{figure}[ht]
+	\centering
+   \includegraphics[width=1.\textwidth]{content/drawings/heatmap_3months_t1}
+	\caption{State-Action function, visualized after the first training round.}
+	\label{fig:heatmap:t1}
+\end{figure}
+
+Knowing the optimal state action values for all states with $t=1$, all informations are given to compute the optimal state action values for their predecessor states with $t=2$ (see \Cref{fig:heatmap:t2}).
+
+\begin{figure}[ht]
+	\centering
+   \includegraphics[width=1.\textwidth]{content/drawings/heatmap_3months_t2}
+	\caption{State-Action function, visualized after the second training round.}
+	\label{fig:heatmap:t2}
+\end{figure}
+
+After $T=4$ iterations, a globally optimal policy as shown in \Cref{fig:heatmap} has been found. This example was learned from 4154 orderbook windows\footnote{Orderbook windows of 60 minutes, as extracted from USDT\_BTC data between Nov, 10th 2016, 10am until Mai, 31st 2017}, where $70.000\$$ cash (discretized in 8 intervals) had to be traded into Bitcoins. The annotated q value (right) give the corresponding minimum over all available actions only.
+
 \begin{figure}[ht]
 	\centering
    \includegraphics[width=1.\textwidth]{content/drawings/heatmap_3months}
-	\caption{Heatmap.}
+	\caption{Final State-Action function.}
 	\label{fig:heatmap}
 \end{figure}
 
-While the running time depends only on the resolution of the private variables and the chosen action space, it is approximately independent of the number of market variables chosen. The cost update rule is given below: 
-\begin{equation}
-   cost(x, a) = \dfrac{n}{n+1} cost(x, a) + \dfrac{1}{n+1} [cost_{im}(x,a) + \arg\min_{p}cost(y, p)]
-\end{equation}
+\Cref{fig:heatmap} illustrates clearly, how the optimal strategy becomes more aggressive as time ceases and a large portion of the trading volume remains unexecuted.
 
 \subsection{Discussion}
 \begin{itemize}
@@ -98,7 +126,7 @@ Influence/dependence on Spread (+8\% claimed!) as MarketVariable seems obvious h
 \end{itemize}
 
 
-\subsection{Improvements tried}
+\section{Improvements}
 \begin{itemize}
 \item actions represent deviation from ask, not bid
 \item Forward Sampling
