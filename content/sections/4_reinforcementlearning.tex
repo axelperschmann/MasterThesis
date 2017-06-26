@@ -23,7 +23,7 @@ All market variables were discretized into 0 (low), 1 (medium) and 2 (high), whi
 \subsection{Action space}
 Actions define the level of trading aggression to be performed. An action $a \in \mathbb{R}$ defines the deviation between current best price and chosen limit price, as $bid + a$ (for buy orders) and $ask - a$ (for sell orders).\\
 
-In case of the market situation as shown in \Cref{table:orderbook:example:again}, a buy order with an aggressive action $a=1.4$ would translate into $limit=28.7+1.4=30.1$. This limit would allow trading up to 75 shares instantaneously.
+In case of the market situation as shown in \Cref{table:orderbook:example:again}, a buy order with an aggressive action $a=1.4$ would translate into $limit=28.7+1.4=30.1$. This limit would allow trading up to 75 shares instantaneously.\\
 
 \begin{table}
 \centering
@@ -44,11 +44,25 @@ In case of the market situation as shown in \Cref{table:orderbook:example:again}
 \label{table:orderbook:example:again}
 \end{table}
 
+The employed number of selectable actions and their actual value range is not further specified.
+
 
 \subsection{Costs}
-bla
+Costs are basically defined as the slippage induced from the previously chosen action. The baseline is given by the initial center price. The following formula is used to compute (partial) costs in terms of price deviation from the idealized case of buying all shares at the initial center price:
+\begin{equation}
+   cost = (avg\_paid - initial\_center) * volume\_traded
+\end{equation}
+\begin{equation}
+   initial\_center = (ask_t+bid_t)/2 | t=0
+\end{equation}
+
+Since the complete trade execution happens within a finite time horizon and full execution of the \emph{trading volume} is mandatory, partial costs, observed in individual \lstinline!trading_periods!, can simply be summed up without any discounting.
+
 
 \subsection{Learning Algorithm}
+bla
+
+\subsection{Discussion}
 bla
 
 \section{RL Agents}
