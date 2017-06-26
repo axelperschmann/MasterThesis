@@ -71,24 +71,36 @@ Optimal_strategy(V, H, T, I, L)
                 For a = 0 to L
                     Set x = [t, i, o_1, ..., o_R]
                     Simulate transition x -> y
-                    Calculate cost(x, a)
+                    Calculate immediate cost_im(x, a)
                     Look up argmax cost(y, p)
                     Update cost([t, v, o_1, ..., o_R], a)
     Select the highest-payout action argmax cost(y, p) in every state y to output optimal policy
 \end{lstlisting}
 
-While the running time depends only on the resolution of the private variables and the chosen action space, it is approximately independent of the number of market variables. 
+\begin{figure}[ht]
+	\centering
+   \includegraphics[width=1.\textwidth]{content/drawings/heatmap_3months}
+	\caption{Heatmap.}
+	\label{fig:heatmap}
+\end{figure}
+
+While the running time depends only on the resolution of the private variables and the chosen action space, it is approximately independent of the number of market variables chosen. The cost update rule is given below: 
+\begin{equation}
+   cost(x, a) = \dfrac{n}{n+1} cost(x, a) + \dfrac{1}{n+1} [cost_{im}(x,a) + \arg\min_{p}cost(y, p)]
+\end{equation}
 
 \subsection{Discussion}
 \begin{itemize}
 \item Discrete Actions / Lookup-table
 \item Vulnerable to seldom observed market states
-\item Why crossing the spread?! Start from ask, rather than bid!
+\item Why crossing the spread?! Start from ask, rather than bid!\\
+Influence/dependence on Spread (+8\% claimed!) as MarketVariable seems obvious here.
 \end{itemize}
 
 
 \subsection{Improvements tried}
 \begin{itemize}
+\item actions represent deviation from ask, not bid
 \item Forward Sampling
 \begin{itemize}
 \item Markov Property violated
@@ -120,5 +132,7 @@ bla
 \subsection{BatchTree Agent}
 bla
 
+\subsection{NN Agent}
+bla
 
 \cleardoublepage{}
