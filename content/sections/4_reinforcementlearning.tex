@@ -119,8 +119,10 @@ After $T=4$ iterations, a globally optimal policy as shown in \Cref{fig:heatmap}
 
 \subsection{Discussion}
 \begin{itemize}
-\item Discrete Actions / Lookup-table
+\item Discrete Actions
+\item Discrete States (why 3 bins?, borders?, \ldots{}) / Lookup-table / Rounding-issues
 \item Vulnerable to seldom observed market states
+
 \item Why crossing the spread?! Start from ask, rather than bid!\\
 Influence/dependence on Spread (+8\% claimed!) as MarketVariable seems obvious here.
 \end{itemize}
@@ -131,8 +133,13 @@ Influence/dependence on Spread (+8\% claimed!) as MarketVariable seems obvious h
 \item actions represent deviation from ask, not bid
 \item Forward Sampling
 \begin{itemize}
+\item Growing batch learning
+\item Experience Replay (NN\_Agent)
+\item Exploration vs avoidance of repeatedly trying same actions.
+\end{itemize}
+\begin{itemize}
 \item Markov Property violated
-\item Realistic samples, no rounding.
+\item Realistic samples, no rounding. Better fit for \emph{curious} masterbook shapes as described in \Cref{chap:modelcorrectness}?!
 \end{itemize}
 \item Function Approximation
 \begin{itemize}
@@ -152,7 +159,7 @@ Influence/dependence on Spread (+8\% claimed!) as MarketVariable seems obvious h
 \end{itemize}
 
 \section{RL Agents}
-Various type
+bla
 
 \subsection{QTable Agent}
 bla
