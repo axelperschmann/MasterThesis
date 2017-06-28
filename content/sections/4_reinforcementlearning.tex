@@ -53,7 +53,8 @@ The employed number of selectable actions and their actual value range is not fu
 \label{chap:costs}
 Costs are defined as the slippage induced from the previously chosen action. The baseline is given by the initial center price. The following formula is used to compute (partial) costs in terms of price deviation from the idealized case of buying all shares at the initial center price:
 \begin{equation}
-   cost = (avg\_paid - initial\_center) * volume\_traded
+\label{eq:imcost}
+   cost_{im} = (avg\_paid - initial\_center) * volume\_traded
 \end{equation}
 \begin{equation}
    initial\_center = (\dfrac{ask_t+bid_t)}{2} | t=0
@@ -68,7 +69,7 @@ In order to learn the optimal limit for each possible situation, orderbook windo
 
 \begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Brute-Force strategy learning approach as described in \Cite{Nevmyvaka:2006}., label=lst:bruteforce:pseudocode]
 Optimal_strategy(V, H, T, I, L)
-    For t=T to 0
+    For t=1 to T
         While(not end of data)
             Transform (orderbook) -> o_1 ... o_R
             For i =0 to I
@@ -86,43 +87,52 @@ While the algorithms running time depends solely on the resolution of the two pr
    cost(x_t, a) = \dfrac{n}{n+1} cost(x_t, a) + \dfrac{1}{n+1} [cost_{im}(x_t,a) + \arg\min_{p}cost(x_{t-1}, p)]
 \end{equation}
 
-The algorithm assumes the individual trading\_periods to be of an (approximately) Markovian nature, where the optimal action to choose at a state with $t = \tau$ is completely independent of actions chosen previously ($t \geq \tau$).\\
+The algorithm assumes the individual trading\_periods to be of an (approximately) Markovian nature, where the optimal action to choose at state $x_t$ with $t = \tau$ is completely independent of actions chosen previously ($t \geq \tau$).\\
 
-As such the state-action function can be computed inductively via dynamic programming. In a first round, expected costs for all actions in states being immediate predecessors of end states (\ie $t=1$) are computed according to \Cref{eq:costfunction}. \Cref{fig:heatmap:t1} visualizes the resulting optimal costs (right) and corresponding actions (left) after the first round has finished.
+As such, the state-action function can be computed inductively via dynamic programming. In a first round, expected costs for all actions in states being immediate predecessors of end states (\ie $t=1$) are computed according to \Cref{eq:costfunction}. \Cref{fig:heatmap:t1} visualizes the resulting optimal costs (right) and corresponding actions (left) after the first round has finished.
 
 \begin{figure}[ht]
 	\centering
-   \includegraphics[width=1.\textwidth]{content/drawings/heatmap_3months_t1}
+   \includegraphics[width=0.8\textwidth]{content/drawings/heatmap_3months_t1}
 	\caption{State-Action function, visualized after the first training round.}
+	$T=4$, $I=8$, L=15
 	\label{fig:heatmap:t1}
 \end{figure}
 
-Knowing the optimal state action values for all states with $t=1$, all informations are given to compute the optimal state action values for their predecessor states with $t=2$ (see \Cref{fig:heatmap:t2}).
+Knowing the optimal state-action values for all states with $t=1$, all informations are given to compute the optimal state-action values for their predecessor states with $t=2$ (see \Cref{fig:heatmap:t2}).
 
 \begin{figure}[ht]
 	\centering
-   \includegraphics[width=1.\textwidth]{content/drawings/heatmap_3months_t2}
+   \includegraphics[width=0.8\textwidth]{content/drawings/heatmap_3months_t2}
 	\caption{State-Action function, visualized after the second training round.}
+	$T=4$, $I=8$, L=15
 	\label{fig:heatmap:t2}
 \end{figure}
 
-After $T=4$ iterations, a globally optimal policy as shown in \Cref{fig:heatmap} has been found. This example was learned from 4154 orderbook windows\footnote{Orderbook windows of 60 minutes, as extracted from USDT\_BTC data between Nov, 10th 2016, 10am until Mai, 31st 2017}, where $70.000\$$ cash (discretized in 8 intervals) had to be traded into Bitcoins. The annotated q value (right) give the corresponding minimum over all available actions only.
+After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, has been found. The annotated q values (right) denote the corresponding minimum over all available actions. The visualized state-action function was trained over orderbook snapshots from Nov, 10th 2017 10am to May, 31st 2017, partitioned into 4.154 orderbook windows of 60 minutes length each. Specifying $T=4$ limit prices, $70.000\$$ cash (discretized in 8 intervals) had to be traded into Bitcoins. The state space included the two private variables \lstinline!time! and \lstinline!volume! only, while the action space comprised 15 actions. As such, a total of $4.154 * 4 * 8 * 15 = 1.993.920$ transition tuples were generated.
 
 \begin{figure}[ht]
 	\centering
    \includegraphics[width=1.\textwidth]{content/drawings/heatmap_3months}
 	\caption{Final State-Action function.}
+	$T=4$ (60min), $I=8$ (70.000\$), L=15 ([-4, -3, \ldots{}, 9, 10])
 	\label{fig:heatmap}
 \end{figure}
 
 \Cref{fig:heatmap} illustrates clearly, how the optimal strategy becomes more aggressive as time ceases and a large portion of the trading volume remains unexecuted.
 
 \subsection{Discussion}
-\begin{itemize}
-\item Discrete Actions
-\item Discrete States (why 3 bins?, borders?, \ldots{}) / Lookup-table / Rounding-issues
-\item Vulnerable to seldom observed market states
+While the presented algorithm exploits the available data profoundly in a brute force manner, it comes with some room for improvements.\\
 
+It's most obvious weakness lies in it's vulnerability to seldomly observed market situations. Since the state-action function is implemented as a simple lookup table without any generalization capabilities, it is strictly dependent on a thorough exploration of the underlying state space. As exhaustive exploration is enforced for the value range of private variables only, market variables are entrusted to chance. Especially when increasing the state space dimension by adding multiple market simultaneously, the explanatory power of a learned state-action mapping depends crucially on the number of underlying observations. There exists even the chance of certain states never been monitored at all during the training phase. The concrete discretization process was not further described or questioned. Particularly it is not stated, how borders between 0 (low), 1 (medium) and 2 (high) have been chosen, and how the trading performance may be influenced by a higher market variable resolution.\\
+
+While discretization of market variables mainly affects the strategies explanatory power, the resolution of private variable \lstinline!volume! leads to considerable rounding issues in regards to the cost function employed. As observed successor states $y_{t-1}$ must be discretized as well to allow looking up the corresponding minimal costs, the immediate costs, as computed in \Cref{eq:imcost}, must be scaled accordingly. Simply replacing \emph{volume\_traded} with \emph{round(volume\_traded)} falsifies the actual costs, as they correlate to the accomplished trade volume in an  unpredictable, non-linear manner. Nevmyvaka \etal \Cite{Nevmyvaka:2006} did not mention this problematic and presumably did not perform any cost scaling at all.\\
+
+The mapping from actions to limits deserves some reflection as well. The proposed method (see \Cref{chap:actionspace}) adds the chosen action directly to the current best price of the opposing book, such that the bid-ask spread must be crossed before any shares may be traded. On the one hand it seems pointless to 
+
+On the one hand the proposed formula  
+
+\begin{itemize}
 \item Why crossing the spread?! Start from ask, rather than bid!\\
 Influence/dependence on Spread (+8\% claimed!) as MarketVariable seems obvious here.
 \end{itemize}
