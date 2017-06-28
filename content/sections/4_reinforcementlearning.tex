@@ -135,7 +135,7 @@ The algorithms most obvious weakness lies in its vulnerability to seldomly obser
 	\caption{Non-linear slippage growth.}
 	\label{fig:nonlinearcosts}
 \end{wrapfigure}
-While discretization of market variables mainly affects the strategies explanatory power, the resolution of private variable \lstinline!volume! leads to considerable rounding issues in regards to the cost function employed. As observed successor states $x_{t-1}$ must be discretized as well to allow looking up the corresponding minimal costs, the immediate costs, as computed in \Cref{eq:imcost}, must be scaled accordingly. Simply replacing \lstinline!volume_traded! with \lstinline!round(volume_traded)! falsifies the actual costs, as they correlate to the accomplished trade volume in an  unpredictable, non-linear manner. Nevmyvaka \etal \Cite{Nevmyvaka:2006} did not mention this problematic and presumably did not perform any cost scaling at all.
+While discretization of market variables mainly affects the strategies explanatory power, the resolution of private variable \lstinline!volume! leads to considerable rounding issues in regards to the cost function employed. As observed successor states $x_{t-1}$ must be discretized as well to allow looking up the corresponding minimal costs, the immediate costs, as computed in \Cref{eq:imcost}, must be scaled accordingly. Simply replacing \lstinline!volume_traded! with \lstinline!round(volume_traded)! falsifies the actual costs, as they correlate to the accomplished trade volume in an  unpredictable, non-linear manner as indicated in \Cref{fig:nonlinearcosts}. Nevmyvaka \etal \Cite{Nevmyvaka:2006} did not mention this problematic and presumably did not perform any cost scaling at all.
 
 
 
@@ -151,14 +151,29 @@ The proposed backward algorithm assumes individual trading\_periods to be of an 
 \end{figure}
 
 \subsection*{4. Action Space}
-The mapping from actions to limits deserves some reflection as well. The proposed method (see \Cref{chap:actionspace}) adds the value of the chosen action directly to the current best price of the opposing book, such that the bid-ask spread must be crossed before any shares may be traded. On the one hand it seems pointless to fix the origin at the best price of the \emph{opposing} book. By doing so, it appears obvious, that decisions derived from state spaces including a variable for the current spread size perform, outperform decisions derived from state spaces not including this market. Indeed, the  bid-ask spread was posed as the market variable causing the greatest individual impact, namely -$7.97\%$, on cost reduction, while the maximum reduction achieved was $12.85\%$ \footnote{Strategies derived from five dimensional state spaces including the market variables Spread, ImmCost \& Signed Vol, as described in \Cref{chap:costs}, outperformed strategies derived from two dimensional state spaces, containing the private variables only, by $12.85\%$ in average.}.\\
+The mapping from actions to limits deserves some reflection as well. The proposed method (see \Cref{chap:actionspace}) adds the value of the chosen action directly to the current best price of the opposing book, such that the bid-ask spread must be crossed before any shares may be traded.\\
+
+On the one hand it seems pointless to fix the origin at the best price of the \emph{opposing} book. By doing so, it appears obvious, that decisions derived from state spaces including a variable for the current spread size, outperform decisions derived from state spaces not including this market variable. Indeed, the  bid-ask spread was posed as the market variable causing the greatest individual impact on cost reduction, namely -$7.97\%$, which is a major fraction of their maximum achievement of  $-12.85\%$\footnote{Strategies derived from five dimensional state spaces including the market variables Spread, ImmCost \& Signed Vol, as described in \Cref{chap:costs}, outperformed strategies derived from two dimensional state spaces, containing the private variables only, by $-12.85\%$ in average.}.\\
 
 On the other hand, the proposed mapping method does not necessarily fit to the Bitcoin data at hand. As is shown in \Cref{fig:ploniexPriceHistory}, Bitcoin prices have burst from roughly 700\$ to more than 2.000\$ in the period of recording, \ie interpreting actions as the absolute difference to the current best prices, maps to significantly different levels of aggressions as time passes. As a consequence, actions should be interpreted as factors, rather than summands: $limit = bid * a$ (respectively $limit = ask * (1-a)$).
 
 
 \section{Modifications}
 \label{chap:modifications}
-Various attempts have been made, to solve the issues discussed in \Cref{chap:backwardalgorithm:discussion}.
+Various attempts have been made, to solve the issues discussed in \Cref{chap:backwardalgorithm:discussion}.\\
+
+Issue 4 (action space) has been approached by replacing \lstinline!limit_buy = bid + a! with \\\lstinline!limit_buy = ask * (1 + (a/100))!  and  \lstinline!limit_sell = ask - a! with \lstinline!limit_sell = bid * (1 - (a/100))!. \\\Cref{fig:actionlimitmapping} compares the achieved performance for both versions.
+
+Throughout the rest of this thesis, the same 15 actions are evaluated: $[-4, -3, ..., 8, 9, 10]$, corresponding to limit factors of $[0.996, 0.997, ..., 1.008, 1.009, 1.01]$\\
+
+\begin{figure}[ht]
+	\centering
+	[placeholder]
+	\caption{Comparison of action-limit map functions.}
+	\label{fig:actionlimitmapping}
+\end{figure}
+
+interchanging bid price and ask price in \Cref{eq:imcost}.
 
 \begin{itemize}
 \item actions represent deviation from ask, not bid
