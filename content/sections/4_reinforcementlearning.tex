@@ -3,7 +3,7 @@
 This chapter describes an \ac{RL} approach, used to tackle the important problem of optimized trade execution. To a large extend, it is based on the \ac{RL} formulation, as described by Nevmyvaka \etal \cite{Nevmyvaka:2006}, but modified in detail.\\
 
 \section{Original Algorithm}
-The original algorithm claims to find optimal limits from a discretized state space, representing trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) and additional market variables. While they achieved an impressive 50\% gain over more simple trading strategies, they left some room for improvements. As their work was based on a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from NASDAQ, it was furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.\\
+The original algorithm claims to find optimal limits from a discretized state space, describing trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) and market situation. While the obtained strategies achieved an impressive 50\% gain over the more simple Submit \& Leave Trading Strategy (see \Cref{chap:tradingstrategies}), they left some room for improvements. As their work was based on a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from NASDAQ, it was furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.\\
 
 Nevmyvaka \etal \cite{Nevmyvaka:2006} fused Q-learning and dynamic programming to learn a state-based strategy over the first year of their data in a brute force manner.
 
@@ -23,9 +23,9 @@ All market variables were discretized into 0 (low), 1 (medium) and 2 (high), whi
 
 \subsection{Action space}
 \label{chap:actionspace}
-Actions define the level of trading aggression to be performed. An action $a \in \mathbb{R}$ defines the deviation between current best price and chosen limit price, as $bid + a$ (for buy orders) and $ask - a$ (for sell orders).\\
+Actions define the level of trading aggression to be performed. An action $a \in \mathbb{R}$ defines the deviation between current best price and chosen limit price, as $bid + a$ (for buy orders) and $ask - a$ (for sell orders). As such, actions must cross the full bid-ask-spread to find matching orders in the opposing book. Large actions $a$ result in larger fractions of the order volume being matched immediately. Smaller or even negative actions $a$ help to prolong the actual execution, and may help to profit from opportune market movements.\\
 
-In case of the market situation as shown in \Cref{table:orderbook:example:again}, a buy order with an aggressive action $a=1.4$ would translate into $limit=28.7+1.4=30.1$. This limit would allow trading up to 75 shares instantaneously.\\
+In case of the market situation as shown in \Cref{table:orderbook:example:again}, a buy order with an aggressive action $a=1.4$ would translate into $limit=bid+a=28.7+1.4=30.1$. This limit would allow trading up to 75 shares instantaneously.\\
 
 \begin{table}
 \centering
@@ -46,7 +46,7 @@ In case of the market situation as shown in \Cref{table:orderbook:example:again}
 \label{table:orderbook:example:again}
 \end{table}
 
-The employed number of selectable actions and their actual value range is not further specified.
+The employed number of selectable actions and their actual value range was not further specified.
 
 
 \subsection{Costs}
