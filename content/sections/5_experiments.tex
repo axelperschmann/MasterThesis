@@ -2,6 +2,66 @@
 \label{chap:experiments}
 This chapter is about a concrete, real world example.
 
+
+
+\begin{itemize}
+\item actions represent deviation from ask, not bid
+\item Forward Sampling
+\begin{itemize}
+\item Growing batch learning
+\item Experience Replay (NN\_Agent)
+\item Exploration vs avoidance of repeatedly trying same actions.
+\end{itemize}
+\begin{itemize}
+\item Markov Property violated
+\item Realistic samples, no rounding. Better fit for \emph{curious} masterbook shapes as described in \Cref{chap:modelcorrectness}?!
+\end{itemize}
+\item Function Approximation
+\begin{itemize}
+\item RandomForest (BatchTree Agent)
+\item NN Agent
+\end{itemize}
+\item Different Market Variables:
+\begin{itemize}
+\item Immediate Slippage/MarketPrice Imbalance
+\item MarketPrice Spread (buy vs. sell)
+\end{itemize}
+\item Cost function
+\begin{itemize}
+\item Slippage based on initial\_center
+\item Improvement over MarketPrice??
+\end{itemize}
+\end{itemize}
+
+
+\section{RL Agents}
+bla
+
+\subsection{QTable Agent}
+bla
+
+\subsection{BatchTree Agent}
+bla
+
+\subsection{NN Agent}
+bla
+
+
+\section{Action-Limit Mapping}
+\label{chap:exp:actionlimitmapping}
+Throughout the rest of this thesis, the same 15 actions are evaluated: $[-4, -3, ..., 8, 9, 10]$, corresponding to limit factors of $[0.996, 0.997, ..., 1.008, 1.009, 1.01]$\\
+
+\begin{figure}[ht]
+	\centering
+	[placeholder]
+	\caption{Comparison of action-limit map functions.}
+	\label{fig:actionlimitmapping}
+\end{figure}
+
+\section{Additional Market Variables}
+\label{chap:exp:additionalmarketvars}
+
+
 \section{Backward approach}
 
 \subsection{QTable Agent + additional orderbook features}
@@ -16,6 +76,7 @@ bla
 
 
 \section{Forward approach}
+\label{chap:forwardlearning}
 bla
 
 \subsection{Motivation}

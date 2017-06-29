@@ -51,7 +51,7 @@ The employed number of selectable actions and their actual value range was not f
 
 \subsection{Costs}
 \label{chap:costs}
-Costs are defined as the slippage induced from the previously chosen action. The baseline is given by the initial center price. The following formula is used to compute (partial) costs in terms of price deviation from the idealized case of buying all shares at the initial center price:
+Costs are defined as the slippage induced from the previously chosen actions. The baseline is given by the initial center price. The following formula is used to compute (partial) costs in terms of price deviation from the idealized case of buying all shares at the initial center price:
 \begin{equation}
 \label{eq:imcost}
    cost_{im} = (avg\_paid - initial\_center) * volume\_traded
@@ -60,12 +60,14 @@ Costs are defined as the slippage induced from the previously chosen action. The
    initial\_center = (\dfrac{ask_t+bid_t)}{2} | t=0
 \end{equation}
 
-Since the complete trade execution happens within a finite time horizon and full execution of the \lstinline!volume! is mandatory, partial costs, as observed after the individual \lstinline!trading_periods!, can simply be summed up without any discounting.
+Since the complete trade execution happens within a finite time horizon and full execution of the \lstinline!volume! is mandatory, partial costs, as observed within the individual \lstinline!trading_periods!, can simply be summed up without any discounting.\\
+
+It is impossible to compute occurring costs in advance, as they depend on how the orderbook evolves within the subsequent \lstinline!trading_period!.
 
 
 \subsection{Backward learning}
 \label{chap:backwardlearning}
-In order to learn the optimal limit for each possible situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{lst:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.
+In order to learn the optimal limit for each possible situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{lst:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.\\
 
 \begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Brute-Force strategy learning approach as described in \Cite{Nevmyvaka:2006}., label=lst:bruteforce:pseudocode]
 Optimal_strategy(V, H, T, I, L)
@@ -121,26 +123,40 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 
 \Cref{fig:heatmap} illustrates clearly, how the optimal strategy becomes more aggressive as time ceases and a large portion of the trading volume remains unexecuted.
 
-\subsection{Discussion}
+\section{Discussion}
 \label{chap:backwardalgorithm:discussion}
 While the presented algorithm exploits the available data profoundly in a brute force manner, it comes with some room for improvements.\\
 
-\subsection*{1. Discrete State Space}
+
+
+\subsection{Discrete State Space}
 The algorithms most obvious weakness lies in its vulnerability to seldomly observed market situations. Since the state-action function is implemented as a simple lookup table without any generalization capabilities, it is strictly dependent on a thorough exploration of the underlying state space. As exhaustive exploration is enforced for the value range of private variables only, market variables are entrusted to chance. Especially when increasing the state space dimension by adding multiple market simultaneously, the explanatory power of a learned state-action mapping depends crucially on the number of underlying observations. There exists even the chance of certain states never been monitored at all during the training phase. The concrete discretization process was not further described or questioned. Particularly it is not stated, how boundaries between 0 (low), 1 (medium) and 2 (high) have been chosen, and how the trading performance may be influenced by a higher market variable resolution.
 
-\subsection*{2. Cost scaling}
-\begin{wrapfigure}{R}{0.35\textwidth}
+\begin{description}
+\item[Potential Improvements] are described and tested in \Cref{chap:experiments}.\\
+Firstly, the discretization is automatized, such that boundaries between the bins are automatically derived from the training data. Performances of multiple discretization resolutions are compared. Secondly, the underlying look up tables are replaced by function approximations, making discretization unnecessary.
+\item[Alternative Market Variables] may be considered.\\
+The market variables exploited (see \Cref{chap:statespace}) came from market level 1 data only. \Cref{chap:exp:additionalmarketvars} evaluates the impact of additional market level 2 features.
+\end{description}
+
+
+
+\subsection{Cost scaling}
+\begin{wrapfigure}{r}{0.35\textwidth}
 	\centering
 	\includegraphics[width=0.3\textwidth]{content/drawings/nonlinearcosts}
 	\caption{Non-linear slippage growth.}
 	\label{fig:nonlinearcosts}
 \end{wrapfigure}
-While discretization of market variables mainly affects the strategies explanatory power, the resolution of private variable \lstinline!volume! leads to considerable rounding issues in regards to the cost function employed. As observed successor states $x_{t-1}$ must be discretized as well to allow looking up the corresponding minimal costs, the immediate costs, as computed in \Cref{eq:imcost}, must be scaled accordingly. Simply replacing \lstinline!volume_traded! with \lstinline!round(volume_traded)! falsifies the actual costs, as they correlate to the accomplished trade volume in an  unpredictable, non-linear manner as indicated in \Cref{fig:nonlinearcosts}. Nevmyvaka \etal \Cite{Nevmyvaka:2006} did not mention this problematic and presumably did not perform any cost scaling at all.
+While discretization of market variables mainly affects the strategies explanatory power, the resolution of private variable \lstinline!volume! leads to considerable rounding issues in regards to the cost function employed. As observed successor states $x_{t-1}$ must be discretized equally to allow looking up the corresponding minimal costs, the immediate costs, as computed in \Cref{eq:imcost}, must be scaled accordingly. Simply replacing \lstinline!volume_traded! with \lstinline!round(volume_traded)! falsifies the actual costs, as they correlate to the accomplished trade volume in an  unpredictable, non-linear manner as indicated in \Cref{fig:nonlinearcosts}. Nevmyvaka \etal \Cite{Nevmyvaka:2006} did not mention this problematic and presumably did not perform any cost scaling at all.
+
+\begin{description}
+\item[Potential Improvements]  A simple, but imprecise approach is to perform cost scaling, as described above. In general, this problem should be void, when function approximations are trained from the original float values, instead of rounded values.
+\end{description}
 
 
-
-\subsection*{3. Markovian Assumption}
-The proposed backward algorithm assumes individual trading\_periods to be of an (approximately) Markovian nature. This is in fact not true, as the \ac{OTS}'s internal masterbook shape depends drastically from the preceding trade history.\\
+\subsection{Markovian Assumption}
+The proposed backward algorithm assumes individual \lstinline!trading_periods! to be of an (approximately) Markovian nature. This is in fact not true, as the \ac{OTS}'s internal masterbook shape depends drastically from the preceding trade history.\\
 \Eg starting at t=30min and a remaining trade volume of 52.500\$, the previously traded 17.500\$ could have been traded in a linear fashion, roughly at 600\$ per minute, or all 17.500\$ could have been traded in the very first minute.\\
 
 \begin{figure}[ht]
@@ -150,70 +166,33 @@ The proposed backward algorithm assumes individual trading\_periods to be of an 
 	\label{fig:differingmasterbooks}
 \end{figure}
 
-\subsection*{4. Action Space}
+\begin{description}
+\item[Potential Improvements] lay in more realistic sampling, as proposed in \Cref{chap:forwardlearning}.\\
+Here, the sampling process has been flipped around, from backward to forward mode. Rather than evaluating actions on individual \lstinline!trading_periods!, the \ac{OTS} always starts at $t=0$ and keeps going until the full trade is executed. As such, more realistic samples are generated. This does not give the problem a Markovian nature, but the internal masterbook is always of an attainable shape. In contrast to the backward approach, full exploration of the state space is not self-evident and must be accelerated.
+Simultaneously the forward sampling approach generates more versatile samples for training the function approximates, as the generated samples do not necessarily start at \emph{discrete} start points.
+\end{description}
+
+
+
+\subsection{Action Space}
 The mapping from actions to limits deserves some reflection as well. The proposed method (see \Cref{chap:actionspace}) adds the value of the chosen action directly to the current best price of the opposing book, such that the bid-ask spread must be crossed before any shares may be traded.\\
 
 On the one hand it seems pointless to fix the origin at the best price of the \emph{opposing} book. By doing so, it appears obvious, that decisions derived from state spaces including a variable for the current spread size, outperform decisions derived from state spaces not including this market variable. Indeed, the  bid-ask spread was posed as the market variable causing the greatest individual impact on cost reduction, namely -$7.97\%$, which is a major fraction of their maximum achievement of  $-12.85\%$\footnote{Strategies derived from five dimensional state spaces including the market variables Spread, ImmCost \& Signed Vol, as described in \Cref{chap:costs}, outperformed strategies derived from two dimensional state spaces, containing the private variables only, by $-12.85\%$ in average.}.\\
 
-On the other hand, the proposed mapping method does not necessarily fit to the Bitcoin data at hand. As is shown in \Cref{fig:ploniexPriceHistory}, Bitcoin prices have burst from roughly 700\$ to more than 2.000\$ in the period of recording, \ie interpreting actions as the absolute difference to the current best prices, maps to significantly different levels of aggressions as time passes. As a consequence, actions should be interpreted as factors, rather than summands: $limit = bid * a$ (respectively $limit = ask * (1-a)$).
+On the other hand, the proposed mapping method does not necessarily fit to the Bitcoin data at hand. As is shown in \Cref{fig:ploniexPriceHistory}, Bitcoin prices have burst from roughly 700\$ to more than 2.000\$ in the period of recording, \ie interpreting actions as the absolute difference to the current best prices, maps to significantly different levels of aggressions as time passes.
 
 
-\section{Modifications}
-\label{chap:modifications}
-Various attempts have been made, to solve the issues discussed in \Cref{chap:backwardalgorithm:discussion}.\\
+\begin{description}
+\item[Potential Improvements] lay in alternative action-limit mappings.\\
+On the one hand side, the limit base may be fixed to the other side of the bid-ask-spread, reducing pointless dependencies on the speads size. On the other hand, actions should be interpreted as factors, rather than summands to allow for a consistent aggression interpretation. 
+The mapping functions are thus redefined as follows:\\
+\lstinline!limit_buy = ask * (1 + (a/1000))! instead of \lstinline!limit_buy = bid + a!\\
+\lstinline!limit_sell = bid * (1 - (a/1000))! instead of \lstinline!limit_sell = ask - a!.
 
-Issue 4 (action space) has been approached by replacing \lstinline!limit_buy = bid + a! with \\\lstinline!limit_buy = ask * (1 + (a/100))!  and  \lstinline!limit_sell = ask - a! with \lstinline!limit_sell = bid * (1 - (a/100))!. \\\Cref{fig:actionlimitmapping} compares the achieved performance for both versions.
+Actions $a$ now represent the deviation from the limit base in per mile. The influence of the chosen limit base is analyzed in \Cref{chap:exp:actionlimitmapping}.
+\end{description}
 
-Throughout the rest of this thesis, the same 15 actions are evaluated: $[-4, -3, ..., 8, 9, 10]$, corresponding to limit factors of $[0.996, 0.997, ..., 1.008, 1.009, 1.01]$\\
 
-\begin{figure}[ht]
-	\centering
-	[placeholder]
-	\caption{Comparison of action-limit map functions.}
-	\label{fig:actionlimitmapping}
-\end{figure}
 
-interchanging bid price and ask price in \Cref{eq:imcost}.
-
-\begin{itemize}
-\item actions represent deviation from ask, not bid
-\item Forward Sampling
-\begin{itemize}
-\item Growing batch learning
-\item Experience Replay (NN\_Agent)
-\item Exploration vs avoidance of repeatedly trying same actions.
-\end{itemize}
-\begin{itemize}
-\item Markov Property violated
-\item Realistic samples, no rounding. Better fit for \emph{curious} masterbook shapes as described in \Cref{chap:modelcorrectness}?!
-\end{itemize}
-\item Function Approximation
-\begin{itemize}
-\item RandomForest (BatchTree Agent)
-\item NN Agent
-\end{itemize}
-\item Different Market Variables:
-\begin{itemize}
-\item Immediate Slippage/MarketPrice Imbalance
-\item MarketPrice Spread (buy vs. sell)
-\end{itemize}
-\item Cost function
-\begin{itemize}
-\item Slippage based on initial\_center
-\item Improvement over MarketPrice??
-\end{itemize}
-\end{itemize}
-
-\section{RL Agents}
-bla
-
-\subsection{QTable Agent}
-bla
-
-\subsection{BatchTree Agent}
-bla
-
-\subsection{NN Agent}
-bla
 
 \cleardoublepage{}
