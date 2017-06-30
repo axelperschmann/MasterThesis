@@ -3,6 +3,7 @@
 This chapter describes an \ac{RL} approach, used to tackle the important problem of optimized trade execution. To a large extend, it is based on the \ac{RL} formulation, as described by Nevmyvaka \etal \cite{Nevmyvaka:2006}, but modified in detail.\\
 
 \section{Original Algorithm}
+\label{chap:reinforcementlearning:original}
 The original algorithm claims to find optimal limits from a discretized state space, describing trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) and market situation. While the obtained strategies achieved an impressive 50\% gain over the more simple Submit \& Leave Trading Strategy (see \Cref{chap:tradingstrategies}), they left some room for improvements. As their work was based on a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from NASDAQ, it was furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.\\
 
 Nevmyvaka \etal \cite{Nevmyvaka:2006} fused Q-learning and dynamic programming to learn a state-based strategy over the first year of their data in a brute force manner.
@@ -19,7 +20,7 @@ As such, each \lstinline!state! $s \in <time, volume ,o_1, o_2, ...>$ forms a ve
 \item[Signed Transaction Volume]: signed volume of all trades executed within last 15 seconds. A positive value indicates more buy orders, while a negative value complies to more sell orders being executed.
 \end{description}
 
-All market variables were discretized into 0 (low), 1 (medium) and 2 (high), while the concrete category mapping process was not further described.
+All market variables were discretized into 0 (low), 1 (medium) and 2 (high), while the concrete category mapping process was not further described. Market variables are extracted from the original orderbooks, as if the market had evolved without our impact.
 
 \subsection{Action space}
 \label{chap:actionspace}
@@ -123,26 +124,29 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 
 \Cref{fig:heatmap} illustrates clearly, how the optimal strategy becomes more aggressive as time ceases and a large portion of the trading volume remains unexecuted.
 
+
+
+
+
+
 \section{Discussion}
 \label{chap:backwardalgorithm:discussion}
 While the presented algorithm exploits the available data profoundly in a brute force manner, it comes with some room for improvements.\\
 
-
-
 \subsection{Discrete State Space}
-The algorithms most obvious weakness lies in its vulnerability to seldomly observed market situations. Since the state-action function is implemented as a simple lookup table without any generalization capabilities, it is strictly dependent on a thorough exploration of the underlying state space. As exhaustive exploration is enforced for the value range of private variables only, market variables are entrusted to chance. Especially when increasing the state space dimension by adding multiple market simultaneously, the explanatory power of a learned state-action mapping depends crucially on the number of underlying observations. There exists even the chance of certain states never been monitored at all during the training phase. The concrete discretization process was not further described or questioned. Particularly it is not stated, how boundaries between 0 (low), 1 (medium) and 2 (high) have been chosen, and how the trading performance may be influenced by a higher market variable resolution.
+The algorithms most obvious weakness lies in its vulnerability to seldomly observed market situations. Since the state-action function is implemented as a simple lookup table without any generalization capabilities, it is strictly dependent on a thorough exploration of the underlying state space. As exhaustive exploration is enforced for the value range of private variables only, market variables are entrusted to chance. Especially when increasing the state space dimension by adding multiple market variables simultaneously, the explanatory power of a learned state-action mapping depends crucially on the number of underlying observations. There exists even the chance of certain states never been monitored at all during the training phase. The concrete discretization process was not further described or questioned. Particularly it is not stated, how boundaries between 0 (low), 1 (medium) and 2 (high) have been chosen, and how the trading performance may be influenced by a higher market variable resolution.
 
 \begin{description}
 \item[Potential Improvements] are described and tested in \Cref{chap:experiments}.\\
-Firstly, the discretization is automatized, such that boundaries between the bins are automatically derived from the training data. Performances of multiple discretization resolutions are compared. Secondly, the underlying look up tables are replaced by function approximations, making discretization unnecessary.
+Firstly, the discretization is automatized, such that boundaries between the bins are automatically derived from the training data. Performances of multiple discretization resolutions are compared. Secondly, the underlying lookup tables are replaced by function approximations, making discretization unnecessary.
 \item[Alternative Market Variables] may be considered.\\
-The market variables exploited (see \Cref{chap:statespace}) came from market level 1 data only. \Cref{chap:exp:additionalmarketvars} evaluates the impact of additional market level 2 features.
+The market variables exploited (see \Cref{chap:statespace}) basically came from market level 1 data only. \Cref{chap:exp:additionalmarketvars} evaluates the impact of additional market level 2 features.
 \end{description}
 
 
 
 \subsection{Cost scaling}
-\begin{wrapfigure}{r}{0.35\textwidth}
+\begin{wrapfigure}[7]{r}{0.35\textwidth}
 	\centering
 	\includegraphics[width=0.3\textwidth]{content/drawings/nonlinearcosts}
 	\caption{Non-linear slippage growth.}
@@ -157,29 +161,51 @@ While discretization of market variables mainly affects the strategies explanato
 
 \subsection{Markovian Assumption}
 The proposed backward algorithm assumes individual \lstinline!trading_periods! to be of an (approximately) Markovian nature. This is in fact not true, as the \ac{OTS}'s internal masterbook shape depends drastically from the preceding trade history.\\
-\Eg starting at t=30min and a remaining trade volume of 52.500\$, the previously traded 17.500\$ could have been traded in a linear fashion, roughly at 600\$ per minute, or all 17.500\$ could have been traded in the very first minute.\\
+
+\Cref{fig:differingmasterbooks} shows differing masterbook shapes, that can build the base of a simulated \lstinline!trading_period!, \eg if starting at $t=45min$ and a remaining trade volume of 17.500\$.
+
+\ref{fig:differingmasterbooks:NoSim} shows the original orderbook, as if no orders had been matched by our strategy. This version of the masterbook is queried by the original backward algorithm, potentially resulting in more passive trading aggressions, as it does not account for the own impact on the market at all. \ref{fig:differingmasterbooks:SimEq} and \ref{fig:differingmasterbooks:SimMarketOrder} show two ideas, how the market impact can be incorporated. Both lead to different masterbook shapes and to different subsets of attainable prices.\\
 
 \begin{figure}[ht]
 	\centering
-	[placeholder]
-	\caption{Two different versions of the initial masterbook.}
+	\begin{subfigure}[t]{0.3\textwidth}
+        		\centering
+        		\includegraphics[width=\textwidth]{content/drawings/masterbook_customstart_NoSim}
+        		\caption{Original Orderbook.}
+		\label{fig:differingmasterbooks:NoSim}
+    	\end{subfigure}
+	\begin{subfigure}[t]{0.3\textwidth}
+        		\centering
+        		\includegraphics[width=\textwidth]{content/drawings/masterbook_customstart_SimMarketOrder}
+        		\caption{Assuming 52.500 shares being matched at \lstinline!t=0!, then no further matches.}
+		\label{fig:differingmasterbooks:SimMarketOrder}
+    	\end{subfigure}%
+	\begin{subfigure}[t]{0.3\textwidth}
+        		\centering
+        		\includegraphics[width=\textwidth]{content/drawings/masterbook_customstart_SimEqual}
+        		\caption{Assuming 52.500 shares being matched evenly at 1.166 shares per minute.}
+		\label{fig:differingmasterbooks:SimEq}
+    	\end{subfigure}%
+
+	\caption{Different shaped masterbooks at \lstinline!t=45!.}
+	The shapes differ, depending on the preceding trade history.
 	\label{fig:differingmasterbooks}
 \end{figure}
 
 \begin{description}
-\item[Potential Improvements] lay in more realistic sampling, as proposed in \Cref{chap:forwardlearning}.\\
-Here, the sampling process has been flipped around, from backward to forward mode. Rather than evaluating actions on individual \lstinline!trading_periods!, the \ac{OTS} always starts at $t=0$ and keeps going until the full trade is executed. As such, more realistic samples are generated. This does not give the problem a Markovian nature, but the internal masterbook is always of an attainable shape. In contrast to the backward approach, full exploration of the state space is not self-evident and must be accelerated.
-Simultaneously the forward sampling approach generates more versatile samples for training the function approximates, as the generated samples do not necessarily start at \emph{discrete} start points.
+\item[Potential Improvements] Initializing the \ac{OTS} outside the original start point ($t=0, V=100\%$), the supposedly traded volume must be incorporated, \eg as done in \Cref{fig:differingmasterbooks:SimEq}. Other than that, a more realistic sampling method my be applied: The forward sampling process, described in \Cref{chap:forwardlearning}, approaches sampling from the other side. Rather than evaluating actions on individual \lstinline!trading_periods!, the \ac{OTS} always starts with $V=100 \% $ and keeps going until the full trade is executed. As such, more realistic samples are generated. This does not give the problem a Markovian nature, but the internal masterbook is always of a realistic shape. In contrast to the backward approach, exhaustive exploration of the state space is not self-evident and must be enforced.
+As a side benefit, the forward sampling approach generates more versatile samples for training the function approximates, as the generated samples do not necessarily start at \emph{discrete} start points only.
 \end{description}
 
 
 
 \subsection{Action Space}
-The mapping from actions to limits deserves some reflection as well. The proposed method (see \Cref{chap:actionspace}) adds the value of the chosen action directly to the current best price of the opposing book, such that the bid-ask spread must be crossed before any shares may be traded.\\
+\label{chap:backwardalgorithm:discussion:actionspace}
+The mapping from actions to limits deserves some reflection as well. The proposed method (see \Cref{chap:actionspace}) adds the value of the chosen action directly to the current best price of the opposing book, such that the bid-ask spread must be crossed before any orders may be matched.\\
 
-On the one hand it seems pointless to fix the origin at the best price of the \emph{opposing} book. By doing so, it appears obvious, that decisions derived from state spaces including a variable for the current spread size, outperform decisions derived from state spaces not including this market variable. Indeed, the  bid-ask spread was posed as the market variable causing the greatest individual impact on cost reduction, namely -$7.97\%$, which is a major fraction of their maximum achievement of  $-12.85\%$\footnote{Strategies derived from five dimensional state spaces including the market variables Spread, ImmCost \& Signed Vol, as described in \Cref{chap:costs}, outperformed strategies derived from two dimensional state spaces, containing the private variables only, by $-12.85\%$ in average.}.\\
+On the one hand, it seems pointless to fix the origin at the best price of the \emph{opposing} book. By doing so, it appears obvious, that decisions derived from state spaces including a variable for the current spread size, outperform decisions derived from state spaces not including this market variable. Indeed, the  bid-ask spread was posed as the market variable causing the greatest individual impact on cost reduction, namely -$7.97\%$, which is a major fraction of the maximum achievement of  $-12.85\%$\footnote{Strategies derived from five dimensional state spaces including the market variables Spread, ImmCost \& Signed Vol, as described in \Cref{chap:costs}, outperformed strategies derived from two dimensional state spaces, containing the private variables only, by $-12.85\%$ in average.}.\\
 
-On the other hand, the proposed mapping method does not necessarily fit to the Bitcoin data at hand. As is shown in \Cref{fig:ploniexPriceHistory}, Bitcoin prices have burst from roughly 700\$ to more than 2.000\$ in the period of recording, \ie interpreting actions as the absolute difference to the current best prices, maps to significantly different levels of aggressions as time passes.
+On the other hand, the proposed mapping method does not necessarily fit to the Bitcoin data at hand. As is shown in \Cref{fig:ploniexPriceHistory}, Bitcoin prices have burst from roughly 700\$ to more than 2.000\$ in the period of recording, \ie interpreting actions as the absolute difference to the current best prices, maps to significantly different levels of aggression as time passes.
 
 
 \begin{description}

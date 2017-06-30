@@ -18,7 +18,7 @@ On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots 
 \begin{figure}[ht]
 	\centering
    \includegraphics[width=1.\textwidth]{content/drawings/bitcoin_historicPrices}
-	\caption{Historic center prices between Nov, 10th 2016 and Mar, 31 2017, as fetched from Poloniex.}
+	\caption{Historic center prices between Nov, 10th 2016 and May, 31 2017, as fetched from Poloniex.}
 	\label{fig:ploniexPriceHistory}
 \end{figure}
 
@@ -76,10 +76,10 @@ ob.plot()
 
 
 \section{Simulator}
-The \ac{OTS} framework serves as basis for all preceding experiments and evaluations.
-Each simulator instance is fed with an array of subsequent OrderbookContainers (\emph{orderbook windows}) and a targeted trading volume $V$, which it pretends to trade into cash or visa versa within a fixed time horizon $H$, according to an external strategy.\\
+The \ac{OTS} framework serves as base for all preceding experiments and evaluations.
+Each simulator instance is fed with an array of subsequent OrderbookContainers (\emph{orderbook windows}) and a targeted trading volume $V$, which it pretends to trade into cash or vice versa within a fixed time horizon $H$, according to an external strategy.\\
 
-In the rare case of missing orderbook snapshots (see \Cref{chap:preprocessing}), the \emph{real} time horizon may be larger than usual, since always $H$ subsequent orderbooks are selected. The \ac{OTS} refuses to work with orderbook windows, whose actual length differs from the presumed length by more than two minutes.\\
+In the rare case of missing orderbook snapshots (see \Cref{chap:preprocessing}), the \emph{real} time horizon may be larger than usual, since always $H$ subsequent orderbooks are selected. By default, the \ac{OTS} refuses to work with orderbook windows, whose actual length differs from the presumed length by more than two minutes.\\
 
 Limit orders may be placed at predefined, discrete time steps within the trading horizon $H$. This is done though the simulators main interface method \lstinline!trade(limit=...)!. The simulator is done, once the remaining trading volume is zero, which is enforced at the very last time point. Any remaining volume at \emph{H-1} is transformed into a simple market order and executed immediately, at any price. Additional parameters control the simulators precise behavior:
 
@@ -103,13 +103,25 @@ Defines which of multiple cost functions to use in the reports returned.
 
 \subsection{Orderbook and strategy visualization}
 
-\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (a) and \emph{worst} (b) price, that has to be paid at a given time point, in case of an immediate market order of 100, 75, 50 and 25 bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of -25, -50, -75 and -100 bitcoins.\\
+\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (\ref{fig:orderbookwindow:avg}) and \emph{worst} (\ref{fig:orderbookwindow:worst}) price, that has to be paid at a given time point, in case of an immediate market order of 100, 75, 50 and 25 bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of -25, -50, -75 and -100 bitcoins.\\
 
 As can be seen in this graph, ask prices deviate more from the center price than bid prices. An plausible inference might be, that imbalances between demand and supply might serve as a valuable indicator for future price trends.
 
 \begin{figure}[ht]
 	\centering
-   \includegraphics[width=0.49\textwidth]{content/drawings/orderbook_window17} \includegraphics[width=0.49\textwidth]{content/drawings/orderbook_window17_worst}
+	\begin{subfigure}[t]{0.5\textwidth}
+        		\centering
+        		\includegraphics[width=\textwidth]{content/drawings/orderbook_window17}
+        		\caption{Average market price.}
+		\label{fig:orderbookwindow:avg}
+    	\end{subfigure}%
+	\begin{subfigure}[t]{0.5\textwidth}
+        		\centering
+        		\includegraphics[width=\textwidth]{content/drawings/orderbook_window17_worst}
+        		\caption{Worst market price.}
+		\label{fig:orderbookwindow:worst}
+    	\end{subfigure}%
+	
 	\caption{An orderbook window over a period of 60 minutes.}
 	\label{fig:orderbookwindow}
 \end{figure}
@@ -131,9 +143,9 @@ In case of order size reductions\footnote{order size may be reduced, due to orde
 \begin{figure}[ht]
 	\centering
 	\begin{enumerate}
-	\item $master += diff(ob[t] - ob[t-1])$
+	\item \lstinline!master += diff(ob[t] - ob[t-1])!, drop negative share counts.
 	\item perform trade: buy until given limit
-	\item $master -= bought bitcoins$
+	\item \lstinline!master -= bought bitcoins!
 	\item done if \lstinline!volume==0! or $t==T-1$ (\lstinline!forced=True! a)
 	\end{enumerate}
 	\caption{Figure describing the masterbook adjustments as a graph?!}
@@ -160,7 +172,9 @@ The masterbook is then ready to be queried again. Any eligible \emph{new} orders
 \end{table}
 
 \subsection{Visualization}
-A visual representation of the same trading strategy, which underlies \Cref{tab:tradinghistory}, is shown in \Cref{fig:tradingstrategy17good}. Here, the \ac{OTS} was instructed to buy 100 bitcoins within a period of 60 minutes and called with four consecutive limits prices 713, 715, 717.5 and 720, which are shown as grey step function in the upper subplot.
+A visual representation of the same trading strategy, which underlies \Cref{tab:tradinghistory}, is shown in \Cref{fig:tradingstrategy17good}. Here, the \ac{OTS} was instructed to buy 100 bitcoins within a period of 60 minutes and called with four consecutive limits prices 713, 715, 717.5 and 720, which are shown as grey step function in the upper subplot.\\
+
+The second subplot displays trade executions and declining trade volume over time and the bottom subplot displays induced costs. Expected costs conform to the respective accumulated costs, extrapolated to the full trade volume.
 
 \begin{figure}[ht]
 	\centering

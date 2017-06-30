@@ -1,6 +1,73 @@
-\chapter{Experiments}
+\chapter{Orderbook Agents}
+This chapter describes several \emph{Orderbook Agents}, implemented to learn optimal \emph{Submit \& Revise} trading strategies from a given training data set.
+
+
+\section{Implementation}
+\label{chap:experiments:implementation}
+Each \emph{Orderbook Agents} inherits some commonly shared functionality from the super class \lstinline!class RL_Agent_Base!. This base class provides a consistent framework, allowing to swap the logic behind \lstinline!learn_from_samples! and \lstinline!predict! only, while general functionality like \lstinline!load! and \lstinline!save!, \lstinline!plot_heatmap_Q! and \lstinline!collect_samples! may be reused.\\
+
+Three kinds of \emph{Orderbook Agents} have been implemented and experimented with.
+
+\begin{description}
+\item[QTable\_Agent] : Expected state-values are stored in a simple lookup table.\\
+This agent is based on the formulation described in \Cref{chap:reinforcementlearning:original} and requires a discretized state space. For each observed state, a vector of length $L=num\_actions$ is maintained, of which the argmin refers to the optimal action.
+\item[BatchTree\_Agent]:  Expected state-values are approximated by an ensemble of decision trees.
+This agent does not require a discretized state space. Actions are 
+\item[NN\_Agent] : Expected state-values are approximated by a multi layer perceptron.
+\end{description}
+
+\subsection{Backward Sampling \& Learning}
+The process of sampling from training data and learning optimal state-action values has been split into two independent phases, mostly due to performance\footnote{The backward sampling phase for the example mentioned in \Cref{chap:backwardlearning}, took roughly 10 hours, even though the work load was distributed among 24 CPU's.} reasons. In the \emph{sampling phase} all possible combinations of actions and private variables are evaluated and stored as 5-tuples $sample=(state, action, cost, timestamp, new\_state)$. As market variables are supposedly not influenced by the agents behavior (see \Cref{chap:statespace}), it is sufficient to remember the orderbooks time point, to allow adjacent substitution of market variables.\\
+
+Samples are stored as DataFrame and may be exported and reused by other agents, as wished. This allows to skip the time consuming process of backward sampling. Before the action learning phase starts, the collected samples may be enhanced by a variety of market variables, discretized or untouched. The helper function \lstinline!addMarketFeatures_toSamples()! retrospectively adds market variables to the agents samples DataFrame.\\
+
+If wanted, features are discretized according to their individual value range.\\
+\Eg a chosen resolution of 3, evenly assigns features to the following three bins:\\
+0 (if $o_m< 1/3$ quantile), 1 (if $1/3 <= o_m <= 2/3$ quantile) and 2 (if $2/3 <= o_m3$ quantile).
+
+
+\section{Experiments}
 \label{chap:experiments}
-This chapter is about a concrete, real world example.
+\subsection{Action-Limit Mapping}
+\label{chap:exp:actionlimitmapping}
+As mentioned in \Cref{chap:backwardalgorithm:discussion:actionspace}, it seems pointless to force actions to cross the bid-ask-spread before any orders can be matched. \Cref{fig:actionlimitmapping} compares strategies learned from differing limit base levels.
+
+\begin{figure}[ht]
+	\centering
+	
+	\begin{subfigure}[b]{0.7\textwidth}
+        		\centering
+        		\includegraphics[width=\textwidth]{content/drawings/performance_limitBase_dec.pdf}
+        		\caption{Slippage.}
+		\label{fig:actionlimitmapping:plot}
+    	\end{subfigure}%
+	\begin{subfigure}[b]{0.30\textwidth}
+        		\centering
+		\scalebox{0.7}{
+\begin{tabular}{lr}
+\toprule
+{} &           mean slippage \\
+\midrule
+currBid         &  228.11 \\
+currBid\_mSpread &  215.90 \\
+currBid\_spread  &  225.99 \\
+currAsk         &  229.11 \\
+currAsk\_mSpread &  217.88 \\
+currAsk\_spread  &  226.12 \\
+incStep         &  219.48 \\
+\bottomrule
+\end{tabular}	
+		}  \vspace{1.8cm}      		 
+        		\caption{Mean slippage.}
+		\label{fig:actionlimitmapping:mean}
+    	\end{subfigure}
+
+	\caption{Evaluating the impact of additional market variables.}
+	\label{fig:actionlimitmapping}
+\end{figure}
+
+Throughout the rest of this thesis, the same 15 actions are evaluated: $[-4, -3, ..., 8, 9, 10]$, corresponding to limit factors of $[0.996, 0.997, ..., 1.008, 1.009, 1.01]$\\
+
 
 
 
@@ -47,19 +114,62 @@ bla
 bla
 
 
-\section{Action-Limit Mapping}
-\label{chap:exp:actionlimitmapping}
-Throughout the rest of this thesis, the same 15 actions are evaluated: $[-4, -3, ..., 8, 9, 10]$, corresponding to limit factors of $[0.996, 0.997, ..., 1.008, 1.009, 1.01]$\\
-
-\begin{figure}[ht]
-	\centering
-	[placeholder]
-	\caption{Comparison of action-limit map functions.}
-	\label{fig:actionlimitmapping}
-\end{figure}
 
 \section{Additional Market Variables}
 \label{chap:exp:additionalmarketvars}
+
+
+
+
+
+\begin{figure}[ht]
+	\centering
+	
+	\begin{subfigure}[b]{0.6\textwidth}
+        		\centering
+        		\includegraphics[width=\textwidth]{content/drawings/slippage_additionalMarketVars}
+        		\caption{Slippage.}
+		\label{fig:eval:additionalMarketVariables:plot}
+    	\end{subfigure}%
+	\begin{subfigure}[b]{0.25\textwidth}
+        		\centering
+		\scalebox{0.6}{
+		\begin{tabular}{lr}
+\toprule
+{} &           mean slippage \\
+\midrule
+VolTime                &  202.737500 \\
+ask                    &  201.214796 \\
+bid                    &  201.214796 \\
+center\_orig            &  202.737500 \\
+future\_center15        &  200.865082 \\
+future\_center5         &  204.489075 \\
+future\_center60        &  193.398691 \\
+marketPrice\_buy\_worst  &  214.750825 \\
+marketPrice\_sell\_worst &  211.453516 \\
+marketPrice\_spread     &  202.233493 \\
+maxSlip\_buy            &  214.750825 \\
+maxSlip\_imbalance      &  207.770109 \\
+maxSlip\_sell           &  211.453516 \\
+ob\_direction           &  179.040837 \\
+sharecount\_buy         &  202.737500 \\
+sharecount\_imbalance   &  200.049701 \\
+sharecount\_sell        &  202.737500 \\
+sharecount\_spread      &  206.764315 \\
+spread                 &  201.214796 \\
+5                      &  251.008681 \\
+MarketOrder            &  620.867742 \\
+\bottomrule
+\end{tabular}}        		 
+        		\caption{Mean slippage.}
+		\label{fig:eval:additionalMarketVariables:mean}
+    	\end{subfigure}
+
+	\caption{Evaluating the impact of additional market variables.}
+	\label{fig:eval:additionalMarketVariables}
+\end{figure}
+
+
 
 
 \section{Backward approach}
