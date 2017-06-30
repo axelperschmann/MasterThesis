@@ -146,6 +146,7 @@ The market variables exploited (see \Cref{chap:statespace}) basically came from 
 
 
 \subsection{Cost scaling}
+\label{chap:backwardalgorithm:discussion:costscaling}
 \begin{wrapfigure}[7]{r}{0.35\textwidth}
 	\centering
 	\includegraphics[width=0.3\textwidth]{content/drawings/nonlinearcosts}
@@ -160,6 +161,7 @@ While discretization of market variables mainly affects the strategies explanato
 
 
 \subsection{Markovian Assumption}
+\label{chap:backwardalgorithm:discussion:markovianassumption}
 The proposed backward algorithm assumes individual \lstinline!trading_periods! to be of an (approximately) Markovian nature. This is in fact not true, as the \ac{OTS}'s internal masterbook shape depends drastically from the preceding trade history.\\
 
 \Cref{fig:differingmasterbooks} shows differing masterbook shapes, that can build the base of a simulated \lstinline!trading_period!, \eg if starting at $t=45min$ and a remaining trade volume of 17.500\$.
