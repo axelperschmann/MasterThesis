@@ -8,7 +8,7 @@ Since typical financial data providers must make an earning from their treasures
 
 A costless alternative exists in open cryptocurrencies, like bitcoins (see \Cref{chap:bitcoins}). The digital asset exchange platform Poloniex \cite{poloniex} provides an open API for querying detailed market data in real time. As their push API, to receive live order book updates and trades, was rather error-prone and buggy when this project started, the decision was made, to query full orderbooks on a minutely basis.\\
 
-On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots up to a market depth of 5000 from Poloniex via HTTP GET requests. The volume of recorded orderbook snapshots for nine distinct currency pairs\footnote{Recorded currency pairs include USDT/BTC, BTC/ETH, BT/XMR, BTC/XRP, BTC/FCT, BTC/NAV, BTC/DASH, BTC/MAID, BTC/ZEC} has since grown to roughly 100GB (as per 2017-06-20). This thesis is based on a condensed version of the currency pair USDT/Bitcoin.
+On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots up to a market depth of 5000 from Poloniex via HTTP GET requests (see \Cref{lst:PoloniexFetch}). The volume of recorded orderbook snapshots for nine distinct currency pairs\footnote{Recorded currency pairs include USDT/BTC, BTC/ETH, BT/XMR, BTC/XRP, BTC/FCT, BTC/NAV, BTC/DASH, BTC/MAID, BTC/ZEC} has since grown to roughly 100GB (as per 2017-06-20). This thesis is based on a condensed version of the currency pair USDT/Bitcoin.
 
 \begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Data fetched from Poloniex via HTTP GET request, label=lst:PoloniexFetch]
 # https://poloniex.com/public?command=returnOrderBook&currencyPair=USDT_BTC&depth=5000
@@ -21,6 +21,8 @@ On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots 
 	\caption{Historic center prices between Nov, 10th 2016 and May, 31 2017, as fetched from Poloniex.}
 	\label{fig:ploniexPriceHistory}
 \end{figure}
+
+\Cref{fig:ploniexPriceHistory} shows the price evolution of currency pair USDT/Bitcoin over the period of recording. Prices have burst from roughly 700\$ to more than 2.000\$. Red and green lines depict the percentual slippage induced by immediate market orders in buy and sell direction respectively.
 
 \section{Data preprocessing}
 \label{chap:preprocessing}
