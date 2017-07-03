@@ -48,6 +48,7 @@ collect_samples_forward(V, H, T, I, L, E)
 	            Transform (orderbook) -> o_1 ... o_R
 	            Apply e-greedy strategy until V=0%
 		    Store samples in DataFrame
+        occasionally retrain strategy with new collected samples (+ experience replay)
 		    
 \end{lstlisting}
 
@@ -67,7 +68,7 @@ The studied agents refer to the very same environment settings. Their common tas
 
 \subsection{Action-Limit Mapping}
 \label{chap:exp:actionlimitmapping}
-As mentioned in \Cref{chap:backwardalgorithm:discussion:actionspace}, it seems pointless to force actions to cross the bid-ask-spread before any orders can be matched. \Cref{fig:actionlimitmapping} shows exemplary for November 2016, how the choice of the limit base affects the agents trading performance. While buy orders forcing agents to cross the bid-ask-spread did indeed benefit from the two market variables \lstinline!spread! and \lstinline!marketSpread!, this was not necessarily the case for agents which had the limit base fixed to the other best price. As the latter agents consistently showed better performance, choice has been made to avoid crossing the spread.
+As mentioned in \Cref{chap:backwardalgorithm:discussion:actionspace}, it seems pointless to force actions to cross the bid-ask-spread before any orders can be matched. \Cref{fig:actionlimitmapping} shows exemplary for November 2016, how the choice of the limit base affects the agents trading performance. While buy orders forcing agents to cross the bid-ask-spread did indeed benefit from the two market variables \lstinline!spread! and \lstinline!marketSpread!, this was not necessarily the case for agents which had the limit base fixed to the other best price. As the latter agents consistently showed better performance, choice has been made to avoid crossing the spread henceforth.
 
 \begin{figure}[ht]
 	\centering
@@ -114,7 +115,7 @@ In order to produce comparable results, all subsequent experiments are based on 
 \label{chap:experiments:baseline}
 Simple \ac{SL} strategies (see \Cref{chap:tradingstrategies}) and immediate market order placements serve as benchmark for the performance measurement.\\
 
-Due to bursting Bitcoin prices (see \Cref{fig:ploniexPriceHistory}), the investigated sum of 70.000\$ constitutes a declining contingent of the total market volume. \Cref{fig:runningmean:marketPrice} shows a running average over the amount of slippage, as induced by immediate market orders. Concurrent to declining slippage, the optimal \ac{SL} actions become less aggressive as time passes. The green, dashed lines show the respective average over the train period, which significantly differs from the red, dotted line referring to the average over the test period. \Cref{fig:bestAction} shows the average costs, induced by varying \ac{SL} strategies.
+Due to bursting Bitcoin prices (see \Cref{fig:ploniexPriceHistory}), the investigated sum of 70.000\$ constitutes a declining contingent of the total market volume. \Cref{fig:runningmean:marketPrice} shows a running average over the amount of slippage, as induced by immediate market orders. Concurrent to declining slippage, the optimal \ac{SL} actions become less aggressive as time passes. The green, dashed lines show the respective average over the train period, which significantly differs from the red, dotted line referring to the average over the test period. \Cref{fig:bestAction} shows the average costs, induced by varying \ac{SL} strategies within the training period.
 
 \begin{figure}[ht]
 	\centering
@@ -139,11 +140,11 @@ Due to bursting Bitcoin prices (see \Cref{fig:ploniexPriceHistory}), the investi
 \begin{figure}[ht]
         	\centering
         	\includegraphics[width=\textwidth]{content/drawings/bestActionTrain}
-	\caption{Average costs achieved by the varying \ac{SL} actions over the training period.}
+	\caption{Average costs induced by the varying \ac{SL} actions over the full training period. In average, action 4 performed best.}
 	\label{fig:bestAction}
 \end{figure}
 
-In order to provide a more realistic and unexaggerated baseline, the optimal \ac{SL} action is estimated from the test period. As such, performance of subsequents experiments is compared to the performance of a simple market order and the \ac{SL} action "2" with the initial order limit fixed to 1.002 times the initial ask ($+= 0.2\%$).
+In order to provide a more realistic and unexaggerated baseline, the optimal \ac{SL} action is estimated from the test period. As such, performance of subsequents experiments is compared to the performance of a simple market order and the \ac{SL} strategy "2", with the initial order limit fixed to 1.002 times the initial ask (\ie $+= 0.2\%$).
 
 
 \subsection{Cost function}
@@ -151,11 +152,19 @@ default: slippage based on initial\_center
 
 experimental: Improvement over MarketPrice
 
-\subsection{Discretization Resoution}
+
+\subsection{Additional Market Variables}
+\label{chap:exp:additionalmarketvars}
+\begin{itemize}
+\item Immediate Slippage/MarketPrice Imbalance
+\item MarketPrice Spread (buy vs. sell)
+\end{itemize}
+
+\subsection*{Discretization Resoution}
 \label{chap:experiments:discretization}
 Comparison of disc3, disc5, disc9
 
-\subsection{Function Approximation}
+\subsection*{Function Approximation}
 \begin{itemize}
 \item RandomForest (BatchTree Agent)
 \item NN Agent
@@ -173,12 +182,7 @@ Comparison of disc3, disc5, disc9
 \end{itemize}
 
 
-\subsection{Additional Market Variables}
-\label{chap:exp:additionalmarketvars}
-\begin{itemize}
-\item Immediate Slippage/MarketPrice Imbalance
-\item MarketPrice Spread (buy vs. sell)
-\end{itemize}
+
 
 
 
