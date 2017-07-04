@@ -4,7 +4,7 @@ This chapter describes an \ac{RL} approach, used to tackle the important problem
 
 \section{Original Algorithm}
 \label{chap:reinforcementlearning:original}
-The original algorithm claims to find optimal limits from a discretized state space, describing trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) and market situation. While the obtained strategies achieved an impressive 50\% gain over the more simple Submit \& Leave Trading Strategy (see \Cref{chap:tradingstrategies}), they left some room for improvements. As their work was based on a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from NASDAQ, it was furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.\\
+The original algorithm claims to find optimal limits from a discretized state space, describing trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) and market situation. While the obtained strategies achieved an impressive 50\% gain over the more simple Submit \& Leave Trading Strategy (see \Cref{chap:tradingstrategies}), they left some room for improvements. As their work was based on a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from \acs{NASDAQ}, it was furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.\\
 
 Nevmyvaka \etal \cite{Nevmyvaka:2006} fused Q-learning and dynamic programming to learn a state-based strategy over the first year of their data in a brute force manner.
 
