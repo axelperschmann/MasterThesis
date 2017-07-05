@@ -149,53 +149,111 @@ In order to provide a more realistic and unexaggerated baseline, the optimal \ac
 
 \subsection{Additional Market Variables}
 \label{chap:exp:additionalmarketvars}
-In addition to the market variables proposed in \Cref{chap:actionspace}, the following market level 2 features have been examined: \lstinline!marketPrice_*! describes the relative difference between current center\_price and the worst price that must be paid in case of simple market orders. \lstinline!marketPrice_buy_worst! \Cref{tab:eval:additionalMarketVariables} shows the performance of individual QTable agents trained on private variables plus one discretized market variable attached at a time. While observed trading costs undercut costs induced by simple market orders by almost -47.13\%, the gain in comparison to simple \ac{SL} strategies is far smaller: -7.43\%. In contrast to the results reported by Nevmyvaka \etal \Cite{Nevmyvaka:2006}, the market variable \lstinline!spread! yields only an improvement of -2.14\% (compared to -7.97\%) over the plain \lstinline!VolTime!-agent.\\
+In addition to the market variables proposed in \Cref{chap:actionspace}, the following market level 2 features have been examined: \lstinline!marketPrice_*! describes the relative difference between current center\_price and the worst price that must be paid in case of simple market orders. \lstinline!sharecount_*! quotes the number of Bitcoins, immediately available for 70.000\$.\\
 
+ \Cref{tab:eval:additionalMarketVariables} shows the performance of individual QTable agents trained on private variables plus one discretized market variable attached at a time. While observed trading costs undercut costs induced by simple market orders by -49.14\%, the gain in comparison to the optimal \ac{SL} strategy is far smaller: -10.99\%.\\
+ 
+ Adding the market variable \lstinline!spread! yields a notable improvement of -6.34\% over the plain \lstinline!VolTime!-agent, verifying the findings of Nevmyvaka \etal \Cite{Nevmyvaka:2006}. However, in contrast to their reported results, the market variable \lstinline!sharecount_buy!, which complies to their \lstinline!Immediate Market Order Cost!, falls flat with a worsening of +6.70\% (compared to -4.26\%).\\
 
 \begin{table}[ht]
 	\centering
 	
-		\scalebox{0.6}{
-		\begin{tabular}{lrr|rrrr}
+	
+	\scalebox{0.6}{
+	\begin{tabular}{lrrrllll}
 \toprule
-{} &  slippage &     std &    perf\_2 &  perf\_4 &  perf\_M &  perf\_VolTime \\
+{} &  slippage &     med &     std &   perf\_2 &   perf\_4 &   perf\_M & perf\_VolTime \\
 \midrule
-center\_orig\_disc3            	&    149.57 &  420.14 &   94.37\% &   84.81\% &   53.90\% &   99.30\% \\
-ImmCost\_buy\_worst\_disc3  	&    148.35 &  361.17 &   93.61\% &   84.11\% &   53.46\% &   98.49\% \\
-ImmCost\_sell\_worst\_disc3 	&    \color{mygreen}146.72 &  385.13 &   \color{mygreen}92.57\% &   \color{mygreen}83.19\% &   \color{mygreen}52.87\% &   \color{mygreen}97.41\% \\
-ImmCost\_spread\_disc3     		&    150.27 &  355.46 &   94.82\% &   85.20\% &   54.16\% &   99.77\% \\
-ImmCost\_imbalance\_disc3     	&    148.42 &  358.49 &   93.64\% &   84.15\% &   53.49\% &   98.53\% \\
-sharecount\_buy\_disc3         	&    149.57 &  420.14 &   94.37\% &   84.81\% &   53.90\% &   99.30\% \\
-sharecount\_imbalance\_disc3  	&    148.57 &  353.91 &   93.74\% &   84.24\% &   53.54\% &   98.64\% \\
-sharecount\_sell\_disc3        	&    149.57 &  420.14 &   94.37\% &   84.81\% &   53.90\% &   99.30\% \\
-sharecount\_spread\_disc3      	&    147.57 &  \color{mygreen}350.33 &   93.11\% &   83.67\% &   53.18\% &   97.97\% \\
-spread\_disc3                 	&    147.41 &  370.96 &   93.01\% &   83.58\% &   53.12\% &   97.86\% \\
+center\_orig\_disc3            &    149.57 &   46.15 &  420.14 &   94.37\% &   84.81\% &   53.90\% &       99.30\% \\
+center\_orig\_disc5            &    161.70 &   37.83 &  450.36 &  102.03\% &   91.68\% &   58.27\% &      107.35\% \\
+ImmCost\_buy\_worst\_disc5  &    146.83 &   39.62 &  351.77 &   92.64\% &   83.25\% &   52.92\% &       97.48\% \\
+ImmCost\_sell\_worst\_disc5 &    148.94 &   42.71 &  388.86 &   93.97\% &   84.45\% &   53.67\% &       98.88\% \\
+ImmCost\_spread\_disc5     &    150.46 &   44.15 &  371.32 &   94.93\% &   85.31\% &   54.22\% &       99.89\% \\
+ImmCost\_imbalance\_disc5      &    150.10 &   68.68 &  \cellcolor{green!25}336.60 &   94.71\% &   85.10\% &   54.09\% &       99.65\% \\
+sharecount\_buy\_disc3         &    149.57 &   46.15 &  420.14 &   94.37\% &   84.81\% &   53.90\% &       99.30\% \\
+sharecount\_buy\_disc5         &    160.73 &   37.78 &  449.22 &  101.41\% &   91.13\% &   57.92\% &      \cellcolor{red!25}106.70\% \\
+sharecount\_imbalance\_disc5   &    148.03 &   40.49 &  372.86 &   93.40\% &   83.93\% &   53.35\% &       98.27\% \\
+sharecount\_sell\_disc5        &    151.50 &   47.49 &  425.35 &   95.59\% &   85.90\% &   54.60\% &      100.58\% \\
+sharecount\_spread\_disc5      &    148.93 &   40.84 &  352.12 &   93.97\% &   84.44\% &   53.67\% &       98.87\% \\
+spread\_disc3                 &    147.41 &   35.48 &  370.96 &   93.01\% &   83.58\% &   53.12\% &       97.86\% \\
+spread\_disc5                 &    \cellcolor{green!25}141.07 &   \cellcolor{green!25}37.39 &  349.72 &   \cellcolor{green!25}89.01\% &   \cellcolor{green!25}79.98\% &   \cellcolor{green!25}50.84\% &       \cellcolor{green!25}93.66\% \\
+spread\_disc9                 &    142.80 &   36.69 &  364.76 &   90.10\% &   80.97\% &   51.46\% &       94.80\% \\
 \midrule
-ob\_direction\_disc3           	&     65.80 &  335.76 &   \color{red}41.52\% &   37.31\% &   23.71\% &   43.68\% \\
-future\_center5\_disc3         	&    133.58 &  377.88 &   84.29\% &   75.74\% &   48.14\% &   88.69\% \\
-future\_center15\_disc3        	&    107.74 &  364.92 &   \color{red}67.98\% &   61.09\% &   38.83\% &   71.53\% \\
-future\_center60\_disc3        	&    139.20 &  398.05 &   87.83\% &   78.93\% &   50.17\% &   92.42\% \\
+ob\_direction\_disc5           &     61.99 &   97.52 &  319.84 &   \cellcolor{black!15}39.11\% &   35.15\% &   22.34\% &       41.16\% \\
+future\_center5\_disc5         &    141.61 &   41.79 &  389.58 &   89.35\% &   80.29\% &   51.03\% &       94.02\% \\
+future\_center15\_disc5        &    133.78 &   40.90 &  405.88 &   84.41\% &   75.85\% &   48.21\% &       88.82\% \\
+future\_center60\_disc5        &    131.85 &   47.63 &  391.46 &   \cellcolor{black!15}83.19\% &   74.75\% &   47.51\% &       87.53\% \\
 \midrule
-VolTime                      	&    150.63 &  358.66 &   95.04\% &   85.40\% &   54.28\% &  100.00\% \\
-\midrule
-2                            	&    158.49 &  400.59 &  100.00\% &   89.86\% &   57.12\% &  105.22\% \\
-4                            	&    176.37 &  273.58 &  111.28\% &  100.00\% &   63.56\% &  117.09\% \\
-MarketOrder                  	&    277.49 &  158.66 &  175.08\% &  157.33\% &  100.00\% &  184.22\% \\
+VolTime                      &    150.63 &   \cellcolor{green!25}33.83 &  358.66 &   95.04\% &   85.40\% &   54.28\% &      100.00\% \\
+2                            &    158.49 &   69.66 &  400.59 &  100.00\% &   89.86\% &   57.12\% &      105.22\% \\
+4                            &    176.37 &  141.66 &  273.58 &  111.28\% &  100.00\% &   63.56\% &      117.09\% \\
+MarketOrder                  &    277.49 &  246.48 &  158.66 &  175.08\% &  157.33\% &  100.00\% &      184.22\% \\
 \bottomrule
-\end{tabular}}           		 
-        		\caption{Average trading costs, as observed within the test period, show the effect of adding individual, discretized market variables to the state space of QTable agents.}
+\end{tabular}
+	}  		 
+        		\caption{An excerpt from the average trading costs within the test period.}
+		See \Cref{tab:eval:additionalMarketVariables:fulltable} in the Appendix for complete results.
 		\label{tab:eval:additionalMarketVariables}
 
 \end{table}
 
-The exact reason, why individual market variables have such little effect, is unclear, but one possible explanations lies in the data set employed. The original experiment assessed a different data quality. Due to the low resolution of the available orderbook snapshots, a large fraction of the market activity is inaccessible and consequently the majority of trading opportunities are missed by the agents. Furthermore, the minute time-scaled limit order book data inevitably requires the trading horizon to be rather long. Experiments with shorter time horizons nullified the achievable savings, while longer time horizons led to unacceptable computation times. Consequently, the agents where trained on 4.109 sixty-minute orderbook windows, while Nevmyvaka \etal invoked 45.000 two-minute orderbook windows.\\
+The exact reason, why individual market variables had such little effect, is unclear, but one possible explanations lies in the data set employed. The original experiment assessed a different data quality. Due to the low resolution of the available orderbook snapshots, a large fraction of the market activity remains inaccessible and consequently the majority of trading opportunities are missed by the agents. Furthermore, the minute time-scaled limit order book data inevitably requires the trading horizon to be rather long. Experiments with shorter time horizons nullified the achievable savings, while longer time horizons led to unacceptable computation times. Consequently, the agents where trained on 4.109 sixty-minute orderbook windows, while Nevmyvaka \etal invoked 45.000 two-minute orderbook windows.
 
-In order to proof the algorithms general ability to find costs reducing order limits, look-ahead features\footnote{look-ahead features provide a glance into the future, and are thus equivalent to cheating.} were added to the universe of market variables. The hypothetical knowledge about future price trends (\ie percentual changes between the current center price and the center price in 5, 15 and 60 minutes respectively) reduced observed trading costs by -32.02\%.\\
 
-The largest impact (-58.48\%) was observed for the look-ahead feature \lstinline!ob_direction!, which marks the general price trend of the currently observed orderbook window. In contrast to the \lstinline!future_enter*! variables, it's value stays constant within individual orderbook windows: \lstinline!orderbook[-1].get_center() / orderbook[0].get_center()!, which seems to provoke more stable strategies.
+\subsection*{Look-Ahead Features}
+\label{chap:experiments:lookahead}
+In order to proof the algorithms general ability to find costs reducing order limits, look-ahead features\footnote{look-ahead features provide a glance into the future, and are thus equivalent to cheating.} were added to the universe of market variables. \lstinline!future_center*! quotes percentual changes between the current center price and the center price in 5, 15 and 60 minutes respectively. This hypothetical knowledge about future price trends reduced observed trading costs by -16.81\%.\\
+
+An vastly larger impact (-60.89\%) was observed for the look-ahead feature \lstinline!ob_direction!, quoting the general price trend of the currently observed orderbook window. In contrast to the \lstinline!future_center*! variables, it's value stays constant within individual orderbook windows: \lstinline!orderbook[-1].get_center() / orderbook[0].get_center()!, which seems to provoke more stable strategies.
+
+\subsection*{Discretization Resoution}
+\label{chap:experiments:discretization}
+While valuable market variables (\ie \lstinline!spread!, \lstinline!ob_direction!, \lstinline!future_center*!) could profit from a larger discretion resolution, this was not the case for the other variables examined.
 
 \subsection*{Constant Market Variables}
-The findings from the look-ahead features encourage a tailing experiment. Rather than observing market variables at the actual time, always the market situation observed at \lstinline!t=0! is used.
+\label{chap:exp:additionalmarketvars:constant}
+The findings from the look-ahead features encouraged for a supplementary experiment. Rather than considering the actual market situation, the market situation was observed once (at \lstinline!t=0!), and kept frozen for the remaining trading horizon. Hope was, to provoke more stable strategies, as the agents could potentially decide on a \emph{major} strategy and consequently only adapt the limits to the private variables representing the actual trade progress.\\
+
+While \Cref{tab:eval:additionalMarketVariables:fixed} shows improved performance for previous bad performers, the leading \lstinline!spread! dropped from -6.34\% to -4.98\%. Contrary to initial hopes, this approach did not lead to superior performance and was not further persued.
+\begin{table}[ht]
+	\centering
+	
+	
+	\scalebox{0.6}{
+	\begin{tabular}{lrrrllll}
+\toprule
+{} &  slippage &     med &     std &   perf\_2 &   perf\_4 &   perf\_M & perf\_VolTime \\
+\midrule
+center\_orig\_disc3            &    149.57 &   46.15 &  420.14 &   94.37\% &   84.81\% &   53.90\% &       99.30\% \\
+center\_orig\_disc5            &    150.37 &   47.01 &  422.14 &   94.88\% &   85.26\% &   54.19\% &       \cellcolor{red!25}99.83\% \\
+ImmCost\_buy\_worst\_disc5  &    150.22 &   50.15 &  402.48 &   94.78\% &   85.17\% &   54.13\% &       99.73\% \\
+ImmCost\_sell\_worst\_disc5 &    157.24 &   42.71 &  378.90 &   99.21\% &   89.15\% &   56.67\% &      104.39\% \\
+ImmCost\_spread\_disc5     &    151.25 &   53.07 &  397.30 &   95.43\% &   85.75\% &   54.51\% &      100.41\% \\
+ImmCost\_imbalance\_disc5      &    147.26 &   47.03 &  383.23 &   92.91\% &   83.49\% &   53.07\% &       \cellcolor{black!15}97.76\% \\
+sharecount\_buy\_disc3         &    149.57 &   46.15 &  420.14 &   94.37\% &   84.81\% &   53.90\% &       99.30\% \\
+sharecount\_buy\_disc5         &    150.37 &   47.01 &  422.14 &   94.88\% &   85.26\% &   54.19\% &       \cellcolor{red!25}99.83\% \\
+sharecount\_imbalance\_disc5   &    152.44 &   53.41 &  400.89 &   96.18\% &   86.43\% &   54.94\% &      101.21\% \\
+sharecount\_sell\_disc5        &    150.37 &   47.01 &  422.14 &   94.88\% &   85.26\% &   54.19\% &       99.83\% \\
+sharecount\_spread\_disc5      &    149.23 &   53.41 &  402.65 &   94.16\% &   84.61\% &   53.78\% &       99.07\% \\
+spread\_disc3                 &    148.83 &   41.70 &  360.98 &   93.91\% &   84.39\% &   53.64\% &       98.81\% \\
+spread\_disc5                 &    \cellcolor{green!25}143.12 &   \cellcolor{green!25}40.78 &  \cellcolor{green!25}350.14 &   \cellcolor{green!25}90.30\% &   \cellcolor{green!25}81.15\% &   \cellcolor{green!25}51.58\% &       \cellcolor{green!25}95.02\% \\
+spread\_disc9                 &    144.66 &   43.25 &  352.39 &   91.27\% &   82.02\% &   52.13\% &       96.04\% \\
+\midrule
+ob\_direction\_disc5           &     61.99 &   97.52 &  319.84 &   39.11\% &   35.15\% &   22.34\% &       41.16\% \\
+\midrule
+VolTime                      &    150.63 &   33.83 &  358.66 &   95.04\% &   85.40\% &   54.28\% &      100.00\% \\
+2                            &    158.49 &   69.66 &  400.59 &  100.00\% &   89.86\% &   57.12\% &      105.22\% \\
+4                            &    176.37 &  141.66 &  273.58 &  111.28\% &  100.00\% &   63.56\% &      117.09\% \\
+MarketOrder                  &    277.49 &  246.48 &  158.66 &  175.08\% &  157.33\% &  100.00\% &      184.22\% \\
+\bottomrule
+\end{tabular}
+	}  		 
+        		\caption{An excerpt from the average trading costs within the test period.}
+		In contrast to \Cref{tab:eval:additionalMarketVariables}, market variables originate from the very first orderbook of the respective orderbook window.
+		See \Cref{tab:eval:additionalMarketVariables:fixed:fulltable} in the Appendix for complete results.
+		\label{tab:eval:additionalMarketVariables:fixed}
+
+\end{table}
 
 
 
@@ -206,9 +264,7 @@ experimental: Improvement over MarketPrice
 
 
 
-\subsection*{Discretization Resoution}
-\label{chap:experiments:discretization}
-Comparison of disc3, disc5, disc9
+
 
 \subsection*{Function Approximation}
 \begin{itemize}
