@@ -131,7 +131,7 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 
 \section{Discussion}
 \label{chap:backwardalgorithm:discussion}
-While the presented algorithm exploits the available data profoundly in a brute force manner, it comes with some room for improvements.\\
+While the presented algorithm exploits the available data profoundly in a brute force manner, it comes with some room for improvements.
 
 \subsection{Discrete State Space}
 The algorithms most obvious weakness lies in its vulnerability to seldomly observed market situations. Since the state-action function is implemented as a simple lookup table without any generalization capabilities, it is strictly dependent on a thorough exploration of the underlying state space. As exhaustive exploration is enforced for the value range of private variables only, market variables are entrusted to chance. Especially when increasing the state space dimension by adding multiple market variables simultaneously, the explanatory power of a learned state-action mapping depends crucially on the number of underlying observations. There exists even the chance of certain states never been monitored at all during the training phase. The concrete discretization process was not further described or questioned. Particularly it is not stated, how boundaries between 0 (low), 1 (medium) and 2 (high) have been chosen, and how the trading performance may be influenced by a higher market variable resolution.
