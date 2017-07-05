@@ -140,14 +140,14 @@ The algorithms most obvious weakness lies in its vulnerability to seldomly obser
 \item[Potential Improvements] are described and tested in \Cref{chap:experiments}.\\
 Firstly, the discretization is automatized, such that boundaries between the bins are automatically derived from the training data. Performances of multiple discretization resolutions are compared. Secondly, the underlying lookup tables are replaced by function approximations, making discretization unnecessary.
 \item[Alternative Market Variables] may be considered.\\
-The market variables exploited (see \Cref{chap:statespace}) basically came from market level 1 data only. \Cref{chap:exp:additionalmarketvars} evaluates the impact of additional market level 2 features.
+Except for \emph{Immediate Market Order Cost}, the market variables exploited (see \Cref{chap:statespace}) basically came from market level 1 data only. \Cref{chap:exp:additionalmarketvars} evaluates the impact of additional market level 2 features, describing potential imbalances between ask and bid book.
 \end{description}
 
 
 
 \subsection{Cost scaling}
 \label{chap:backwardalgorithm:discussion:costscaling}
-\begin{wrapfigure}[7]{r}{0.35\textwidth}
+\begin{wrapfigure}[6]{r}{0.35\textwidth}
 	\centering
 	\includegraphics[width=0.3\textwidth]{content/drawings/nonlinearcosts}
 	\caption{Non-linear slippage growth.}

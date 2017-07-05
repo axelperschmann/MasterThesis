@@ -206,7 +206,7 @@ In order to proof the algorithms general ability to find costs reducing order li
 
 An vastly larger impact (-60.89\%) was observed for the look-ahead feature \lstinline!ob_direction!, quoting the general price trend of the currently observed orderbook window. In contrast to the \lstinline!future_center*! variables, it's value stays constant within individual orderbook windows: \lstinline!orderbook[-1].get_center() / orderbook[0].get_center()!, which seems to provoke more stable strategies.
 
-\subsection*{Discretization Resoution}
+\subsection*{Discretization Resolution}
 \label{chap:experiments:discretization}
 While valuable market variables (\ie \lstinline!spread!, \lstinline!ob_direction!, \lstinline!future_center*!) could profit from a larger discretion resolution, this was not the case for the other variables examined.
 
