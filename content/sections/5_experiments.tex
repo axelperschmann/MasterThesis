@@ -49,7 +49,6 @@ collect_samples_forward(V, H, T, I, L, E)
 	            Apply e-greedy strategy until V=0%
 		    Store samples in DataFrame
         occasionally retrain strategy with new collected samples (+ experience replay)
-		    
 \end{lstlisting}
 
 
@@ -62,13 +61,13 @@ collect_samples_forward(V, H, T, I, L, E)
 \label{chap:experiments}
 Various experiments have been conducted to examine the agents ability to find optimal solutions to the problem of optimized trade execution. The recorded orderbook snapshots for currency pair USDT/BTC (see \Cref{chap:dataorigin}) have been split into training period (Nov, 10th 2016 - Apr, 30th 2017) and test period (May 2017).\\
 
-The studied agents refer to the very same environment settings. Their common task is to buy Bitcoins worth of 70.000\$ within a trading horizon of 60 minutes. As such the training set translates into 4.154 orderbook windows, while the test set gives 724 orderbook windows. If not stated otherwise, a period\_length of 15 minutes is assumed, such that the \ac{OTS} expects up to 4 order limit prices. After an initial backward sampling phase, the obtained samples DataFrame makes the base for varying learning phases.
+The studied agents refer to the very same environment settings. Their common task is to buy Bitcoins worth of 70.000\$ within a trading horizon of 60 minutes. As such the training set translates into 4.154 orderbook windows, while the test set gives 724 orderbook windows. A period\_length of 15 minutes is assumed, such that the \ac{OTS} expects up to 4 order limit prices. After an initial backward sampling phase, the obtained samples DataFrame makes the base for varying learning phases.
 
 \subsection{Action-Limit Mapping}
 \label{chap:exp:actionlimitmapping}
 As mentioned in \Cref{chap:backwardalgorithm:discussion:actionspace}, it seems pointless to force actions to cross the bid-ask-spread before any orders can be matched. \Cref{fig:actionlimitmapping} shows exemplary for November 2016, how the choice of the limit base affects the agents trading performance. While buy orders forcing agents to cross the bid-ask-spread did indeed benefit from the two market variables \lstinline!spread! and \lstinline!marketSpread!, this was not necessarily the case for agents which had the limit base fixed to the other best price. As the latter agents consistently showed better performance, choice has been made to avoid crossing the spread henceforth.\\
 
-\begin{figure}[ht]
+\begin{table}[ht]
 	\centering
 	%
 	%\begin{subfigure}[b]{0.6\textwidth}
@@ -104,7 +103,7 @@ MarketOrder          & 737.58 & 310.2\%\\
 	\caption{Evaluating the impact of different limit base levels.}
 	Results stem from applying the respective strategies on all 537 orderbook windows recorded between Nov, 10th 2016 and Nov, 30th 2016.
 	\label{fig:actionlimitmapping}
-\end{figure}
+\end{table}
 
 In order to produce comparable results, all subsequent experiments are based on the same set of 15 actions: $[-4, -3, ..., 8, 9, 10]$. In line with the formulas presented in \Cref{chap:backwardalgorithm:discussion:actionspace}, these actions translate into order limits deviating by -0.4\% to +1.0\% from the current best price.
 
@@ -257,7 +256,10 @@ MarketOrder                  &    277.49 &  246.48 &  158.66 &  175.08\% &  157.
 \end{table}
 
 
+\subsection{Simulation of preceding trades}
+As described in \Cref{chap:backwardalgorithm:discussion:markovianassumption}, the \ac{OTS}'s internal masterbook shape depends drastically from the preceding trade history. In the following, the effect of simulating the own impact on the market is investigated.\\
 
+The backward sampling phase is modified, such that prior to the actual trade simulations, the supposedly consumed trading volume is removed from the masterbook. The trading volume affected, is matched evenly along the elapsed time, as is indicated in \Cref{fig:differingmasterbooks:SimEq}.
 
 
 
