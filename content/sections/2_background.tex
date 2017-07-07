@@ -99,14 +99,14 @@ In \cite{Nevmyvaka2005SubmitAndLeave} Nevmyvaka \etal introduce a \ac{SL}, which
 
 \section{Bitcoin}
 \label{chap:bitcoins}
-Bitcoin is a digital cryptocurrency, released in 2009 as open-source software under the name Satoshi Nakamoto \Cite{Davis:Bitcoin_inventor}. Motivated in part by anger over the foregone financial crisis, the underlying peer-to-peer system\Cite{Nakamoto_bitcoin:a}, provides a decentralized payment system. To this point, electronic transactions always required involving a third party to prevent double-spending bitcoin tokens. Double-spending is a problem unique to digital currencies as digital informations, in contrast to physical currencies, can easily be replicated. Rather than trusting a central authority or central server, a distributed public transaction log, known as the \emph{block chain}\Cite{Economist:Blockchain} is maintained among all participants.\\
+Bitcoin is a digital cryptocurrency, released in 2009 as open-source software under the name Satoshi Nakamoto \Cite{Davis:Bitcoin_inventor}. Motivated in part by anger over the foregone financial crisis, the underlying peer-to-peer system\Cite{Nakamoto_bitcoin:a}, provides a decentralized payment system. To this point, electronic transactions always required involving a third party to validate transactions, an inevitable necessity to forestall double-spending bitcoin tokens. Double-spending is a problem unique to digital currencies, as digital informations, in contrast to physical currencies, may be replicated arbitrarily. Rather than entrusting a central authority or central server with this validation task, a distributed public transaction log, known as the \emph{block chain}\Cite{Economist:Blockchain} is maintained among all participants.\\
 
-The block chain maintains a continuously growing list of confirmed and timestamped transaction records, called \emph{blocks}. Every block includes a proof-of-work and a cryptographic hash of the previous block, making it extremely resistant against retrospective modifications. To motivate others to confirm transactions, newly created bitcoins are rewarded to the first miner (or mining party), successfully serving the computationally demanding proof-of-work.\\
+The block chain is a continuously growing list of confirmed and timestamped transaction records, called \emph{blocks}. Every block includes a complex proof-of-work and a cryptographic hash of the previous block, making it extremely resistant against retrospective modifications. To motivate others to validate transactions, newly created bitcoins are rewarded to the first miner (or mining party), successfully serving the computationally demanding proof-of-work.\\
 
-Through a manifold of legal and black markets, bitcoins may be exchanged for other currencies, products and services. Because no central authority is involved, bitcoins are a mostly unregulated, pseudonymous\footnote{Owners of bitcoin tokens are not explicitly identified, but bitcoin exchanges may collect personal data on their customers if required by law.} digital asset \Cite{WashingtonPost:Bitcoinfacts} of increasing popularity.\\
+Through a manifold of legal and black markets, bitcoins may be exchanged for other currencies, products and services. In contrast to traditional exchanges, no regular trading hours exist. Transactions can be executed at all times, mostly unregulated and pseudonymous\footnote{Owners of bitcoin tokens are not explicitly identified, but bitcoin exchanges may collect personal data on their customers if required by law.}\Cite{WashingtonPost:Bitcoinfacts}. As a consequence, Bitcoin are particularly sensitive to extraordinary events or news, frequently causing immediate (panic) reactions. This effect is possibly leveraged by relatively low entry barriers, attracting amateur and professional traders likewise.
 
 \subsection{Volatility}
-Bitcoin is a highly volatile currency, capable of massive price changes towards both directions within short periods of time. Given the fact, that no regular trading hours exist, immediate (panic) reactions to extraordinary events or news happen frequently. In addition to constant availability, relatively low entry barriers attract the attention of amateur and professional traders likewise.\\
+Bitcoin is a highly volatile currency, capable of massive price changes towards both directions within short periods of time. \Cref{fig:bitcoinvolatility} compares volatilities of currency pairs USDT/BTC (blue line) and USD/Pound (red line). A high volatility provides profitable opportunities, but comes at the price of higher risk.
 
 \begin{figure}[ht]
 	\centering
@@ -116,15 +116,6 @@ Bitcoin is a highly volatile currency, capable of massive price changes towards 
 	\label{fig:bitcoinvolatility}
 \end{figure}
 
-\Cref{fig:bitcoinvolatility} compares volatilities of currency pairs USDT/BTC (blue line) and USD/Pound (red line). A high volatility provides profitable opportunities, but comes at the price of higher risk.
-
-\subsection{Marktreaktionen}
-"Bitcoin ist eine Währung, die äußerst sensibel auf Nachrichten reagiert. Begründet wird dies vor allem durch die Möglichkeit, ständig am Markt teilnehmen zu können: Es gibt keine zentrale Ausgabestelle mit geregelten Handelszeiten, an die man gebunden ist."
-
-"Auch die Tatsache, dass viele Anfänger in Bitcoins investieren, führte bereits in der Vergangenheit zu den ein oder anderen Panikverkäufen. Wer sein Geld in Bitcoins investieren möchte, kann die meist lukrative Möglichkeit nutzen, sollte sich jedoch regelmäßig über Marktveränderungen informieren.
-
-Da viele Investoren schnell auf Meldungen reagieren, kann es innerhalb von Stunden zu großen Kursverlusten oder Gewinnen kommen."
-\url{https://www.btc-echo.de/bitcoin-trading-tipps-prinzipien-des-bicoin-handels_2015022502/}
 
 
 \section{Supervised Learning}
