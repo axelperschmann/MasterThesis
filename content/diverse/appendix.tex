@@ -61,12 +61,12 @@ MarketOrder                  &    277.49 &  246.48 &  158.66 &   +79.14\% &   +5
 \end{tabular}
 }
 
-        		\caption[Full version of \Cref{tab:eval:additionalMarketVariables}]{Average trading costs within the test period May 2017.}
+        		\caption[Full version of \Cref{tab:eval:additionalMarketVariables}]{Average trading costs within the test period.}
 		See \Cref{chap:exp:additionalmarketvars} for the actual experiment description. This is the full version of \Cref{tab:eval:additionalMarketVariables}.
 		\label{tab:eval:additionalMarketVariables:fulltable}
 
 \end{table}
-
+\clearpage{}
 
 
 
@@ -75,54 +75,56 @@ MarketOrder                  &    277.49 &  246.48 &  158.66 &   +79.14\% &   +5
 \begin{table}[ht]
 	\centering
 
-\scalebox{0.6}{
+\scalebox{0.5}{
+
 \begin{tabular}{lRRR|RRRR}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
 \midrule
-VolTime                      &    150.63 &   33.83 &  358.66 &   95.04\% &   85.40\% &   54.28\% &      100.00\% \\
-center\_orig\_disc3            &    149.57 &   46.15 &  420.14 &   94.37\% &   84.81\% &   53.90\% &       99.30\% \\
-center\_orig\_disc5            &    150.37 &   47.01 &  422.14 &   94.88\% &   85.26\% &   54.19\% &       99.83\% \\
-center\_orig\_disc9            &    149.76 &   46.15 &  420.67 &   94.49\% &   84.91\% &   53.97\% &       99.43\% \\
-ImmCost\_buy\_worst\_disc3  &    149.46 &   44.67 &  398.72 &   94.31\% &   84.74\% &   53.86\% &       99.23\% \\
-ImmCost\_buy\_worst\_disc5  &    150.22 &   50.15 &  402.48 &   94.78\% &   85.17\% &   54.13\% &       99.73\% \\
-ImmCost\_buy\_worst\_disc9  &    155.55 &   44.67 &  417.02 &   98.14\% &   88.19\% &   56.06\% &      103.27\% \\
-ImmCost\_sell\_worst\_disc3 &    150.13 &   41.26 &  352.48 &   94.73\% &   85.12\% &   54.10\% &       99.67\% \\
-ImmCost\_sell\_worst\_disc5 &    157.24 &   42.71 &  378.90 &   99.21\% &   89.15\% &   56.67\% &      104.39\% \\
-ImmCost\_sell\_worst\_disc9 &    148.66 &   48.86 &  360.92 &   93.80\% &   84.29\% &   53.57\% &       98.69\% \\
-ImmCost\_spread\_disc3     &    152.15 &   51.32 &  391.87 &   96.00\% &   86.26\% &   54.83\% &      101.01\% \\
-ImmCost\_spread\_disc5     &    151.25 &   53.07 &  397.30 &   95.43\% &   85.75\% &   54.51\% &      100.41\% \\
-ImmCost\_spread\_disc9     &    150.43 &   41.60 &  382.41 &   94.91\% &   85.29\% &   54.21\% &       99.87\% \\
-ImmCost\_imbalance\_disc3      &    148.05 &   51.06 &  379.25 &   93.41\% &   83.94\% &   53.35\% &       98.29\% \\
-ImmCost\_imbalance\_disc5      &    147.26 &   47.03 &  383.23 &   92.91\% &   83.49\% &   53.07\% &       97.76\% \\
-ImmCost\_imbalance\_disc9      &    146.76 &   53.75 &  377.13 &   92.60\% &   83.21\% &   52.89\% &       97.43\% \\
-sharecount\_buy\_disc3         &    149.57 &   46.15 &  420.14 &   94.37\% &   84.81\% &   53.90\% &       99.30\% \\
-sharecount\_buy\_disc5         &    150.37 &   47.01 &  422.14 &   94.88\% &   85.26\% &   54.19\% &       99.83\% \\
-sharecount\_buy\_disc9         &    149.76 &   46.15 &  420.67 &   94.49\% &   84.91\% &   53.97\% &       99.43\% \\
-sharecount\_imbalance\_disc3   &    151.21 &   52.13 &  397.27 &   95.40\% &   85.73\% &   54.49\% &      100.39\% \\
-sharecount\_imbalance\_disc5   &    152.44 &   53.41 &  400.89 &   96.18\% &   86.43\% &   54.94\% &      101.21\% \\
-sharecount\_imbalance\_disc9   &    155.03 &   57.56 &  394.20 &   97.81\% &   87.90\% &   55.87\% &      102.92\% \\
-sharecount\_sell\_disc3        &    149.57 &   46.15 &  420.14 &   94.37\% &   84.81\% &   53.90\% &       99.30\% \\
-sharecount\_sell\_disc5        &    150.37 &   47.01 &  422.14 &   94.88\% &   85.26\% &   54.19\% &       99.83\% \\
-sharecount\_sell\_disc9        &    149.53 &   46.15 &  420.50 &   94.35\% &   84.78\% &   53.89\% &       99.27\% \\
-sharecount\_spread\_disc3      &    150.66 &   48.23 &  419.32 &   95.06\% &   85.42\% &   54.29\% &      100.02\% \\
-sharecount\_spread\_disc5      &    149.23 &   53.41 &  402.65 &   94.16\% &   84.61\% &   53.78\% &       99.07\% \\
-sharecount\_spread\_disc9      &    148.64 &   52.13 &  408.67 &   93.78\% &   84.27\% &   53.57\% &       98.68\% \\
-spread\_disc3                 &    148.83 &   41.70 &  360.98 &   93.91\% &   84.39\% &   53.64\% &       98.81\% \\
-spread\_disc5                 &    143.12 &   40.78 &  350.14 &   90.30\% &   81.15\% &   51.58\% &       95.02\% \\
-spread\_disc9                 &    144.66 &   43.25 &  352.39 &   91.27\% &   82.02\% &   52.13\% &       96.04\% \\
-2                            &    158.49 &   69.66 &  400.59 &  100.00\% &   89.86\% &   57.12\% &      105.22\% \\
-4                            &    176.37 &  141.66 &  273.58 &  111.28\% &  100.00\% &   63.56\% &      117.09\% \\
-MarketOrder                  &    277.49 &  246.48 &  158.66 &  175.08\% &  157.33\% &  100.00\% &      184.22\% \\
+center\_orig\_disc3            &    158.96 &   48.93 &  431.17 &    2.62\% &   -9.87\% &  -42.71\% &        +5.54\% \\
+center\_orig\_disc5            &    150.37 &   47.01 &  422.14 &   -2.92\% &  -14.74\% &  -45.81\% &       -0.17\% \\
+center\_orig\_disc9            &    149.76 &   46.15 &  420.67 &   -3.32\% &  -15.09\% &  -46.03\% &       -0.57\% \\
+ImmCost\_buy\_worst\_disc3  &    150.27 &   44.67 &  398.78 &   -2.99\% &  -14.80\% &  -45.85\% &       -0.24\% \\
+ImmCost\_buy\_worst\_disc5  &    150.74 &   50.15 &  402.13 &   -2.69\% &  -14.54\% &  -45.68\% &        +0.07\% \\
+ImmCost\_buy\_worst\_disc9  &    155.99 &   44.67 &  416.56 &    +0.70\% &  -11.56\% &  -43.79\% &        +3.56\% \\
+ImmCost\_sell\_worst\_disc3 &    150.13 &   41.26 &  352.48 &   -3.08\% &  -14.88\% &  -45.90\% &       -0.33\% \\
+ImmCost\_sell\_worst\_disc5 &    157.56 &   43.95 &  379.33 &    +1.72\% &  -10.66\% &  -43.22\% &        +4.61\% \\
+ImmCost\_sell\_worst\_disc9 &    147.90 &   48.20 &  357.93 &   -4.52\% &  -16.14\% &  -46.70\% &       -1.81\% \\
+ImmCost\_spread\_disc3     &    152.15 &   51.32 &  391.87 &   -1.78\% &  -13.74\% &  -45.17\% &        +1.01\% \\
+ImmCost\_spread\_disc5     &    152.19 &   53.07 &  398.10 &   -1.75\% &  -13.71\% &  -45.15\% &        +1.04\% \\
+ImmCost\_spread\_disc9     &    150.74 &   41.60 &  382.24 &   -2.69\% &  -14.53\% &  -45.68\% &        +0.08\% \\
+ImmCost\_imbalance\_disc3      &    148.04 &   51.06 &  379.25 &   -4.43\% &  -16.06\% &  -46.65\% &       -1.71\% \\
+ImmCost\_imbalance\_disc5      &    147.16 &   47.03 &  383.19 &   -5.00\% &  -16.57\% &  -46.97\% &       -2.30\% \\
+ImmCost\_imbalance\_disc9      &    146.85 &   54.71 &  375.38 &   -5.20\% &  -16.74\% &  -47.08\% &       -2.51\% \\
+sharecount\_buy\_disc3         &    149.57 &   46.15 &  420.14 &   -3.44\% &  -15.19\% &  -46.10\% &       -0.70\% \\
+sharecount\_buy\_disc5         &    150.37 &   47.01 &  422.14 &   -2.92\% &  -14.74\% &  -45.81\% &       -0.17\% \\
+sharecount\_buy\_disc9         &    149.76 &   46.15 &  420.67 &   -3.32\% &  -15.09\% &  -46.03\% &       -0.57\% \\
+sharecount\_imbalance\_disc3   &    151.20 &   52.13 &  395.90 &   -2.39\% &  -14.27\% &  -45.51\% &        +0.38\% \\
+sharecount\_imbalance\_disc5   &    152.44 &   53.41 &  400.89 &   -1.59\% &  -13.57\% &  -45.06\% &        +1.20\% \\
+sharecount\_imbalance\_disc9   &    154.90 &   57.56 &  395.50 &   -0.00\% &  -12.18\% &  -44.18\% &        +2.84\% \\
+sharecount\_sell\_disc3        &    149.57 &   46.15 &  420.14 &   -3.44\% &  -15.19\% &  -46.10\% &       -0.70\% \\
+sharecount\_sell\_disc5        &    150.37 &   47.01 &  422.14 &   -2.92\% &  -14.74\% &  -45.81\% &       -0.17\% \\
+sharecount\_sell\_disc9        &    149.53 &   46.15 &  420.50 &   -3.47\% &  -15.22\% &  -46.11\% &       -0.73\% \\
+sharecount\_spread\_disc3      &    150.78 &   48.23 &  419.23 &   -2.66\% &  -14.51\% &  -45.66\% &        +0.10\% \\
+sharecount\_spread\_disc5      &    149.23 &   53.41 &  402.65 &   -3.66\% &  -15.39\% &  -46.22\% &       -0.93\% \\
+sharecount\_spread\_disc9      &    148.65 &   52.13 &  408.66 &   -4.04\% &  -15.72\% &  -46.43\% &       -1.31\% \\
+spread\_disc3                 &    148.92 &   41.70 &  361.12 &   -3.86\% &  -15.57\% &  -46.33\% &       -1.14\% \\
+spread\_disc5                 &    143.56 &   40.78 &  350.74 &   -7.32\% &  -18.60\% &  -48.26\% &       -4.69\% \\
+spread\_disc9                 &    145.54 &   43.25 &  352.05 &   -6.04\% &  -17.48\% &  -47.55\% &       -3.38\% \\
+\midrule
+VolTime                      &    150.63 &   33.83 &  358.66 &   -2.76\% &  -14.60\% &  -45.72\% &        0.00\% \\
+2                            &    154.90 &   68.62 &  389.15 &    0.00\% &  -12.17\% &  -44.18\% &        +2.84\% \\
+4                            &    176.37 &  141.66 &  273.58 &   +13.86\% &    0.00\% &  -36.44\% &       +17.09\% \\
+MarketOrder                  &    277.49 &  246.48 &  158.66 &   +79.14\% &   +57.33\% &    0.00\% &       +84.22\% \\
 \bottomrule
 \end{tabular}
 }
 
-        		\caption[Full version of \Cref{tab:eval:additionalMarketVariables}]{Average trading costs within the test period May 2017.}
+        		\caption[Full version of \Cref{tab:eval:additionalMarketVariables}]{Average trading costs within the test period.}
 		See \Cref{chap:exp:additionalmarketvars:constant} for the actual experiment description. This is the full version of \Cref{tab:eval:additionalMarketVariables:fixed}.
 		\label{tab:eval:additionalMarketVariables:fixed:fulltable}
 \end{table}
-
+\clearpage{}
 
 
 
@@ -196,7 +198,7 @@ MarketOrder                    &    277.49 &  246.48 &  158.66 &   +79.14\% &   
 \bottomrule
 \end{tabular}}
 
-        		\caption[Full version of \Cref{tab:eval:additionalMarketVariables:simulatedTrades}]{Average trading costs within the test period May 2017.}
+        		\caption[Full version of \Cref{tab:eval:additionalMarketVariables:simulatedTrades}]{Average trading costs within the test period.}
 		See \Cref{chap:exp:simulatedTrades} for the actual experiment description. This is the full version of \Cref{tab:eval:additionalMarketVariables:simulatedTrades}.
 		\label{tab:eval:additionalMarketVariables:simulatedTrades:fulltable}
 \end{table}

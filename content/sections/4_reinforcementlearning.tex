@@ -159,6 +159,7 @@ collect_samples_forward(V, H, T, I, L, e)
 While the presented algorithm exploits the available data profoundly in a brute force manner, the underlying assumptions deserve a short discussion. Alternative formulations are tested out, to potentially improve the algorithms cost saving capabilities.
 
 \subsection{Subject of Trade}
+\label{chap:backwardalgorithm:discussion:subjectTrade}
 Nevmyvaka \etal \cite{Nevmyvaka:2006} tackled the problem of trading a certain amount of shares within a fixed time period. A more practicable problem definition must distinguish between the concrete trading direction. While their problem definition fits to the case of selling shares that are in the investors possessions, it does not mirror the opposite case properly. If the subject of trade is to obtain shares, it is more realistic to define a fixed amount of disposable \emph{cash}, rather than the number of \emph{shares}, that shall be acquired. Subsequently, all experiments in buy direction are instructed to commute a fixed amount of cash into as many shares as possible.\\
  
 If cash is the subject of trade, the optional market variable \emph{Immediate Market Order Cost}  (\eg $72.321\$$) becomes meaningless, and will be replaced by \emph{Immediate Market Order Shares} (\eg 92 BTC), displaying the number of shares acquirable with a immediately.
