@@ -2,8 +2,19 @@
 \label{chap:background}
 This chapter gives a general introduction into the vocabulary of financial computing and the machine learning techniques employed.
 
-\section{Exchange Markets, Bitcoins and Trading Basics}
-An exchange is a market, where financial instruments are sold and bought. It is typically organized by a broker, which can be both, an individual or a firm, executing buy and sell orders on behalf of dealers for a certain fee or commission. The respective prices are determined by the current market situations, in particular by supply and demand.\\
+\section{Trading Basics}
+
+\subsection{Financial Instruments}
+Financial instruments represent legal agreements of monetary value between parties and can be traded as assets. These assets span from  actual cash, through evidence of entity or share ownership, to contractual rights to receive or deliver another type of financial instrument.
+
+\subsection{Markets}
+Trades are typically organized through one of two basic market types:
+\begin{description}
+\item[Over-The-Counter (OTC)] In an OTC or off-exchange market, transactions take place directly between two parties, without a mediator. Prices are negotiated directly between buyer and seller and typically not published to the public.
+\item[Exchange] In exchange markets, transactions are executed by a so called broker. A broker, which can be both, an individual or a firm, executes buy and sell orders on behalf of traders for a certain fee or commission. The respective prices are determined by the current market situation, in particular by supply and demand.
+\end{description}
+
+\subsection{Exchange Markets}
 
 Specialized exchanges concentrate on certain sub-types of financial instruments and offer a trading venue for those willing to buy and sell these instruments. Some of them are listed below:
  
@@ -32,6 +43,7 @@ It is usually not before the matching engine has arranged an actual trade, that 
 
 \begin{table}
 \centering
+	\scalebox{0.6}{
 \begin{tabular}{lrlrrr}
 \toprule
 {} &  Amount &    Type &  Volume &  VolumeAcc &  norm\_Price \\
@@ -44,7 +56,7 @@ It is usually not before the matching engine has arranged an actual trade, that 
 28.50 &   100.0 &     bid &  2850.0 &     8590.0 &    0.987877 \\
 28.00 &   300.0 &     bid &  8400.0 &    16990.0 &    0.970546 \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \caption[Exemplary snapshot of a limit orderbook]{Exemplary snapshot of a limit orderbook for stocks of AIWC\protect\footnotemark}
 \label{table:orderbook:example}
 \end{table}

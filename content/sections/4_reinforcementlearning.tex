@@ -129,10 +129,9 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 
 \section{Forward learning}
 \label{chap:forwardlearning}
+In order to collect more realistic transition samples (see subsequent discussion in \Cref{chap:backwardalgorithm:discussion:markovianassumption}), an alternative, \emph{forward sampling} method is presented.
 
 \subsection{Forward Sampling \& Learning}
-In order to collect more realistic transition samples (see subsequent discussion in \Cref{chap:backwardalgorithm:discussion:markovianassumption}), an alternative, \emph{forward sampling} method is presented.\\
-
 Rather than examining all available actions on the great variety of combinational possibilities the state space has to offer, the forward approach repeatedly simulates trades in their entirety. The once again utilized \ac{OTS} always starts with $V=100\%$, but may be initialized at random start points (\eg \lstinline!t=0, t=15, t=30, t=45!) and keeps going until the full trade is executed.\\
 
 As such, the obtained transitions stem from a more natural and furthermore fully continuous environment. Only actually attainable states, that could arise in the (simulated) reality, are used as transition start points, potentially increasing their significance. As major disadvantage, this forward sampling approach does not assure exhaustive exploration of the state space. A thorough exploration is not self-evident and must be supervised.\\
