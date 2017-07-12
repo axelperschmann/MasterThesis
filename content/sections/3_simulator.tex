@@ -22,7 +22,7 @@ On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots 
 	\label{fig:ploniexPriceHistory}
 \end{figure}
 
-\Cref{fig:ploniexPriceHistory} shows the price evolution of currency pair USDT/Bitcoin over the period of recording. Prices have burst from roughly 700\$ to more than 2.000\$. Red and green lines depict the relative difference between the worst price paid/received for an immediate market orders of $70.000\$$, respectively.
+\Cref{fig:ploniexPriceHistory} shows the price evolution of currency pair USDT/Bitcoin over the period of recording. Prices have burst from roughly $700\$$ to more than $2.000\$$. Red and green lines depict the relative difference between the worst price paid/received for an immediate market order of $\pm70.000\$$ respectively\footnote{With a total trading volume of roughly $40.000.000\$$ per day (see \Cref{chap:bitcoin:volatility}), these $\pm70.000\$$ refer to roughly $4.2\%$ thereof.}.
 
 \section{Data preprocessing}
 \label{chap:preprocessing}
@@ -38,13 +38,13 @@ The python \lstinline!class OrderbookContainer! aggregates all informations cont
   \end{rcases} 
   = 2.772181 * 705.45
 \]
-\item Market depth is capped just above the threshold of 100 bitcoins, roughly corresponding to a market depth of 100-140 prices levels in both books. This threshold allows to simulate trades up to a market order price of 70.000 \$ at any time throughout the whole recording period.
+\item Market depth is capped just above the threshold of 100 bitcoins, roughly corresponding to a market depth of 100-140 prices levels in both books. This threshold allows to simulate trades up to a market order price of $70.000\$$ at any time throughout the whole recording period.
 
 \item Erroneous orderbook snapshots have been discarded. Occasional errors may occur, due to Poloniex API failures.
 
 \end{itemize}
 
-These measurements reduce the average individual orderbook snapshots size from 30KB to approximately 6.6KB. As for the december 2016, this results into 44.640 snapshots with a total size of 295MB instead of 1.35GB, clearly reducing the memory consumption.\\
+These measurements reduce the average individual orderbook snapshots size from 30KB to approximately 6.6KB. As for the december 2016, this results into $44.640$ snapshots with a total size of 295MB instead of 1.35GB, clearly reducing the memory consumption.\\
 
 \Cref{lst:OrderbookContainer} shows the most important functions, provided by the OrderbookContainer class. OrderbookContainer instances are vigorously used by the \ac{OTS}. \Cref{fig:orderbook} shows a plain visualization of an individual orderbook snapshot.
 
@@ -83,7 +83,7 @@ Each simulator instance is fed with an array of subsequent OrderbookContainers (
 
 In the rare case of missing orderbook snapshots (see \Cref{chap:preprocessing}), the \emph{real} time horizon may be larger than usual, since always $H$ subsequent orderbooks are selected. By default, the \ac{OTS} refuses to work with orderbook windows, whose actual length differs from the presumed length by more than two minutes.\\
 
-Limit orders may be placed at predefined, discrete time steps within the trading horizon $H$. This is done though the simulators main interface method \lstinline!trade(limit=...)!. The simulator is done, once the remaining trading volume is zero, which is enforced at the very last time point. Any remaining volume at \emph{H-1} is transformed into a simple market order and executed immediately, at any price. Additional parameters control the simulators precise behavior:
+Limit orders may be placed at predefined, discrete time steps within the trading horizon $H$. This is done though the simulators main interface method \lstinline!trade(limit=...)!. The simulator is done, once the remaining trading volume is zero, which is enforced at the very last time point. Any remaining volume at $H-1$ is transformed into a simple market order and executed immediately, at any price. Additional parameters control the simulators precise behavior:
 
 \begin{description}
 \item[volume] : The targeted trading volume $V$.\\
@@ -105,7 +105,7 @@ Defines which of multiple cost functions to use in the reports returned.
 
 \subsection{Orderbook and strategy visualization}
 
-\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (\ref{fig:orderbookwindow:avg}) and \emph{worst} (\ref{fig:orderbookwindow:worst}) price, that has to be paid at a given time point, in case of an immediate market order of 100, 75, 50 and 25 bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of -25, -50, -75 and -100 bitcoins.\\
+\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (\ref{fig:orderbookwindow:avg}) and \emph{worst} (\ref{fig:orderbookwindow:worst}) price, that has to be paid at a given time point, in case of an immediate market order of $100$, $75$, $50$ and $25$ bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of $-25$, $-50$, $-75$ and $-100$ bitcoins.\\
 
 As can be seen in this graph, ask prices deviate more from the center price than bid prices. An plausible inference might be, that imbalances between demand and supply might serve as a valuable indicator for future price trends.
 
@@ -174,7 +174,7 @@ The masterbook is then ready to be queried again. Any eligible \emph{new} orders
 \end{table}
 
 \subsection{Visualization}
-A visual representation of the same trading strategy, which underlies \Cref{tab:tradinghistory}, is shown in \Cref{fig:tradingstrategy17good}. Here, the \ac{OTS} was instructed to buy 100 bitcoins within a period of 60 minutes and called with four consecutive limits prices 713, 715, 717.5 and 720, which are shown as grey step function in the upper subplot.\\
+A visual representation of the same trading strategy, which underlies \Cref{tab:tradinghistory}, is shown in \Cref{fig:tradingstrategy17good}. Here, the \ac{OTS} was instructed to buy $100$ bitcoins within a period of $60$ minutes and called with four consecutive limits prices $713$, $715$, $717.5$ and $720$, which are shown as grey step function in the upper subplot.\\
 
 The second subplot displays trade executions and declining trade volume over time and the bottom subplot displays induced costs. Expected costs conform to the respective accumulated costs, extrapolated to the full trade volume.
 

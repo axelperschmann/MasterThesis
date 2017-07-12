@@ -188,7 +188,7 @@ MarketOrder                  &    277.49 &  246.48 &  158.66 &   +79.14\% &   +5
 
 The different discretization levels yield rather mixed results. While \lstinline!spread! typically performed best in case of 5 levels, no clear statement can be made for the other variables.\\
 
-The exact reason, why factually only adding \lstinline!spread! causes a beneficial effect, is unclear, but one possible explanations lies in the data set employed. The original experiment assessed a different data quality. Due to the low resolution of the available orderbook snapshots, a large fraction of the market activity remains inaccessible and consequently the majority of trading opportunities are missed by the agents. Furthermore, the minute time-scaled data inevitably requires the trading horizon to be rather long. Experiments with shorter time horizons nullified the achievable savings, while longer time horizons led to unacceptable computation times. Consequently, the agents where trained on 4.109 sixty-minute orderbook windows, while Nevmyvaka \etal invoked 45.000 two-minute orderbook windows.
+The exact reason, why factually only adding \lstinline!spread! causes a beneficial effect, is unclear, but one possible explanations lies in the data set employed. The original experiment assessed a different data quality. Due to the low resolution of the available orderbook snapshots, a large fraction of the market activity remains inaccessible and consequently the majority of trading opportunities are missed by the agents. Furthermore, the minute time-scaled data inevitably requires the trading horizon to be rather long. Experiments with shorter time horizons nullified the achievable savings, while longer time horizons led to unacceptable computation times. Consequently, the agents where trained on $4.109$ sixty-minute orderbook windows, while Nevmyvaka \etal invoked $45.000$ two-minute orderbook windows.
 
 
 \subsection*{Look-Ahead Features}
@@ -437,7 +437,7 @@ MarketOrder      &    277.49 &  246.48 &  158.66 &  +79.14\% &   +57.33\% &    0
 
 While the plain \lstinline!BT_VolTime!-agent performs de facto worse than the original, discrete \lstinline!VolTime!-agent ($-2.47\%$ vs. $-4.55\%$),  agents employing individual market variables perform terribly if fed with continuous values. The worst of all, \lstinline!BT_VolTimeSpread!-agent,  performs $+60.79\%$ worse than the optimal \ac{SL} strategy!\\
 
-Conversely, a \ac{BT}-agent trained on all fifteen \lstinline!_a*_effects!-variables simultaneously lifts the \ac{BT} performance from $-2.47\%$ to $-7.53\%$, which is a good result. Unfortunately it does not catch up with the previously attained $-9.7\%$ (see \Cref{chap:exp:simulatedTrades}).\\
+Conversely, a \ac{BT}-agent trained on all fifteen \lstinline!_a*_effects!-variables simultaneously lifts the \ac{BT} performance from $-2.47\%$ to $-7.53\%$, which is a good result. Unfortunately, it does not catch up with the previously attained $-9.7\%$ (see \Cref{chap:exp:simulatedTrades}).\\
 
 
 \Cref{fig:heatmap:BatchTree:SimPreTrades} shows exemplary for the plain \lstinline!VolTime!-agent, how the \ac{BT}-agent is able to deliver a more accurate resolution of q-values and optimal actions.
@@ -471,7 +471,7 @@ Conversely, a \ac{BT}-agent trained on all fifteen \lstinline!_a*_effects!-varia
 
 \section{Forward Sampling Experiments}
 \label{chap:experiments:forward}
-Based on the same training data and simulator settings as in the Backward Sampling Experiments, the novel forward sampling approach (see \Cref{chap:forwardlearning}) is applied.\\
+Based on the same training data and simulator settings as used in the Backward Sampling Experiments, the novel forward sampling approach (see \Cref{chap:forwardlearning}) is applied.\\
 
 A \ac{BT}-agent samples from the previously shuffled training data, following an $\epsilon$-greedy strategy. In each exploration phase the respective orderbook window is run through up to 60 times, while only disparate paths are traced. After every 256 exploration phases, the underlying RandomForestRegressor is retrained from scratch, using all transition samples collected to this point. Intermediate models are stored, to document the learning progress over time. The continuous state space consists of both private variables and fifteen minimum-consequence-variables (\ie \lstinline!_a*_!) as introduced in \Cref{chap:exp:additionalmarketvars}.\\
 

@@ -7,7 +7,7 @@ Some of the assumptions made in the original approach deserve a discussion and l
 
 \section{General Framework}
 \label{chap:reinforcementlearning:original}
-x
+In the first place, the general framework of the reinforcement learning problem is described.
 
 
 \subsection{State space}
@@ -68,22 +68,33 @@ Since the complete trade execution happens within a finite time horizon and full
 
 \section{Backward learning}
 \label{chap:backwardlearning}
-In order to learn the optimal limit for each possible situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{lst:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.
+In order to learn the optimal limit for each possible situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{alg:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.\\
 
-\begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Brute-Force strategy learning approach as described in \Cite{Nevmyvaka:2006}., label=lst:bruteforce:pseudocode]
-Optimal_strategy(data, V, H, T, I, L)
-    For t=1 to T
-        While(not end of data)
-            Transform (orderbook) -> o_1 ... o_R
-            For i =0 to I
-                For a = 0 to L
-                    Set x = [t, i, o_1, ..., o_R]
-                    Simulate transition x -> y
-                    Calculate immediate cost_im(x, a)
-                    Look up argmax cost(y, p)
-                    Update cost([t, v, o_1, ..., o_R], a)
-    Select the highest-payout action argmax cost(y, p) in every state y to output optimal policy
-\end{lstlisting}
+\begin{algorithm}[H] 
+ \caption{Optimal\_strategy, as described in \Cite{Nevmyvaka:2006}}
+     \SetAlgoLined
+     \footnotesize
+     
+     \KwIn{Transition set $\widetilde{D} = \{(x_t, a_t, s_t, r_t) $ $|$ $ t=1..n \}$}
+
+\For{t=1 to T}{
+    \While{not end of data}{
+        Transform (orderbook) $\rightarrow o_1..o_R$\;
+        \For{i=0 to I}{
+            \For{a=0 to L}{
+                 Set $x = [t, i, o_1, ..., o_R]$\;
+                    Simulate transition $x \rightarrow y$\;
+                    Calculate immediate $\text{cost}_{im}(x, a)$\;
+                    Look up argmax $\text{cost}(y, p)$\;
+                    Update $\text{cost}([t, v, o_1, ..., o_R], a)$\;
+
+            }
+        }
+        Select the highest-payout action argmax $\text{cost}(y, p)$ in every state $y$ to output optimal policy
+    }
+}
+\label{alg:bruteforce:pseudocode}
+\end{algorithm}\bigskip
 
 While the algorithms running time depends solely on the resolution of the two private variables, the chosen action space and the size of the training data set, it is approximately independent of the number of market variables chosen. The precise transition simulation was not further described, but for this thesis the model described in \Cref{chap:tradeexecution} is utilized. The cost update rule is given below: 
 \begin{equation}\label{eq:costfunction}
@@ -136,29 +147,40 @@ Rather than examining all available actions on the great variety of combinationa
 
 As such, the obtained transitions stem from a more natural and furthermore fully continuous environment. Only actually attainable states, that could arise in the (simulated) reality, are used as transition start points, potentially increasing their significance. As major disadvantage, this forward sampling approach does not assure exhaustive exploration of the state space. A thorough exploration is not self-evident and must be supervised.\\
 
-The pseudo-code of the forward sampling approach is shown in \Cref{lst:forward:pseudocode}. The algorithm iterates over the training data, starts $E$ exploration phases per orderbook window and follows an $\epsilon$-greedy exploration strategy. Each exploration phase starts with $\epsilon=1.0$ which finally decays to $\epsilon=0.05$ according to $\epsilon=0.05^{e/E}$.\\
+The pseudo-code of the forward sampling approach is shown in \Cref{alg:forward:pseudocode}. The algorithm iterates over the training data, starts $E$ exploration phases per orderbook window and follows an $\epsilon$-greedy exploration strategy. Each exploration phase starts with $\epsilon=1.0$ which finally decays to $\epsilon=0.05$ according to $\epsilon=0.05^{e/E}$.\\
 
 If $\epsilon$-greedy proposes an actions, that previously led to an end state (\ie trade completed), an alternative action is sampled according to a gaussian distribution with its peak at the originally proposed action. Before the actual random draw, probabilities of all dead-end-actions are set to zero, to forestall pointless resampling. In case of repeatedly running into dead-ends (\eg \lstinline!max_dead_ends=4!) the exploration phase is aborted and continues with the next orderbook.\\
 
 After every \lstinline!retrain! exploration phases, the new samples are fit into the agents model (\eg \lstinline!retrain=256!) and the updated model used for future $\epsilon$-greedy exploration. Prior to the sampling phase, the training set is shuffled.\\
 
-In contrast to the backward sampling method, market variables may be queried on the go, such that they entail the strategies impact. Because sample trajectories stem from a continuous state space function approximations prove handy. Here a RandomForestRegressor (\ie \ac{BT}) is utilized and retrained from scratch every \lstinline!retrain! exploration phases. The alternative approach of exploiting Neural Fitted Q-iteration \Cite{Riedmiller:2005:NFQ}, has been  postponed to future experiments.\\
+In contrast to the backward sampling method, market variables may be queried on the go, such that they entail the strategies impact. Because sample trajectories stem from a continuous state space function approximations prove handy. Here a RandomForestRegressor (\ie \ac{BT}) is utilized and retrained from scratch every \lstinline!retrain! exploration phases. The alternative approach of exploiting Neural Fitted Q-iteration \Cite{Riedmiller:2005:NFQ}, has been  postphoned to future experiments.\\
 
-\begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Forward sampling approach., label=lst:forward:pseudocode]
-collect_samples_forward(data, V, H, T, I, L, E)
-    shuffle(data)
-    While(not end of data)
-        init OTS with V=100%
-            For epoch=0 to E
-                reset OTS to random time point
-                Transform (orderbook) -> o_1 ... o_R
-                Enquire e-greedy action
-                if action led to an end state previously:
-                    choose other action
-                apply action until V=0\%
-    	    Store samples in DataFrame
-        occasionally retrain strategy with new collected samples
-\end{lstlisting}
+\begin{algorithm}[H] 
+ \caption{Forward sampling approach}
+     \SetAlgoLined
+     \footnotesize
+     
+     \KwIn{data, V, H, T, I, L}
+
+shuffle(data)
+
+\While{not end of data}{
+init OTS with $V=100\%$ and current orderbook\_window
+    \For{epoch=0 to E}{
+        Reset OTS to random start point\;
+        \Repeat{until $V=0\%$}{
+        Transform (orderbook) $\rightarrow o_1..o_R$\;
+        Enquire $\epsilon$-greedy action\;
+        \If{action led to an end state previously}{choose other action}
+        apply action
+        
+        }
+    }
+}
+
+\label{alg:forward:pseudocode}
+\end{algorithm}\bigskip
+
 
 
 
@@ -191,9 +213,9 @@ Except for \emph{Immediate Market Order Cost}, the market variables exploited (s
 
 \subsection{Cost scaling}
 \label{chap:backwardalgorithm:discussion:costscaling}
-\begin{wrapfigure}[6]{r}{0.35\textwidth}
+\begin{wrapfigure}[8]{r}{0.35\textwidth}
 	\centering
-	\includegraphics[width=0.3\textwidth]{content/drawings/nonlinearcosts}
+	\includegraphics[width=0.3\textwidth,trim={0 0.2cm 0 0.7cm},clip]{content/drawings/nonlinearcosts}
 	\caption{Non-linear slippage growth.}
 	\label{fig:nonlinearcosts}
 \end{wrapfigure}
