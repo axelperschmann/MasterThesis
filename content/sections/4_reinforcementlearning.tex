@@ -135,9 +135,6 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 
 \Cref{fig:heatmap} illustrates clearly, how the optimal strategy becomes more aggressive as time ceases and a large portion of the trading volume remains unexecuted.
 
-
-
-
 \section{Forward learning}
 \label{chap:forwardlearning}
 In order to collect more realistic transition samples (see subsequent discussion in \Cref{chap:backwardalgorithm:discussion:markovianassumption}), an alternative, \emph{forward sampling} method is presented.
@@ -156,25 +153,29 @@ After every \lstinline!retrain! exploration phases, the new samples are fit into
 In contrast to the backward sampling method, market variables may be queried on the go, such that they entail the strategies impact. Because sample trajectories stem from a continuous state space function approximations prove handy. Here a RandomForestRegressor (\ie \ac{BT}) is utilized and retrained from scratch every \lstinline!retrain! exploration phases. The alternative approach of exploiting Neural Fitted Q-iteration \Cite{Riedmiller:2005:NFQ}, has been  postphoned to future experiments.\\
 
 \begin{algorithm}[H] 
- \caption{Forward sampling approach}
+ \caption{Forward sampling and learning approach}
      \SetAlgoLined
      \footnotesize
      
-     \KwIn{data, V, H, T, I, L}
+     \KwIn{data, V=$70.000\$$, H=60min, T=4, L=[-4..10], E=60, retrain=256}
 
-shuffle(data)
+Shuffle(data)\;
+Split data into chunks of length $retrain$
 
-\While{not end of data}{
-init OTS with $V=100\%$ and current orderbook\_window
+\While{not end of chunks}{
+\For{orderbook window in chunks}{
+Init OTS(orderbook\_window, V, H, T, L)\;
     \For{epoch=0 to E}{
-        Reset OTS to random start point\;
-        \Repeat{until $V=0\%$}{
-        Transform (orderbook) $\rightarrow o_1..o_R$\;
-        Enquire $\epsilon$-greedy action\;
-        \If{action led to an end state previously}{choose other action}
-        apply action
-        
+        Reset OTS to $V=100\%$ and random time point (in H)\;
+        \Repeat{$V=0\%$}{
+        Set $x_t=[\text{time\_left}, \text{volume\_left}, o_1, ..., o_R]$\;
+        Enquire $\epsilon$-greedy action from model\;
+        \If{action chain led to an end state previously}{choose other action}
+        Apply action\;
+        Remember transition \{$x_t, action, cost, x_{t+1}$\}
         }
+    }
+    Retrain model from collected transitions
     }
 }
 
@@ -204,16 +205,16 @@ The concrete discretization process was not further described or questioned. Par
 
 \begin{description}
 \item[Potential Improvements] are described and tested in \Cref{chap:experiments}.\\
-Firstly, the discretization is automatized, such that boundaries between the bins are automatically derived from the training data. Performances of multiple discretization resolutions are compared. Secondly, the underlying lookup tables are replaced by function approximations, making discretization unnecessary.
+Firstly, the discretization is automatized, such that boundaries between bins are automatically derived from the training data. Varying discretization resolutions are tested. Secondly, the underlying lookup tables are replaced by function approximations, making discretization unnecessary.
 \item[Alternative Market Variables] may be considered.\\
-Except for \emph{Immediate Market Order Cost}, the market variables exploited (see \Cref{chap:statespace}) basically came from market level 1 data only. \Cref{chap:exp:additionalmarketvars} evaluates the impact of additional market level 2 features, describing potential imbalances between ask and bid book.
+Except for \emph{Immediate Market Order Cost}, the market variables exploited (see \Cref{chap:statespace}) basically came from market level 1 data only. \Cref{chap:exp:additionalmarketvars} evaluates the impact of additional market level 2 features, describing potential imbalances between ask and bid book and forecasting estimated action consequences.
 \end{description}
 
 
 
 \subsection{Cost scaling}
 \label{chap:backwardalgorithm:discussion:costscaling}
-\begin{wrapfigure}[8]{r}{0.35\textwidth}
+\begin{wrapfigure}{r}{0.35\textwidth}
 	\centering
 	\includegraphics[width=0.3\textwidth,trim={0 0.2cm 0 0.7cm},clip]{content/drawings/nonlinearcosts}
 	\caption{Non-linear slippage growth.}

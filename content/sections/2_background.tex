@@ -128,43 +128,104 @@ Bitcoin is a highly volatile currency, capable of massive price changes towards 
 \begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.6\textwidth]{content/images/BitcoinVolatility}
-	\caption{BTC/USDT and USDT/Pound volatility compared..}
+	\caption{BTC/USDT and USDT/Pound volatility compared.}
 	\scriptsize Source: \url{https://99bitcoins.com/bitcoin-volatility-explained}
 	\label{fig:bitcoinvolatility}
 \end{figure}
 
 
 
-\section{Supervised Learning}
-Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vectors $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.
-
-A supervised learning algorithms seeks to find a general function $g_w()$ (or it's parameters $w$), such that $g_w(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
-
-
-Markow Decision Process
-
-Value Function and Bellmann Equation
-
-Value Iteration
-
-Q-Learning
-
-\subsection{Logistic Regression}
-bla
-
-\subsection{Random Forest}
-bla
+%\section{Supervised Learning}
+%Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vectors $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.
+%
+%A supervised learning algorithms seeks to find a general function $g_w()$ (or it's parameters $w$), such that $g_w(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
+%
+%
+%Markow Decision Process
+%
+%Value Function and Bellmann Equation
+%
+%Value Iteration
+%
+%Q-Learning
+%
+%\subsection{Logistic Regression}
+%bla
+%
+%\subsection{Random Forest}
+%bla
 
 
 
 \section{Reinforcement Learning}
-Reinforcement learning is a subdomain of machine learning, where strategies are learned by an \emph{agent} interacting with its environment. Rather than learning from labeled training data, the agent applies a \emph{trial and error} pattern and exploits external rewards to find actions, maximizing his expected future reward.
+\ac{RL} is a subdomain of machine learning, that was first defined by Sutton and Barto\Cite{Sutton98reinforcementlearning} as the problem of learning from interactions with an environment to achieve long-term goals. In contrast to \ac{SuL}, no labeled training data is present, such that sub-optimal actions can not be corrected explicitly. Instead, in each time step $t$, the agent takes the action $a_t$ which maximizes his future expected reward $R_t$, based on empirical knowledge\footnote{Alternatively, it is possible to \emph{minimize} the future expected cost: $C_t = - R_t$}.\\
+
+\Cref{fig:rlagent} shows the typical \ac{RL} scenario. An agent (partially) observes a state $s_t$ and a reward $r_t$ at every discrete time step $t$, applies an action $a_t$ and hereon receives a new state $s_{t+1}$ and reward $r_{t+1}$.\\
+
+
+\tikzstyle{block} = [rectangle, draw, 
+    text width=8em, text centered, rounded corners, minimum height=4em]
+    
+\tikzstyle{line} = [draw, -latex]
+
+\begin{figure}[ht]
+	\centering
+\begin{tikzpicture}[node distance = 6em, auto, thick]
+    \node [block] (Agent) {Agent};
+    \node [block, below of=Agent] (Environment) {Environment};
+    
+     \path [line] (Agent.0) --++ (4em,0em) |- node [near start]{Action $a_t$} (Environment.0);
+     \path [line] (Environment.190) --++ (-6em,0em) |- node [near start] {New state  $s_{t+1}$} (Agent.170);
+     \path [line] (Environment.170) --++ (-4.25em,0em) |- node [near start, right] {Reward $r_{t+1}$} (Agent.190);
+\end{tikzpicture}
+	\caption{The discrete \ac{RL} scenario defined by Sutton and Barto\Cite{Sutton98reinforcementlearning}}
+	\label{fig:rlagent}
+\end{figure}
+
+Rather than learning from labeled training data, the agent applies a \emph{trial and error} pattern and exploits (delayed) external rewards to find actions, maximizing the expected future reward. As actions may not necessarily show an immediate effect, rewards are often delayed and must be accounted for in the so called \emph{credit assignment problem}\Cite{MinskyManuscript-MINSTA}.\\
+
+The expected future reward $R_t$ can be expressed by the cumulative reward of all successive rewards. The discounting factor $\gamma \in [0,1]$ represents the importance between long-term and short-term rewards. With a high $\gamma$, the agent aims to maximize long-term rewards, wheres a low $\gamma$ leads to greedy actions, concentrating on short-term rewards. 
+\begin{equation}
+	R_t = \sum_{i=0}^{\infty} \gamma^i r_{t+i+1}
+\end{equation}
+
+While learning, the agent has to carefully balance between \emph{exploration} (\ie try new actions to explore previously unknown paths) and \emph{exploitation} (\ie improve actions to receive higher rewards). This can be tackled by an so called $\epsilon$-greedy strategy.
+
+
 
 \subsection{Markov Decision Process}
-bla
+In reinforcement learning, the environment is typically formulated as \ac{MDP} \Cite{Bel}, which provides a mathematical framework for optimization problems.\\
+
+An \ac{MDP} is a discrete time stochastic control process, written as 5-tuple $(S, A, P, R, \gamma)$. It consists of a (finite) set of environment states $s \in S$, a (finite) set of actions $a_t \in A$, a transition probability matrix $P$, which maps from state-action pairs $(s_t, a_t) | s_t \in S, a_t \in A$ to a probability distribution over all successor states $s_{t+1} \in S$,
+\begin{equation}
+	P^a_{ss'} = \mathbb{P}[s_{t+1}=s' | s_t=s, a_t=a]
+\end{equation}
+
+and a reward (or cost) function $R$, that computes the real valued immediate reward received after applying action $a_t$ in state $s_t$.
+\begin{equation}
+	R^a_{s} = \mathbb{E}[r_{t+1} | s_t=s, a_t=a] = -\mathbb{E}[c_{t+1} | s_t=s, a_t=a]
+\end{equation}
+
+The discount factor $\gamma \in [0,1]$ eventually defines the level of foresightedness. It is obligatory in \ac{MDP}s with an infinite time horizon, to impede infinite values for accumulated long-term returns. The general goal of an \ac{MDP} is to find optimal policies $\pi^*$, that map states to applicable actions, such that (discounted) expected long-term reward is maximized, or respectively (discounted) expected long-term cost is minimized.
+\begin{equation}
+    \pi^*(s) = arg\max_{a \in A(s)} \mathbb{E}[R_t | s_t=s] = arg\min_{a \in A(s)} \mathbb{E}[C_t | s_t=s]
+\end{equation}
+
+
+
+\subsection{Markov Property}
+An important condition of \ac{MDP}s is the \emph{Markov Property}, which defines the probability distribution of future states to be independent of the past ($s_{t-n}$), given the present ($s_t$). As such, states must capture all relevant information from the history, to deliver sufficient statistics of the future. A state $s_t$ is \emph{Markov} if and only if:
+\begin{equation}
+     \mathbb{P}(S_{t+1} = s' | s_t, a_t) = \mathbb{P}(s_{t+1} = s' | s_t, a_t, s_{t-1}, a_{t-1}, \ldots{})
+\end{equation}
+
+
+
+
+
 
 \subsection{Value Function and Bellmann Equation}
-bla
+In order to find the optimal strategy $\pi^*$, the value of states and actions must be estimated.
 
 \subsection{Dynamic backward programming}
 Value Iteration\\
