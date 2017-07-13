@@ -214,7 +214,7 @@ The discount factor $\gamma \in [0,1]$ eventually defines the level of foresight
 
 The general goal in reinforcement learning is to find optimal policies $\pi^*: S \rightarrow A$, that map states to the best applicable actions, such that the (discounted) expected long-term reward is maximized, or respectively the (discounted) expected long-term cost is minimized.
 \begin{equation}
-    \pi^*(s) = arg\max_{a \in A(s)} \mathbb{E}[R_t | s_t=s] = arg\min_{a \in A(s)} \mathbb{E}[C_t | s_t=s]
+    \pi^*(s) = arg\max_{a \in A(s)} \mathbb{E}[R_t | s_t=s] \>=\> arg\min_{a \in A(s)} \mathbb{E}[C_t | s_t=s]
 \end{equation}
 
 
@@ -238,8 +238,8 @@ In order to find the optimal strategy $\pi^*$, the value of states and actions m
 \begin{split}
      V^\pi(s) & = \mathbb{E}[R_t | s_t = s] \\
       & = \mathbb{E}_\pi [\sum_{k=0}^\infty \gamma^k r_{t+k+1} | s_t=s] \\
-      & = \mathbb{E}_\pi [r_{t+1} + \gamma \sum_{k=1}^\infty \gamma^k r_{t+k+1} | s_t=s] \\
-      & = \sum_{s' \in S} T(s, \pi(s), s')[r(s, \pi(s), s') + \gamma V^\pi(s')]
+      & = \mathbb{E}_\pi [r_{t+1} + \gamma \sum_{k=1}^\infty \gamma\,^k r_{t+k+1} | s_t=s] \\
+      & = \sum_{s' \in S} P(s' \,|\, \pi(s), s)\>[r(s, \pi(s), s') + \gamma V^\pi(s')]
 \end{split}
 \end{equation}
 
@@ -253,7 +253,7 @@ where $0 \leq \gamma \leq 1$ is the discount rate. Assuming an optimal policy $\
    \end{flushright}
 \end{quote}
 \begin{equation}\label{eq:bellmanequation}
-     V^*(s) = \max_{a \in A}\sum_{s' \in S} T(s, a, s')[r(s, a, s') + \gamma V^*(s')]
+     V^*(s) = \max_{a \in A}\sum_{s' \in S} P(s' \,|\, a, s)\>[r(s, a, s') + \gamma\, V^*(s')]
 \end{equation}
 
 The \emph{Bellman equation} shown in \Cref{eq:bellmanequation} rewrites the value estimation problem as a recursive definition of the value function. This recursion breaks the complex optimization problem into simpler subproblems, that can be solved via \emph{Dynamic Programming}\cite{bellman1957}.\\
@@ -278,7 +278,7 @@ Bellmanns \emph{value iteration algorithm}, recursively applies the Bellman equa
      \Repeat{$\forall s \abs{V^k(s) - V^{k-1}(s)} < \theta$}{
          $k \leftarrow k + 1$\;
       	\ForEach{state $s \in S$}{
-        	  $V^k(s) = \max\limits_{a \in A(s)}   \sum\limits_{s' \in S} T(s, a, s')[r(s, a, s') + \gamma V^{k-1}(s')$ \;
+        	  $V^k(s) = \max\limits_{a \in A}   \sum\limits_{s' \in S} P(s' \,|\, a, s)\>[r(s, a, s') + \gamma\, V^{k-1}(s')$ \;
       	}
       }
 
@@ -287,7 +287,7 @@ Bellmanns \emph{value iteration algorithm}, recursively applies the Bellman equa
 
 Once the optimal  value function $V^*(s)$ is known, the optimal policy $\pi^*$ can simply be extracted thereof:
 \begin{equation}
-     \pi^*(s) = \arg\max_{a \in A}\sum\limits_{s' \in S} T(s, a, s')[r(s, a, s') + \gamma V^*(s')]
+     \pi^*(s) = \arg\max_{a \in A}\sum\limits_{s' \in S} P(s' \,|\, a, s)\>[r(s, a, s') + \gamma\, V^*(s')]
 \end{equation}
 
 
