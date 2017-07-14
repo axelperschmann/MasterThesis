@@ -135,32 +135,15 @@ Bitcoin is a highly volatile currency, capable of massive price changes towards 
 
 
 
-%\section{Supervised Learning}
-%Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vectors $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.
-%
-%A supervised learning algorithms seeks to find a general function $g_w()$ (or it's parameters $w$), such that $g_w(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
-%
-%
-%Markow Decision Process
-%
-%Value Function and Bellmann Equation
-%
-%Value Iteration
-%
-%Q-Learning
-%
-%\subsection{Logistic Regression}
-%bla
-%
-%\subsection{Random Forest}
-%bla
+
+
 
 
 
 \section{Reinforcement Learning}
-\ac{RL} is a subdomain of machine learning, that was first defined by Sutton and Barto\Cite{Sutton98reinforcementlearning} as the problem of learning from interactions with an environment to achieve long-term goals. In contrast to \ac{SuL}, no labeled training data is present, such that sub-optimal actions can not be corrected explicitly. Instead, in each time step $t$, the agent takes the action $a_t$ which maximizes his future expected reward $R_t$, based on empirical knowledge\footnote{Alternatively, it is possible to \emph{minimize} the future expected cost: $C_t = - R_t$}.\\
+\ac{RL} is a subdomain of machine learning. It was first defined by Sutton and Barto\Cite{Sutton98reinforcementlearning} as the problem of learning from interactions with an environment in order to achieve long-term goals. In contrast to \ac{SuL}, no labeled training data is present, such that sub-optimal actions can not be corrected explicitly. Instead, in each time step $t$, the agent takes the action $a_t$ which maximizes\footnote{Alternatively, it is possible to \emph{minimize} the future expected cost: $C_t = - R_t$} his future expected reward $R_t$, based on empirical knowledge.\\
 
-\Cref{fig:rlagent} shows the typical \ac{RL} scenario. An agent (partially) observes a state $s_t$ and a reward $r_t$ at every discrete time step $t$, applies an action $a_t$ and hereon receives a new state $s_{t+1}$ and reward $r_{t+1}$.\\
+\Cref{fig:rlagent} shows the typical \ac{RL} scenario. An agent (partially) observes a state $s_t$ and a reward $r_t$ at every discrete time step $t$. It takes an action $a_t$ and hereon receives a new state $s_{t+1}$ and reward $r_{t+1}$.\\
 
 
 \tikzstyle{block} = [rectangle, draw, 
@@ -184,12 +167,10 @@ Bitcoin is a highly volatile currency, capable of massive price changes towards 
 
 Rather than learning from labeled training data, the agent applies a \emph{trial and error} pattern and exploits (delayed) external rewards to find actions, maximizing the expected future reward. As actions may not necessarily show an immediate effect, rewards are often delayed and must be accounted for in the so called \emph{credit assignment problem}\Cite{MinskyManuscript-MINSTA}.\\
 
-The expected future reward $R_t$ can be expressed by the cumulative reward of all successive rewards. The discounting factor $\gamma \in [0,1]$ represents the importance between long-term and short-term rewards. With a high $\gamma$, the agent aims to maximize long-term rewards, wheres a low $\gamma$ leads to greedy actions, concentrating on short-term rewards. 
+The expected future reward $R_t$ can be expressed by the cumulative reward of all successive rewards. The discounting factor $\gamma \in [0,1]$ represents the importance between long-term and short-term rewards. With a high $\gamma$, the agent aims to maximize long-term rewards, whereas a small $\gamma$ leads to greedy actions, favouring short-term rewards. 
 \begin{equation}
 	R_t = \sum_{i=0}^{\infty} \gamma^i r_{t+i+1}
 \end{equation}
-
-While learning, the agent has to carefully balance between \emph{exploration} (\ie try new actions to explore previously unknown paths) and \emph{exploitation} (\ie improve actions to receive higher rewards). This can be tackled by an so called $\epsilon$-greedy strategy.
 
 
 
@@ -233,13 +214,13 @@ An important condition of \ac{MDP}s is the \emph{Markov Property}, which defines
 
 
 \subsection{Value Function and Bellmann Equation}
-In order to find the optimal strategy $\pi^*$, the value of states and actions must be estimated. The state value function $V^\pi: S \rightarrow \mathbb{R}$ returns the expected reward (or cost) when following $\pi$ from state $s$:
+In order to find the optimal strategy $\pi^*$, the value of states and actions must be estimated. The state-value function $V^\pi: S \rightarrow \mathbb{R}$ returns the expected reward (or cost) when following $\pi$ from state $s$:
 \begin{equation}\label{eq:valuefunction}
 \begin{split}
      V^\pi(s) & = \mathbb{E}[R_t | s_t = s] \\
       & = \mathbb{E}_\pi [\sum_{k=0}^\infty \gamma^k r_{t+k+1} | s_t=s] \\
       & = \mathbb{E}_\pi [r_{t+1} + \gamma \sum_{k=1}^\infty \gamma\,^k r_{t+k+1} | s_t=s] \\
-      & = \sum_{s' \in S} P(s' \,|\, \pi(s), s)\>[r(s, \pi(s), s') + \gamma V^\pi(s')]
+      & = \sum_{s' \in S} P(s' \,|\, s, \pi(s))\>[r(s, \pi(s), s') + \gamma\, V^\pi(s')]
 \end{split}
 \end{equation}
 
@@ -253,17 +234,17 @@ where $0 \leq \gamma \leq 1$ is the discount rate. Assuming an optimal policy $\
    \end{flushright}
 \end{quote}
 \begin{equation}\label{eq:bellmanequation}
-     V^*(s) = \max_{a \in A}\sum_{s' \in S} P(s' \,|\, a, s)\>[r(s, a, s') + \gamma\, V^*(s')]
+     V^*(s) = \max_{a \in A}\sum_{s' \in S} P(s' \,|\, s, a)\>[r(s, a, s') + \gamma\, V^*(s')]
 \end{equation}
 
-The \emph{Bellman equation} shown in \Cref{eq:bellmanequation} rewrites the value estimation problem as a recursive definition of the value function. This recursion breaks the complex optimization problem into simpler subproblems, that can be solved via \emph{Dynamic Programming}\cite{bellman1957}.\\
+The \emph{Bellman equation} shown in \Cref{eq:bellmanequation} rewrites the value estimation problem as a recursive definition of the value function. This recursion breaks the complex optimization problem into simpler subproblems, that can be solved via \emph{Dynamic Programming}\cite{bellman1957}.
 
 
 
 
 
 \subsection{Value Iteration}
-Bellmanns \emph{value iteration algorithm}, recursively applies the Bellman equation to an arbitrarily initialized value function, as shown in \Cref{alg:valueIteration}.  The algorithm repeatedly computes $V^{k+1}$ for all states $s \in S$, until $V^k$ converges to $V^*$. In practice, value iteration is stopped, once the Bellmann residual (\ie the difference between both sides of the equation) falls below a predefined threshold.\\
+Bellmanns \emph{value iteration algorithm} recursively applies the Bellman equation to an arbitrarily initialized value function, as shown in \Cref{alg:valueIteration}.  The algorithm repeatedly computes $V^{k+1}$ for all states $s \in S$, until convergence: $\lim\limits_{k \rightarrow \infty}{V^k} = V^*$. In practice, value iteration is stopped, once the Bellmann residual (\ie the difference between both sides of the equation) falls below a predefined threshold $\theta$.\\
 
 \begin{algorithm}[H] 
  \caption{Value Iteration}
@@ -278,7 +259,7 @@ Bellmanns \emph{value iteration algorithm}, recursively applies the Bellman equa
      \Repeat{$\forall s \abs{V^k(s) - V^{k-1}(s)} < \theta$}{
          $k \leftarrow k + 1$\;
       	\ForEach{state $s \in S$}{
-        	  $V^k(s) = \max\limits_{a \in A}   \sum\limits_{s' \in S} P(s' \,|\, a, s)\>[r(s, a, s') + \gamma\, V^{k-1}(s')$ \;
+        	  $V^k(s) = \max\limits_{a \in A}   \sum\limits_{s' \in S} P(s' \,|\, s, a)\>[r(s, a, s') + \gamma\, V^{k-1}(s')$ \;
       	}
       }
 
@@ -287,19 +268,60 @@ Bellmanns \emph{value iteration algorithm}, recursively applies the Bellman equa
 
 Once the optimal  value function $V^*(s)$ is known, the optimal policy $\pi^*$ can simply be extracted thereof:
 \begin{equation}
-     \pi^*(s) = \arg\max_{a \in A}\sum\limits_{s' \in S} P(s' \,|\, a, s)\>[r(s, a, s') + \gamma\, V^*(s')]
+     \pi^*(s) = \arg\max_{a \in A}\sum\limits_{s' \in S} P(s' \,|\, s, a)\>[r(s, a, s') + \gamma\, V^*(s')]
 \end{equation}
 
 
 
 
 
-\subsection{Q learning}
-Transition function T often not known (\eg partially observable / stochastical environment)\\
 
-The action value function $Q^\pi: S \times A \rightarrow \mathbb{R}$ returns the expected reward (or cost) starting from state $s$, taking action $a$, and following $\pi$ thereafter:
+
+
+
+
+\subsection{Q-learning}
+A more challenging problem arises, if transition probability matrix $P: S \times A \rightarrow \mathbb{P}(S)$ and reward function $R: S \times A \rightarrow \mathbb{R}$ are unknown a priori. In such case, the \emph{model-free} reinforcement learning technique \mbox{\emph{Q-learning}} \Cite{Watkins:1989} can be utilized to learn an action-value function $Q$, based on previously observed state transitions. The action value function $Q^\pi: S \times A \rightarrow \mathbb{R}$ returns the expected reward (or cost) starting from state $s$, taking action $a$, and following $\pi$ thereafter:
 \begin{equation}
-     Q^\pi(s, a) = \mathbb{E}[R_t | s_t = s, a_t=a] = \mathbb{E}_\pi [\sum_{k=0}^\infty \gamma^k r_{t+k+1} | s_t=s, a_t=a]
+\begin{split}
+     Q^\pi(s, a) &= \mathbb{E}[R_t | s_t = s, a_t=a] \\
+     & = \mathbb{E}_\pi [\sum_{k=0}^\infty \gamma^k r_{t+k+1} | s_t=s, a_t=a] \\
+     & = \mathbb{E}_\pi [r_{t+1} + \gamma \sum_{k=1}^\infty \gamma\,^k r_{t+k+1} | s_t=s, a_t=a] \\
+     & = \sum_{s' \in S} P(s' \,|\, s, a)\>[r(s, a, s') + \gamma\, Q^\pi(s', \pi(s'))]
+\end{split}
+\end{equation}
+
+Similar to above, the optimal action-value function may be rewritten as $Q^{\pi^*} = Q^*$:
+\begin{equation}
+     Q^*(s, a) = \sum_{s' \in S} P(s' \,|\, s, a)\>[r(s, a, s') + \gamma\, \max_{a' \in A}Q^*(s', a')]
+\end{equation}
+
+The \emph{Q-learning algorithm}, shown in \Cref{alg:qlearning}, repeatedly computes $Q^{k+1}$ for previously observed transition tuples $(s, a, r, s')$, until convergence: $\lim\limits_{k \rightarrow \infty}{Q^k} = Q^*$. Convergence is guaranteed if all state-actions pairs are visited an unbounded number of times and an appropriate learning rate is chosen \Cite{Watkins92q-learning}. \\
+
+\begin{algorithm}[H] 
+ \caption{Q-learning}
+     \SetAlgoLined
+         % \footnotesize
+     
+     \KwIn{observed transitions $(s, a, r, s')$, $\alpha>0$, $\theta > 0$}
+     \KwOut{approximate of $Q^*$}
+     
+     $Q^0(s, a) \leftarrow$ arbitrary values\;
+     $k \leftarrow 0$\;
+     
+     \Repeat{$\forall s\forall a \abs{Q^k(s, a) - Q^{k-1}(s, a)} < \theta$}{
+         $k \leftarrow k + 1$\;
+      	\ForEach{sample $(s,a,r,s')$}{
+        	  $Q^k(s, a) = (1-\alpha) Q_{k-1}(s,a) + \alpha(r + \gamma \max_{a' \in A} Q^{k-1}(s', a'))]$\;
+      	}
+      }
+
+\label{alg:qlearning}
+\end{algorithm}\bigskip
+
+Once the optimal state-action function $Q^*(s, a)$ is known, the optimal policy $\pi^*$ can simply be extracted thereof:
+\begin{equation}
+     \pi^*(s) = \arg\max_{a \in A} Q^*(s,a)
 \end{equation}
 
 
@@ -308,15 +330,53 @@ The action value function $Q^\pi: S \times A \rightarrow \mathbb{R}$ returns the
 
 
 
+\subsection{Exploration}
+In environments with a large (or infinite) number of states, is is not feasible to visit all state-action pairs an unbounded number of times. Instead, the environment must be examined at the best possible rate. The agent has to carefully balance between \emph{exploration} and \emph{exploitation}, \ie between testing out previously unknown paths and refining of promising actions. As the latter may get stuck in local optima, exploration helps to find the global optimum.\\
 
-The optimal value function $V^\pi$ \emph{value iteration}
+This balancing act can be tackled by a so called $\epsilon$-greedy strategy. With a probability of $p=\epsilon \in [0,1]$ the agent takes a random action and with the remaining probability $q=1-\epsilon$ the agent takes the presumably optimal action, as deduced from his current model. As the agent consolidates his model over time, $\epsilon$ may be slowly reduced.
 
 
+\subsection{Function Approximation}
+In small environments, $V$ and $Q$-values are usually stored in a lookup table. For continuous or (infinitely) large environments function approximators are used to generalize the $V$ and $Q$-functions to previously unseen states-action pairs. Besides scalability towards arbitrarily large environments, this may even speed up the learning process, as earlier experiences are generalized to previously unseen states.\\
 
+More formally $V$ and $Q$ are replaced as follows:
+\begin{equation}
+     V(s) = V(s; \theta)
+\end{equation}
+\begin{equation}
+     Q(s, a) = Q(s, a; \theta)
+\end{equation}
+where $\theta$ refers to function parameters, that must be learned through supervised learning methods.
 
+\subsection{Supervised Learning}
+Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vector $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.\\
+
+A supervised learning algorithms seeks to find a general function $g_\theta()$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
 
 \subsection{Batch Reinforcement Learning}
 bla
+
+\begin{figure}[ht]
+	\centering
+\begin{tikzpicture}[node distance = 16em, auto, thick]
+    \node[draw] at (0, 0)   (A) {Exploration};
+    \node[draw] at (5.4, 0)   (B) {Learning};
+    \node[draw] at (10, 0)   (C) {Application};
+    \draw[dashed] (2.7,-0.8) node[minimum height=3cm,minimum width=8cm,draw, label={below left=0.15cm, xshift=1.7cm, yshift=0.6cm: growing batch learning}] {} ;
+    
+    \draw[->] (A) node[above, xshift=2.7cm] {transition set}  node[below, xshift=2.7cm] {$D = \{ (s_t, a_t r_t, s'_t)  \}$} -- (B);
+    \draw[->] (B.south) node[below, xshift=-2.7cm, yshift=-0.7cm] {exploration policy}  -- ++(-0,0) -- ++(0,-0.7) -| (A);
+    
+    \draw[->] (B) node[above, xshift=2.1cm] {policy}  -- (C);
+
+    
+%     \path [line] (Exploration.0) --++ (4em,0em) |- node [near start]{transition set} (Learning.0);
+%     \path [line] (Environment.190) --++ (-6em,0em) |- node [near start] {New state  $s_{t+1}$} (Agent.170);
+%     \path [line] (Environment.170) --++ (-4.25em,0em) |- node [near start, right] {Reward $r_{t+1}$} (Agent.190);
+\end{tikzpicture}
+	\caption{Growing Batch}
+	\label{fig:batchRL}
+\end{figure}
 
 \subsection{Tree-Based Batch Mode Reinforcement Learning}
 Randomized decision trees can be used to approximate the Q-function, as proposed by Damien Ernst \Cite{Ernst:2005:TreeBasedBatchModeRL}. The batch reinforcement learning algorithm is shown in \Cref{alg:fittedQiteration}.\\
