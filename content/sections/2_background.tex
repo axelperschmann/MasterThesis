@@ -137,6 +137,19 @@ Bitcoin is a highly volatile currency, capable of massive price changes towards 
 
 
 
+\section{Supervised Learning}
+Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vector $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.\\
+
+A supervised learning algorithms seeks to find a general function $g_\theta()$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
+
+{\color{red}Keep or Remove?! Or Move below \Cref{chap:RLfunctionapproximation}}
+
+\subsection{Random Forest}
+bla
+
+
+
+
 
 
 
@@ -249,7 +262,7 @@ Bellmanns \emph{value iteration algorithm} recursively applies the Bellman equat
 \begin{algorithm}[H] 
  \caption{Value Iteration}
      \SetAlgoLined
-         % \footnotesize
+         \footnotesize
      
      \KwIn{MDP, $\theta > 0$}
      \KwOut{approximate of $V^*$}
@@ -296,14 +309,15 @@ Similar to above, the optimal action-value function may be rewritten as $Q^{\pi^
      Q^*(s, a) = \sum_{s' \in S} P(s' \,|\, s, a)\>[r(s, a, s') + \gamma\, \max_{a' \in A}Q^*(s', a')]
 \end{equation}
 
-The \emph{Q-learning algorithm}, shown in \Cref{alg:qlearning}, repeatedly computes $Q^{k+1}$ for previously observed transition tuples $(s, a, r, s')$, until convergence: $\lim\limits_{k \rightarrow \infty}{Q^k} = Q^*$. Convergence is guaranteed if all state-actions pairs are visited an unbounded number of times and an appropriate learning rate is chosen \Cite{Watkins92q-learning}. \\
+The \emph{Q-learning algorithm}, shown in \Cref{alg:qlearning}, repeatedly computes $Q^{k+1}$ from a set of previously observed transition tuples $D = \{(s, a, r, s'), \dots{}| t=1..n\}$, until convergence: $\lim\limits_{k \rightarrow \infty}{Q^k} = Q^*$. Convergence is guaranteed if all state-actions pairs are visited an unbounded number of times and an appropriate learning rate is chosen \Cite{Watkins92q-learning}. \\
 
 \begin{algorithm}[H] 
  \caption{Q-learning}
+ 
      \SetAlgoLined
-         % \footnotesize
+     \footnotesize
      
-     \KwIn{observed transitions $(s, a, r, s')$, $\alpha>0$, $\theta > 0$}
+     \KwIn{D=$\{(s, a, r, s'), \dots{}\}$, $\alpha>0$, $\theta > 0$}
      \KwOut{approximate of $Q^*$}
      
      $Q^0(s, a) \leftarrow$ arbitrary values\;
@@ -311,7 +325,7 @@ The \emph{Q-learning algorithm}, shown in \Cref{alg:qlearning}, repeatedly compu
      
      \Repeat{$\forall s\forall a \abs{Q^k(s, a) - Q^{k-1}(s, a)} < \theta$}{
          $k \leftarrow k + 1$\;
-      	\ForEach{sample $(s,a,r,s')$}{
+      	\ForEach{sample $(s,a,r,s') \in D$}{
         	  $Q^k(s, a) = (1-\alpha) Q_{k-1}(s,a) + \alpha(r + \gamma \max_{a' \in A} Q^{k-1}(s', a'))]$\;
       	}
       }
@@ -337,24 +351,21 @@ This balancing act can be tackled by a so called $\epsilon$-greedy strategy. Wit
 
 
 \subsection{Function Approximation}
+\label{chap:RLfunctionapproximation}
 In small environments, $V$ and $Q$-values are usually stored in a lookup table. For continuous or (infinitely) large environments function approximators are used to generalize the $V$ and $Q$-functions to previously unseen states-action pairs. Besides scalability towards arbitrarily large environments, this may even speed up the learning process, as earlier experiences are generalized to previously unseen states.\\
 
 More formally $V$ and $Q$ are replaced as follows:
 \begin{equation}
-     V(s) = V(s; \theta)
+     V(s) = \hat{V}(s; \theta)
 \end{equation}
 \begin{equation}
-     Q(s, a) = Q(s, a; \theta)
+     Q(s, a) = \hat{Q}(s, a; \theta)
 \end{equation}
 where $\theta$ refers to function parameters, that must be learned through supervised learning methods.
 
-\subsection{Supervised Learning}
-Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vector $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.\\
-
-A supervised learning algorithms seeks to find a general function $g_\theta()$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
 
 \subsection{Batch Reinforcement Learning}
-bla
+In the general reinforcement learning problem, the agent observes a state $s_t$, executes an action $a_t$ and incrementally improves its policy $\pi$ in conformity with the obtained reward $r_t$ and successor state $s'_t$ in an infinite loop. In \emph{batch reinforcement learning} \Cite{Lange_batchreinforcement}, an optimal strategy should be learned out of a fixed set of known transition samples $D=\{(s,a,r,s'), \dots{}| t=1..n\}$. As shown in \Cref{fig:batchlearning}, the samples are collected a priori in an exploration phase, that is not part of the actual batch learning task.
 
 \begin{figure}[ht]
 	\centering
@@ -362,37 +373,51 @@ bla
     \node[draw] at (0, 0)   (A) {Exploration};
     \node[draw] at (5.4, 0)   (B) {Learning};
     \node[draw] at (10, 0)   (C) {Application};
-    \draw[dashed] (2.7,-0.8) node[minimum height=3cm,minimum width=8cm,draw, label={below left=0.15cm, xshift=1.7cm, yshift=0.6cm: growing batch learning}] {} ;
+    \draw[orange, dashed, line width=0.7mm] (5.4,-0.2) node[minimum height=1.6cm,minimum width=2.2cm,draw, label={above: batch learning}] {} ;
+    
+    \draw[->] (A) node[above, xshift=2.7cm] {transition set}  node[below, xshift=2.7cm] {$D = \{ (s_t, a_t r_t, s'_t)  \}$} -- (B);
+
+    \draw[->] (B) node[above, xshift=2.1cm] {policy}  -- (C);
+\end{tikzpicture}
+	\caption{Batch Reinforcement Learning}
+	\label{fig:batchlearning}
+\end{figure}
+
+Because exploration has an important impact on the achieved policy quality, more modern \emph{growing batch reinforcement learning} approaches frequently alternate between exploration and learning phase as shown in \Cref{fig:growingbatchlearning}. In doing so, the agent gets a rough idea of a good policy in order to focus on \emph{interesting} regions of the state space.
+
+\begin{figure}[ht]
+	\centering
+\begin{tikzpicture}[node distance = 16em, auto, thick]
+    \node[draw] at (0, 0)   (A) {Exploration};
+    \node[draw] at (5.4, 0)   (B) {Learning};
+    \node[draw] at (10, 0)   (C) {Application};
+    \draw[orange, dashed, line width=0.7mm] (2.7,-0.6) node[minimum height=2.3cm,minimum width=8cm,draw, label={above: growing batch learning}] {} ;
     
     \draw[->] (A) node[above, xshift=2.7cm] {transition set}  node[below, xshift=2.7cm] {$D = \{ (s_t, a_t r_t, s'_t)  \}$} -- (B);
     \draw[->] (B.south) node[below, xshift=-2.7cm, yshift=-0.7cm] {exploration policy}  -- ++(-0,0) -- ++(0,-0.7) -| (A);
-    
     \draw[->] (B) node[above, xshift=2.1cm] {policy}  -- (C);
-
-    
-%     \path [line] (Exploration.0) --++ (4em,0em) |- node [near start]{transition set} (Learning.0);
-%     \path [line] (Environment.190) --++ (-6em,0em) |- node [near start] {New state  $s_{t+1}$} (Agent.170);
-%     \path [line] (Environment.170) --++ (-4.25em,0em) |- node [near start, right] {Reward $r_{t+1}$} (Agent.190);
 \end{tikzpicture}
-	\caption{Growing Batch}
-	\label{fig:batchRL}
+	\caption{Growing Batch Reinforcement Learning}
+	\label{fig:growingbatchlearning}
 \end{figure}
 
 \subsection{Tree-Based Batch Mode Reinforcement Learning}
-Randomized decision trees can be used to approximate the Q-function, as proposed by Damien Ernst \Cite{Ernst:2005:TreeBasedBatchModeRL}. The batch reinforcement learning algorithm is shown in \Cref{alg:fittedQiteration}.\\
+Randomized decision trees can be used to approximate the parameters of $Q(s, a; \theta)$, as proposed by Damien Ernst \Cite{Ernst:2005:TreeBasedBatchModeRL}. The batch reinforcement learning algorithm is shown in \Cref{alg:fittedQiteration}.\\
 
 \begin{algorithm}[H] 
  \caption{Fitted Q Iteration}
      \SetAlgoLined
           \footnotesize
      
-     \KwIn{data, V, H, T, I, L}
+     \KwIn{$D=\{  (x_t, a_t, s_t, r_t), \dots{} | t=1..n  \}$}
 
      $\hat{Q} \leftarrow 0$\;
+     $k \leftarrow 0$\;
      \Repeat{stopping condition reached}{
+     $k \leftarrow k + 1$\;
       generate pattern set $P = \{(i^t, o^t) | t=1,.., n\}$ where\;
-      \Indp    $i^t = (x^t, a^t),$ \hspace{0.7cm}  $o^t = r_t + \gamma * max \hat{Q}^t(s_t, u)$\;
-      \Indm $\hat{Q}^{t+1} \leftarrow ^{fit} P$
+      \Indp    $i^t = (x^t, a^t),$ \hspace{0.7cm}  $o^t = r_t + \gamma * \max\limits_{u} \hat{Q}^k(s_t, u)$\;
+      \Indm $\hat{Q}^{k+1} \leftarrow ^{fit} P$
      }
 \label{alg:fittedQiteration}
 \end{algorithm}\bigskip
