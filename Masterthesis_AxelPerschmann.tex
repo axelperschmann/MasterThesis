@@ -9,6 +9,21 @@
 \newcolumntype{L}{>{$}l<{$}} % math-mode version of "l" column type
 \newcolumntype{R}{>{$}r<{$}} % math-mode version of "l" column type
 
+
+\AtBeginDocument{%
+\renewcommand\lstlistlistingname{List of Code}
+\renewcommand\listalgorithmcfname{List of Pseudo Code}
+}
+
+
+\renewcommand*\listofalgocfs{\listoftoc{loa}} 
+\newcommand*\listofloaname{\listalgorithmcfname} 
+\addtotoclist{loa} 
+\setuptoc{loa}{chapteratlist}
+
+
+
+
 %%Für scrartcl --> alternativ jeweils eine ebene tiefer
 \let\chapter\section 
 \let\section\subsection 

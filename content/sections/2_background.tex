@@ -260,7 +260,7 @@ The \emph{Bellman equation} shown in \Cref{eq:bellmanequation} rewrites the valu
 Bellmanns \emph{value iteration algorithm} recursively applies the Bellman equation to an arbitrarily initialized value function, as shown in \Cref{alg:valueIteration}.  The algorithm repeatedly computes $V^{k+1}$ for all states $s \in S$, until convergence: $\lim\limits_{k \rightarrow \infty}{V^k} = V^*$. In practice, value iteration is stopped, once the Bellmann residual (\ie the difference between both sides of the equation) falls below a predefined threshold $\theta$.\\
 
 \begin{algorithm}[H] 
- \caption{Value Iteration}
+ \caption{Value Iteration.}
      \SetAlgoLined
          \footnotesize
      
@@ -312,7 +312,7 @@ Similar to above, the optimal action-value function may be rewritten as $Q^{\pi^
 The \emph{Q-learning algorithm}, shown in \Cref{alg:qlearning}, repeatedly computes $Q^{k+1}$ from a set of previously observed transition tuples $D = \{(s, a, r, s'), \dots{}| t=1..n\}$, until convergence: $\lim\limits_{k \rightarrow \infty}{Q^k} = Q^*$. Convergence is guaranteed if all state-actions pairs are visited an unbounded number of times and an appropriate learning rate is chosen \Cite{Watkins92q-learning}. \\
 
 \begin{algorithm}[H] 
- \caption{Q-learning}
+ \caption{Q-learning \Cite{Watkins:1989}.}
  
      \SetAlgoLined
      \footnotesize
@@ -405,7 +405,7 @@ Because exploration has an important impact on the achieved policy quality, more
 Randomized decision trees can be used to approximate the parameters of $Q(s, a; \theta)$, as proposed by Damien Ernst \Cite{Ernst:2005:TreeBasedBatchModeRL}. The batch reinforcement learning algorithm is shown in \Cref{alg:fittedQiteration}.\\
 
 \begin{algorithm}[H] 
- \caption{Fitted Q Iteration}
+ \caption{Fitted Q Iteration \Cite{Ernst:2005:TreeBasedBatchModeRL}.}
      \SetAlgoLined
           \footnotesize
      

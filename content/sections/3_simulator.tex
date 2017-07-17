@@ -8,7 +8,7 @@ Since typical financial data providers must make an earning from their treasures
 
 A costless alternative exists in open cryptocurrencies, like bitcoins (see \Cref{chap:bitcoins}). The digital asset exchange platform Poloniex \cite{poloniex} provides an open API for querying detailed market data in real time. As their push API, to receive live order book updates and trades, was rather error-prone and buggy when this project started, the decision was made, to query full orderbooks on a minutely basis.\\
 
-On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots up to a market depth of 5000 from Poloniex via HTTP GET requests (see \Cref{lst:PoloniexFetch}). The volume of recorded orderbook snapshots for nine distinct currency pairs\footnote{Recorded currency pairs include USDT/BTC, BTC/ETH, BT/XMR, BTC/XRP, BTC/FCT, BTC/NAV, BTC/DASH, BTC/MAID, BTC/ZEC} has since grown to roughly 100GB (as per 2017-06-20). This thesis is based on a condensed version of the currency pair USDT/Bitcoin.
+On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots up to a market depth of $5.000$ from Poloniex via HTTP GET requests (see \Cref{lst:PoloniexFetch}). The volume of recorded orderbook snapshots for nine distinct currency pairs\footnote{Recorded currency pairs include USDT/BTC, BTC/ETH, BT/XMR, BTC/XRP, BTC/FCT, BTC/NAV, BTC/DASH, BTC/MAID, BTC/ZEC} has since grown to roughly 100GB (as per 2017-06-20). This thesis is based on a condensed version of the currency pair USDT/Bitcoin.
 
 \begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Data fetched from Poloniex via HTTP GET request, label=lst:PoloniexFetch]
 # https://poloniex.com/public?command=returnOrderBook&currencyPair=USDT_BTC&depth=5000
@@ -140,7 +140,7 @@ The simulated trade execution is triggered by an external call to \lstinline!tra
 In a first step, all eligible orders, bound by the given limit and the total trade\_volume, are cut from the internal masterbook and pasted into the \lstinline!ots.trade_history!, as such these orders are assumed be fulfilled. The \lstinline!volume! and \lstinline!cash! variables are updated accordingly.
 The simulator then moves to the next time point and adds the corresponding \emph{deltabook} to the masterbook.\\
 
-In case of order size reductions\footnote{order size may be reduced, due to order fulfillment, order updates or order cancelations through the other market participants}, negative order sizes may appear in the masterbook. They are silently dropped, assuming they where matched before they actually vanished from the market. This is a possible source of trouble, as this assumption can not be proven to be valid. As such, matching orders that are simultaneously updated to another price level, are virtually doubled. They are perceived as a new order, even though the responsible market participant has already realized an execution and no basis to submit another one.\\
+In case of order size reductions\footnote{Order size may be reduced due to order fulfillment, order updates or order cancelations through the other market participants.}, negative order sizes may appear in the masterbook. They are silently dropped, assuming they where matched before they actually vanished from the market. This is a possible source of trouble, as this assumption can not be proven to be valid. As such, matching orders that are simultaneously updated to another price level, are virtually doubled. They are perceived as a new order, even though the responsible market participant has already realized an execution and no basis to submit another one.\\
 
 \begin{figure}[ht]
 	\centering
@@ -154,7 +154,7 @@ In case of order size reductions\footnote{order size may be reduced, due to orde
 	\label{fig:masterbookadjustments}
 \end{figure}
 
-The masterbook is then ready to be queried again. Any eligible \emph{new} orders are cut from the masterbook and past into the \lstinline!ots.trade_history!. After \lstinline!period_length! steps, a detailed trading report, as shown in \Cref{tab:tradinghistory} is returned. The upper case columns represent internal variables and orderbook statistics observed at the particular period start. The lower case columns summarize the actual trade in terms of highest, lowest and average price achieved, traded volume and cash and observed costs.\\
+The masterbook is then ready to be queried again. Any eligible \emph{new} orders are cut from the masterbook and past into the \lstinline!ots.trade_history!. After \lstinline!period_length! steps, a detailed trading report, as shown in \Cref{tab:tradinghistory} is returned. The upper case columns represent internal variables and orderbook statistics observed at the particular period start. The lower case columns summarize the actual trade in terms of highest, lowest and average price achieved, traded volume, cash flow and observed costs.\\
 
 \begin{table}
 \centering

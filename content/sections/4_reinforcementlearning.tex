@@ -71,11 +71,11 @@ Since the complete trade execution happens within a finite time horizon and full
 In order to learn the optimal limit for each possible situation, orderbook windows are examined in a backward, brute-force manner as described in \Cref{alg:bruteforce:pseudocode}. Each orderbook window from the training data set is sampled $T*I*L$ times, where $T$ is the number of performed limit revisions, $I$ is the number of discrete volume states and $L$ is the number of available actions.\\
 
 \begin{algorithm}[H] 
- \caption{Optimal\_strategy, as described in \Cite{Nevmyvaka:2006}}
+ \caption{Optimal\_strategy, as described in \Cite{Nevmyvaka:2006}.}
      \SetAlgoLined
      \footnotesize
      
-     \KwIn{Transition set $\widetilde{D} = \{(x_t, a_t, s_t, r_t) $ $|$ $ t=1..n \}$}
+     \KwIn{V=70.000\$, H=60min, T=4, I=[12.5\%..100\%], L=[-4..10]}
 
 \For{t=1 to T}{
     \While{not end of data}{
@@ -153,7 +153,7 @@ After every \lstinline!retrain! exploration phases, the new samples are fit into
 In contrast to the backward sampling method, market variables may be queried on the go, such that they entail the strategies impact. Because sample trajectories stem from a continuous state space function approximations prove handy. Here a RandomForestRegressor (\ie \ac{BT}) is utilized and retrained from scratch every \lstinline!retrain! exploration phases. The alternative approach of exploiting Neural Fitted Q-iteration \Cite{Riedmiller:2005:NFQ}, has been  postphoned to future experiments.\\
 
 \begin{algorithm}[H] 
- \caption{Forward sampling and learning approach}
+ \caption{Forward sampling and learning approach.}
      \SetAlgoLined
      \footnotesize
      
@@ -175,7 +175,7 @@ Init OTS(orderbook\_window, V, H, T, L)\;
         Remember transition \{$x_t, action, cost, x_{t+1}$\}
         }
     }
-    Retrain model from collected transitions
+    Retrain model from collected transitions (growing batch)
     }
 }
 
@@ -231,9 +231,7 @@ While discretization of market variables mainly affects the strategies explanato
 \label{chap:backwardalgorithm:discussion:markovianassumption}
 The proposed backward algorithm assumes individual \lstinline!trading_periods! to be of an (approximately) Markovian nature. This is in fact not true, as the \ac{OTS}'s internal masterbook shape depends drastically from the preceding trade history.\\
 
-\Cref{fig:differingmasterbooks} shows differing masterbook shapes, that can build the base of a simulated \lstinline!trading_period!, \eg if starting at $t=45min$ and a remaining trade volume of 17.500\$.
-
-\ref{fig:differingmasterbooks:NoSim} shows the original orderbook, as if no orders had been matched by our strategy. This version of the masterbook is queried by the original backward algorithm, potentially resulting in more passive trading aggressions, as it does not account for the own impact on the market at all. \ref{fig:differingmasterbooks:SimEq} and \ref{fig:differingmasterbooks:SimMarketOrder} show two ideas, how the market impact can be incorporated. Both lead to different masterbook shapes and to different subsets of attainable prices.\\
+\Cref{fig:differingmasterbooks} shows differing masterbook shapes, that can build the base of a simulated \lstinline!trading_period!, \eg if starting at $t=45min$ and a remaining trade volume of 17.500\$. \ref{fig:differingmasterbooks:NoSim} shows the original orderbook, as if no orders had been matched by our strategy. This version of the masterbook is queried by the original backward algorithm, potentially resulting in more passive trading aggressions, as it does not account for the own impact on the market at all. \ref{fig:differingmasterbooks:SimMarketOrder} and \ref{fig:differingmasterbooks:SimEq} show two ideas, how the market impact can be incorporated. Both lead to different masterbook shapes and to different subsets of attainable prices.\\
 
 \begin{figure}[ht]
 	\centering
