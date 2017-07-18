@@ -1,6 +1,6 @@
 \chapter{Reinforcement Learning Approach}
 \label{chap:reinforcementlearning}
-This chapter describes a \ac{RL} approach, used to tackle the important problem of optimized trade execution. To a large extend, it is based on the \ac{RL} formulation, as described by Nevmyvaka \etal \cite{Nevmyvaka:2006}. Q-learning and dynamic programming are fused to find an optimal, state-based strategy from a training set of historic orderbook date. Sampling the discretized state space\footnote{The state space describes actual trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) as well as current market situation.} in a brute force manner, the authors achieved an impressive 50\% gain over the more simple Submit \& Leave Strategy (see \Cref{chap:tradingstrategies}).\\
+This chapter describes a \ac{RL} approach, used to tackle the important problem of optimized trade execution. To a large extend, it is based on the \ac{RL} formulation, as described by Nevmyvaka \etal \cite{Nevmyvaka:2006}. Q-learning and dynamic programming are fused to find an optimal, state-based strategy from a training set of historic orderbook data. Sampling the discretized state space\footnote{The state space describes actual trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) as well as current market situation.} in a brute force manner, the authors achieved an impressive 50\% gain over the more simple Submit \& Leave Strategy (see \Cref{chap:tradingstrategies}).\\
 
 Some of the assumptions made in the original approach deserve a discussion and leave room for potential improvements. As their work was based on a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from \acs{NASDAQ}, it was furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.
 
@@ -134,6 +134,7 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 \end{figure}
 
 \Cref{fig:heatmap} illustrates clearly, how the optimal strategy becomes more aggressive as time ceases and a large portion of the trading volume remains unexecuted.
+\vspace{0cm}
 
 \section{Forward learning}
 \label{chap:forwardlearning}
