@@ -28,20 +28,22 @@ This thesis tackles the important problem of \emph{optimized trade execution}, w
 \begin{figure}[ht]
 	\centering
 \begin{tikzpicture}[node distance = 16em, auto, thick]
-    \node[draw, minimum height=3cm, align=center, fill=black!5, line width=0.5mm] at (0, 0)   (A) {High Level\\Investment\\Strategy};
-    \node[draw, black, dashed, minimum height=2.8cm, minimum width=6cm, line width=0.4mm, fill=black!40] at (8.3,0.2) (X2) {};
-    \draw[->] (A.52) node[above, xshift=2.7cm] {}  node[above, align=center, xshift=0.93cm]{1. Buy x}  -- (X2.158.5);
+    \node[draw, minimum height=4.4cm, align=center, fill=black!5, line width=0.5mm] at (0, -0.5)   (A) {High Level\\Investment\\Strategy};
+    \node[draw, black, dashed, minimum height=3.4cm, minimum width=6cm, line width=0.4mm, fill=black!40] at (8.3,0) (X2) {};
+    \draw[->] (A.61) node[above, xshift=2.7cm] {}  node[above, align=center, xshift=0.93cm]{1. Buy x}  |- (X2.154);
     
-    \node[draw, black, dashed, minimum height=2.8cm, minimum width=6cm, line width=0.4mm, fill=black!20] at (7.9,-0.2) (X1) {};
-    \draw[->] (A.42) node[above, xshift=2.7cm] {}  node[below, align=center, xshift=0.93cm]{2. Sell y} -- (X1.158.5);
+    \node[draw, black, dashed, minimum height=3.4cm, minimum width=6cm, line width=0.4mm, fill=black!20] at (7.9,-0.4) (X1) {};
+    \draw[->] (A.55.9) node[above, xshift=2.7cm] {}  node[below, align=center, xshift=0.93cm]{2. Sell y} |- (X1.154);
 
-    \node[draw, orange, dashed, minimum height=2.8cm, minimum width=6cm, line width=0.7mm, fill=black!5, label={below, orange: optimized trade execution}] at (7.5,-0.6) (X) {}; 
+    \node[draw, orange, dashed, minimum height=3.4cm, minimum width=6cm, line width=0.7mm, fill=black!5, label={below, orange: optimized trade execution}] at (7.5,-0.8) (X) {}; 
 
     \node[draw, minimum height=1.2cm, align=center] at (5.4, 0)   (B) {Place\\order};
     \node[draw, minimum height=1.2cm, align=center] at (9.4, 0)   (C) {Monitor\\progress};
+    \node[draw, align=center] at (9.4, -2)   (D) {Done};
     
-    \draw[->] (A.-30) node[above, xshift=1.52cm] {3. Buy Bitcoins}  node[below, align=center, xshift=1.7cm]{for $70.000\$$,\\within 60min} -- (X);
+    \draw[->] (A.-15) node[above, xshift=1.52cm] {3. Buy Bitcoins}  node[below, align=center, xshift=1.7cm]{for $70.000\$$,\\within 60min} |- (X);
     \draw[->] (C.south) node[below, xshift=-1.8cm, yshift=-0.7cm] {revise order}  -- ++(-0,0) -- ++(0,-0.7) -| (B);
+    \draw[->] (C.south)  -- (D);
     \draw[->] (B) node[above, xshift=1.8cm] {(partial)} node[below, xshift=1.8cm] {execution}  -- (C);
 
 \end{tikzpicture}
@@ -58,21 +60,31 @@ The scope of this thesis is to examine and improve the reinforcement learning ap
 
 While most research is performed on traditional stock markets with expensive, proprietary data sources, this was simply out of budget for this work. Instead, the relatively young market of bitcoin trading is assessed, as it offers inexpensive access to real-time prices through publicly retrievable interfaces. Snapshots of the current market situations are retrieved on a low-resolution, minute-scale basis from the open bitcoin exchange platform Poloniex\footnote{\url{http://www.poloniex.com}}. Consequently, the usability of the retrieved dataset is analyzed.
 
+
+
 \section{Related Work}
 \label{sec:relatedwork}
-x
+bla
+
+
 
 \section{Contributions}
 \label{sec:contributions}
+The following contributions to the problem of optimized trade execution have been made by this work:
 \begin{itemize}
-\item An orderbook trading simulator framework is presented which takes into account the individual traders influence on the current market situation.
+\item With the \ac{OTS}, a full-featured reinforcement learning environment for the simulation of trade execution is presented. It simulates the execution of orders on historic orderbook data and returns vital feedback to steer reinforcement learning agents towards optimal decisions.
+
+\item An existing reinforcement learning approach, deriving valuable strategies from a discretized state space in a brute force manner, has been examined and could be improved in detail. As an example, the proposed backward-sampling method neglected the agents own impact on the market situation. It was found, that the agents cost reducing capabilities may be further improved, if this impact is incorporated properly.
+
+\item A novel reinforcement learning approach is presented, that applies growing batch reinforcement learning on the problem of optimal trade execution. The proposed forward-sampling method samples from a more realistic, continuous state space and outperforms the foremost algorithm.
 
 \end{itemize}
 
 \section{Outline of Contents}
 \label{sec:outline}
 The remainder of this thesis is structured as follows:\\
-\Cref{chap:background} gives a general introduction into the vocabulary of financial computing and the machine learning techniques employed, \Cref{chap:simulator} describes the Orderbook Trading  Simulator, developed within the scope of this thesis, and \Cref{chap:reinforcementlearning} covers the machine learning part. \Cref{chap:conclusion} closes with a conclusion and discussion.
+
+\Cref{chap:background} gives a general introduction into the vocabulary of financial computing and the machine learning techniques employed, \Cref{chap:simulator} describes the \acl{OTS}, that provides a full-featured reinforcement learning environment. \Cref{chap:reinforcementlearning} describes and discusses both reinforcement learning approaches, \ie the original brute-force method and the novel forward learning method. \Cref{chap:orderbookagents} evaluates the performance of several trading agents emerged and \Cref{chap:conclusion} closes with a conclusion and discussion.
 
 
 \cleardoublepage{}
