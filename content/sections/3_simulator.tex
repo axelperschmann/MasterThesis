@@ -1,12 +1,15 @@
 \chapter{Orderbook Trading Simulator}
 \label{chap:simulator}
-This chapter describes the \ac{OTS} and it's underlying OrderbookContainers, implemented within the scope of this thesis. Fed with historic orderbook data it serves as a backtesting framework for testing out various trading strategies. The \ac{OTS} provides detailed feedback in terms of trading progress, achieved prices and accrued costs.
+As reinforcement learning requires agents to interact with an environment, a trading simulation framework is implemented. The accrued \acf{OTS} provides a full-featured reinforcement learning environment, that simulates the execution of orders on historic data and returns vital feedback to steer the agent towards optimal decisions.\\
+
+This chapter describes the origin and quality of the assessed orderbook data, as well as the \ac{OTS} and it's underlying OrderbookContainers.
+
 
 \section{Data Origin}
 \label{chap:dataorigin}
 Since typical financial data providers must make an earning from their treasures, they typically only deliver delayed market data on a complimentary basis. Investors dependent on real time or level 2 market data (see \Cref{sec:marketdata:levels}) are usually charged horrendous monthly subscription fees.\\
 
-A costless alternative exists in open cryptocurrencies, like bitcoins (see \Cref{chap:bitcoins}). The digital asset exchange platform Poloniex \cite{poloniex} provides an open API for querying detailed market data in real time. As their push API, to receive live order book updates and trades, was rather error-prone and buggy when this project started, the decision was made, to query full orderbooks on a minutely basis.\\
+A costless alternative exists in open cryptocurrencies, like bitcoins (see \Cref{chap:bitcoins}). The digital asset exchange platform Poloniex \footnote{\url{http://www.poloniex.com}} provides an open API for querying detailed market data in real time. As their push API, to receive live order book updates and trades, was rather error-prone and buggy when this project started, the decision was made, to query full orderbooks on a minutely basis.\\
 
 On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots up to a market depth of $5.000$ from Poloniex via HTTP GET requests (see \Cref{lst:PoloniexFetch}). The volume of recorded orderbook snapshots for nine distinct currency pairs\footnote{Recorded currency pairs include USDT/BTC, BTC/ETH, BT/XMR, BTC/XRP, BTC/FCT, BTC/NAV, BTC/DASH, BTC/MAID, BTC/ZEC} has since grown to roughly 100GB (as per 2017-06-20). This thesis is based on a condensed version of the currency pair USDT/Bitcoin.
 
@@ -23,6 +26,8 @@ On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots 
 \end{figure}
 
 \Cref{fig:ploniexPriceHistory} shows the price evolution of currency pair USDT/Bitcoin over the period of recording. Prices have burst from roughly $700\$$ to more than $2.000\$$. Red and green lines depict the relative difference between the worst price paid/received for an immediate market order of $\pm70.000\$$ respectively\footnote{With a total trading volume of roughly $40.000.000\$$ per day (see \Cref{chap:bitcoin:volatility}), these $\pm70.000\$$ refer to roughly $4.2\%$ thereof.}.
+
+\hspace{1cm}
 
 \section{Data preprocessing}
 \label{chap:preprocessing}
@@ -83,7 +88,7 @@ Each simulator instance is fed with an array of subsequent OrderbookContainers (
 
 In the rare case of missing orderbook snapshots (see \Cref{chap:preprocessing}), the \emph{real} time horizon may be larger than usual, since always $H$ subsequent orderbooks are selected. By default, the \ac{OTS} refuses to work with orderbook windows, whose actual length differs from the presumed length by more than two minutes.\\
 
-Limit orders may be placed at predefined, discrete time steps within the trading horizon $H$. This is done though the simulators main interface method \lstinline!trade(limit=...)!. The simulator is done, once the remaining trading volume is zero, which is enforced at the very last time point. Any remaining volume at $H-1$ is transformed into a simple market order and executed immediately, at any price. Additional parameters control the simulators precise behavior:
+Limit orders may be placed at predefined, discrete time steps within the trading horizon $H$. This is done through the simulators main interface method \lstinline!trade(limit=...)!. The simulator is done, once the remaining trading volume is zero, which is enforced at the very last time point. Any remaining volume at $H-1$ is transformed into a simple market order and executed immediately, at any price. Additional parameters control the simulators precise behavior:
 
 \begin{description}
 \item[volume] : The targeted trading volume $V$.\\
@@ -105,9 +110,9 @@ Defines which of multiple cost functions to use in the reports returned.
 
 \subsection{Orderbook and strategy visualization}
 
-\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (\ref{fig:orderbookwindow:avg}) and \emph{worst} (\ref{fig:orderbookwindow:worst}) price, that has to be paid at a given time point, in case of an immediate market order of $100$, $75$, $50$ and $25$ bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of $-25$, $-50$, $-75$ and $-100$ bitcoins.\\
+\Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (\ref{fig:orderbookwindow:avg}) and \emph{worst} (\ref{fig:orderbookwindow:worst}) price, that has to be paid at a given time point, in case of an immediate market order of $100$, $75$, $50$ and $25$ bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of $-25$, $-50$, $-75$ and $-100$ bitcoins respectively.\\
 
-As can be seen in this graph, ask prices deviate more from the center price than bid prices. An plausible inference might be, that imbalances between demand and supply might serve as a valuable indicator for future price trends.
+As can be seen in this graph, ask prices (red) deviate slightly more from the center price than bid prices (green) do. An plausible inference is, that imbalances between demand and supply might serve as a valuable indicator for future price trends.
 
 \begin{figure}[ht]
 	\centering
@@ -129,7 +134,7 @@ As can be seen in this graph, ask prices deviate more from the center price than
 \end{figure}
 
 \subsection{Masterbook}
-During instantiation, the \ac{OTS} creates a copy of the first orderbook, called the \emph{masterbook}. Hereinafter executed trades do only affect this internal \emph{masterbook}. The remaining orderbooks are then converted into \emph{deltabooks}, containing only changes between subsequent orderbooks.\\
+During instantiation, the \ac{OTS} creates a copy of the first orderbook, called the \emph{masterbook}. Hereinafter, executed trades do only affect this internal \emph{masterbook}. The remaining orderbooks are then converted into \emph{deltabooks}, containing only changes between subsequent orderbooks.\\
 
 The \ac{OTS} may be reset to its initial state at any time via \lstinline!ots.reset()!. This avoids computational overhead, when testing out multiple strategies on the same \emph{window}, as only \emph{masterbook} and \emph{history} are reset, while \emph{deltabooks} need not be recomputed and \emph{orderbooks} need not be retransferred. \lstinline!ots.reset()! provides optional parameters for modifying the simulators start conditions. As such the simulator might be instructed to start at a \lstinline!custom_starttime! or with a \lstinline!custom_startvolume!, to simplify the exploration of possible strategies.
 
@@ -178,12 +183,16 @@ A visual representation of the same trading strategy, which underlies \Cref{tab:
 
 The second subplot displays trade executions and declining trade volume over time and the bottom subplot displays induced costs. Expected costs conform to the respective accumulated costs, extrapolated to the full trade volume.
 
+
 \begin{figure}[ht]
 	\centering
    \includegraphics[width=0.8\textwidth]{content/drawings/trading_example17_good}
 	\caption{Visualization of an exemplary trading strategy.}
 	\label{fig:tradingstrategy17good}
 \end{figure}
+
+A total slippage of $340.86\$$ was generated, whereas a simple market order would have cost $784.32\$$.
+
 
 \subsection{Model correctness}
 \label{chap:modelcorrectness}
