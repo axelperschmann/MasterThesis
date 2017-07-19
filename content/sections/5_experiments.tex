@@ -1,103 +1,15 @@
-\chapter{Orderbook Agents}
+\chapter{Discussion and Experiments}
 \label{chap:orderbookagents}
-This chapter describes several \emph{Orderbook Agents}, implemented to learn optimal \emph{Submit \& Revise} trading strategies from a given training data set.
+This chapter summarizes various experiments, that have been conducted to examine the agents ability to find optimal solutions to the problem of optimized trade execution. The recorded orderbook snapshots for currency pair USDT/BTC (see \Cref{chap:dataorigin}) have been split into training period (Nov, 10th 2016 - Apr, 30th 2017) and test period (May 2017).\\
 
+All experiments refer to the very same environment settings. The agents common task is to buy Bitcoins worth of 70.000\$ within a trading horizon of 60 minutes. The problem definition is opposed to the task evaluated by Nevmyvaka \etal \cite{Nevmyvaka:2006}, where the number of shares (respectively Bitcoins) was fixed, rather than the amount of cash.\\
 
-\section{Implementation}
-\label{chap:experiments:implementation}
-Each \emph{Orderbook Agents} inherits some commonly shared functionality from the super class \lstinline!class RL_Agent_Base!. This base class provides a consistent framework, allowing to swap the logic behind \lstinline!learn_from_samples! and \lstinline!predict! only, while general functionality like \lstinline!load!, \lstinline!save!, \lstinline!plot_heatmap_Q! and \lstinline!collect_samples! may be reused.\\
-
-An \emph{Orderbook Agent} holds the environment parameters, used to initialize the \ac{OTS}. As such, different definitions for the optimal trading problem require different Orderbook Agents.
-
-
-\subsection{Backward Sampling \& Learning}
-The process of sampling from training data and learning optimal state-action values is split into two independent phases, mostly due to performance\footnote{The backward sampling phase for the example mentioned in \Cref{chap:backwardlearning}, took roughly 10 hours, even though the work load was distributed among 24 CPU's.} reasons. In the \emph{sampling phase}, all possible combinations of actions and private variables are evaluated and stored as 5-tuples $sample=(state, action, cost, timestamp, new\_state)$. As market variables are supposedly not influenced by the agents behavior (see \Cref{chap:statespace}), it suffices to remember the orderbooks time point, to allow adjacent substitution of market variables.\\
-
-Samples are stored as DataFrame and may be exported and reused by other agents\footnote{Both agents should refer to the same environment settings, as samples collected from different environments (\eg trading horizon of $H=8min$ vs. $H=60min$) may not be compatible.}, as wished. This allows to skip the time consuming process of backward sampling. Before the action learning phase starts, the collected samples may be enhanced by a variety of market variables, discretized or untouched. The helper function \lstinline!addMarketFeatures_toSamples()! retrospectively adds market variables to the agents samples DataFrame.\\
-
-If desired, features are discretized according to their individual value range.\\
-\Eg a chosen resolution of 3, evenly transforms feature $o_m$ into $o_{m\_disc3}$, according to automatically determined boundaries: \\
-0 (if $o_m< 1/3$ quantile), 1 (if $1/3 \leq o_m < 2/3$ quantile) and 2 (if $o_m \geq 2/3$ quantile). Boundaries arise from the training data and are applied to test data unaltered.\\
-
-The learning phase starts hereinafter, whereas two types of orderbook agents have been implemented and experimented with, each of which employ different techniques:
-
-\begin{description}
-\item[QTable\_Agent] : Dynamic Programming as described in \Cref{chap:backwardlearning}.\\
-Expected state-values are stored in a simple lookup table, hence discretization of the state space is required. For each state, a vector of length $L=num\_actions$ is maintained, of which the first argmin refers to the optimal action. The \emph{QTable} does not generalize to previously unobserved states and returns the very first action (here -4) by default. For proper cost-updates an additional \emph{NTable} is maintained, referencing the particular number of observations made.\\
-QTable and NTable entries are computed in an iterative manner. In the first round, all samples with \lstinline!time_left=1! are evaluated, in the second round all samples with \lstinline!time_left=2!, \etc The private variable \lstinline!volume! is discretized according to the specified resolution and linear cost scaling (see \Cref{chap:backwardalgorithm:discussion:costscaling}) is performed.
-
-\item[BatchTree\_Agent]: Tree-Based Batch Mode Reinforcement Learning \Cite{Ernst:2005:TreeBasedBatchModeRL}.\\
-An ensemble of 400 decision trees, with a maximum allowed depth of 15 is fed with the full batch of samples simultaneously, no discretization required. $T$ learning rounds are performed, to completely allow expected costs to unfold over the given time horizon.\\
-The state space is enlarged by an extra dimension for the chosen action. Predicting the optimal action to choose for a given state, the ensemble must predict $L=num\_actions$ q-values, from which the argmin refers to the optimal action.
-
-%\item[NN\_Agent] : Neural fitted Q Iteration \Cite{Riedmiller:2005:NFQ}.\\
-%A simple multi layer perceptron with 400 hidden units and 1 output neuron is trained in mini batches of size 4.096, optimized over multiple epochs by Adam\Cite{Kingma:2014:Adam} with a learning rate of 0.01. As with the BatchTree\_Agent, no state space discretization is required and actions are included into the state space. $L$ predictions are required, to obtain the optimal action.
-\end{description}
-
-
-
-
-
-\section{Backward Sampling Experiments}
-\label{chap:experiments}
-Various experiments have been conducted to examine the agents ability to find optimal solutions to the problem of optimized trade execution. The recorded orderbook snapshots for currency pair USDT/BTC (see \Cref{chap:dataorigin}) have been split into training period (Nov, 10th 2016 - Apr, 30th 2017) and test period (May 2017).\\
-
-The studied agents refer to the very same environment settings. Their common task is to buy Bitcoins worth of 70.000\$ within a trading horizon of 60 minutes. The problem definition is opposed to the task evaluated by Nevmyvaka \etal \cite{Nevmyvaka:2006}, where the number of shares (respectively Bitcoins) was fixed, rather than the amount of cash.\\
-
-The training set translates into 4.154 orderbook windows, while the test set gives 724 orderbook windows. A period\_length of 15 minutes is assumed, such that the \ac{OTS} expects up to 4 order limit prices. After an initial backward sampling phase, the obtained samples-DataFrame makes the base for varying learning phases.
-
-\subsection{Action-Limit Mapping}
-\label{chap:exp:actionlimitmapping}
-As mentioned in \Cref{chap:backwardalgorithm:discussion:actionspace}, it seems pointless to force actions to cross the bid-ask-spread before any orders can be matched. \Cref{fig:actionlimitmapping} shows exemplary for November 2016, how the choice of the limit base affects the agents trading performance. While buy orders, forcing agents to cross the bid-ask-spread (\ie \lstinline!currBid*!), typically benefit from the two market variables \lstinline!spread! and \lstinline!marketSpread!, this is not necessarily the case for agents which have the limit base fixed to the opposing best price (\ie \lstinline!currAsk*!). As the latter agents consistently showed better performance, the limit base is henceforth fixed to the best price of the corresponding trading direction.\\
-
-\begin{table}[ht]
-	\centering
-	%
-	%\begin{subfigure}[b]{0.6\textwidth}
-        %		\centering
-        	%	\includegraphics[width=\textwidth]{content/drawings/performance_limitBase_nov}
-        %		\caption{Slippage.}
-%		\label{fig:actionlimitmapping:plot}
-  %  	\end{subfigure}%
-	%\begin{subfigure}[b]{0.40\textwidth}
-        %		\centering
-		\scalebox{0.7}{
-\rowcolors{1}{}{black!5}
-\begin{tabular}{|lRR|}
-\toprule
-{} &           slippage & performance \\
-\midrule
-currBid         	     &  220.19 & 92.6\%\\
-currBid\_mSpread &  218.71 & 91.9\%\\
-currBid\_spread     &  215.76 & 90.7\%\\
-\midrule
-currAsk                  &  214.00 & 90.0\%\\
-currAsk\_mSpread &  214.53 &90.2\%\\
-currAsk\_spread    &  215.38 & 90.6\%\\
-\midrule
-S\&L: 5         	      & 237.75 & 100.0\%\\
-MarketOrder          & 737.58 & 310.2\%\\
-\bottomrule
-\end{tabular}	
-		} % \vspace{1.5cm}      		 
-   %     		\caption{Mean slippage.}
-%		\label{fig:actionlimitmapping:mean}
-    	%\end{subfigure}
-
-	\caption{Evaluating the impact of different limit base levels.}
-	Results stem from applying the respective strategies on all 537 orderbook windows recorded between Nov, 10th 2016 and Nov, 30th 2016.
-	\label{fig:actionlimitmapping}
-\end{table}
-
-In order to produce comparable results, all subsequent experiments are based on the same set of 15 actions: $[-4, -3, ..., 8, 9, 10]$. In line with the formulas presented in \Cref{chap:backwardalgorithm:discussion:actionspace}, these actions translate into order limits deviating by $-0.4\%$ to $+1.0\%$ from the current best price.
-
+The training set translates into 4.154 orderbook windows, while the test set gives 724 orderbook windows. A period length of 15 minutes is assumed, such that the \ac{OTS} expects up to $T=4$ order limit prices. Private variable \lstinline!volume! is discretized in 8 intervals, \ie $I=[8.750\$,..,70.000\$]$, and the action space consists of fifteen actions $L=[-4, -3, ..., 8, 9, 10]$. In line with the formulas presented in \Cref{chap:actionspace}, these actions translate into order limits deviating by $-0.4\%$ to $+1.0\%$ from the current best price.
 
 
 \subsection{Baseline}
 \label{chap:experiments:baseline}
 Simple \ac{SL} strategies (see \Cref{chap:tradingstrategies}) and immediate market order placements serve as benchmark for the performance measurement.\\
-
-Due to bursting Bitcoin prices (see \Cref{fig:ploniexPriceHistory}), the investigated sum of 70.000\$ constitutes a declining contingent of the total market volume. \Cref{fig:runningmean:marketPrice} shows a running average over the amount of slippage, as induced by immediate market orders. Concurrent to declining slippage, the optimal \ac{SL} actions become less aggressive as time passes. The green, dashed lines show the respective average over the train period, which significantly differs from the red, dotted line referring to the average over the test period. \Cref{fig:bestAction} shows the average costs, induced by varying \ac{SL} strategies within the training period.\\
 
 \begin{figure}[ht]
 	\centering
@@ -126,14 +38,89 @@ Due to bursting Bitcoin prices (see \Cref{fig:ploniexPriceHistory}), the investi
 	\label{fig:bestAction}
 \end{figure}
 
+Due to bursting Bitcoin prices (see \Cref{chap:dataorigin}, \Cref{fig:ploniexPriceHistory}), the investigated sum of 70.000\$ constitutes a declining contingent of the total market volume. \Cref{fig:runningmean:marketPrice} shows a running average over the amount of slippage, as induced by immediate market orders. Concurrent to declining slippage, the optimal \ac{SL} actions become less aggressive as time passes. The green, dashed lines show the respective average over the training period, which significantly differs from the red, dotted line referring to the average over the test period. \Cref{fig:bestAction} shows the average costs, induced by varying \ac{SL} strategies within the training period.\\
+
 In order to provide a more realistic and unexaggerated baseline, the optimal \ac{SL} action is estimated from the test period. As such, performance of subsequents experiments are compared to the performance of a simple market order and the \ac{SL} strategy "2", with the initial order limit fixed to 1.002 times the initial ask (\ie $+0.2\%$).
+
+
+\section{Examined Issues}
+\label{chap:backwardalgorithm:discussion}
+While the presented backward algorithm exploits the available data profoundly in a brute force manner, the underlying assumptions deserve a short discussion. Alternative formulations are tested out, to potentially improve the algorithms cost saving capabilities.
+
+\subsection{Action-Limit Mapping}
+\label{chap:backwardalgorithm:discussion:actionspace}
+By fixing the limit base at the best price of the \emph{opposing} book, it appears obvious, that decisions derived from state spaces including a variable for the current spread size, outperform decisions derived from state spaces not including this market variable. Indeed, in the original paper\Cite{Nevmyvaka:2006} the bid-ask spread was posed as the market variable causing the greatest individual impact on cost reduction, namely -$7.97\%$, which is a major fraction of the maximum achievement of  $-12.85\%$\footnote{Strategies derived from five dimensional state spaces including the market variables Spread, ImmCost \& Signed Vol, as described in \Cref{chap:costs}, outperformed strategies derived from two dimensional state spaces, containing the private variables only, by $-12.85\%$ in average.}.\\
+
+The influence of moving the limit base to the opposite book, as proposed in \Cref{chap:actionspace}, is analyzed in \Cref{chap:exp:actionlimitmapping}.
+
+
+\subsection{Discrete State Space}
+The most obvious weakness of the discrete backward approach lies in its vulnerability to seldomly observed market situations. Since the state-action function is implemented as a simple lookup table without any generalization capabilities, it is strictly dependent on a thorough exploration of the underlying state space. As exhaustive exploration is enforced for the value range of private variables only, market variables are entrusted to chance. Especially when increasing the state space dimension by adding multiple market variables simultaneously, the explanatory power of a learned state-action mapping depends crucially on the number of underlying observations. There exists even the chance of certain states never been monitored at all during the training phase.\\
+
+Consequently, the impact of different market variables at varying levels of discretization is examined, starting in \Cref{chap:exp:additionalmarketvars}. Eventually, the effect of replacing the underlying lookup table with function approximators is studied in \Cref{chap:experiment:functionApprox}. 
+
+
+
+
+
+\subsection{Markov Property}
+\label{chap:backwardalgorithm:discussion:markovianassumption}
+The proposed backward algorithm (see \Cref{chap:backwardlearning}, \Cref{alg:bruteforce:pseudocode}) assumes individual \lstinline!trading_periods! to be of an (approximately) Markovian nature. As explained in \Cref{chap:backwardapproach:precedingTrades}, the \ac{OTS}'s internal masterbook shape depends drastically from the preceding trade history. Since all relevant information from the history must be taken into account, two approaches are examined, that aim to generate more realistic samples and as such to strengthen the Markov Property of states:\\
+
+The advantage of the improved backward algorithm, that takes preceding trades into account (see \Cref{chap:backwardapproach:precedingTrades}, \Cref{alg:bruteforceimproved:pseudocode}), is shown in \Cref{chap:exp:simulatedTrades}. \Cref{chap:experiments:forward} demonstrates, that the novel forward sampling algorithm described in \Cref{chap:forwardlearning} outperforms all other methods, as strategies are derived from a more realistic set of sample transitions.
+
+% than that, a more realistic sampling method may be applied: The forward sampling process, described in \Cref{chap:forwardlearning}, approaches sampling from the other side. Rather than evaluating actions on individual \lstinline!trading_periods!, the \ac{OTS} always starts with $V=100 \% $ and keeps going until the full trade is executed. As such, more realistic samples are generated. This does not give the problem a Markovian nature, but the internal masterbook is always of a realistic shape. In contrast to the backward approach, exhaustive exploration of the state space is not self-evident and must be enforced.
+%As a side benefit, the forward sampling approach generates more versatile samples for training the function approximates, as the generated samples do not necessarily start at \emph{discrete} start points only.
+
+
+
+
+
+
+
+\section{Backward Learning Experiments}
+\label{chap:experiments}
+In the following, backward learning experiments that paved the way towards improved trade execution strategies are presented.
+
+\subsection{Action-Limit Mapping}
+\label{chap:exp:actionlimitmapping}
+As mentioned in \Cref{chap:backwardalgorithm:discussion:actionspace}, it seems pointless to force actions to cross the bid-ask-spread before any orders can be matched. \Cref{fig:actionlimitmapping} shows exemplary for November 2016, how the choice of the limit base affects the agents trading performance.\\
+
+\begin{table}[ht]
+	\centering
+		\scalebox{0.7}{
+\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRR|}
+\toprule
+{} &           slippage & performance \\
+\midrule
+currBid         	     &  220.19 & 92.6\%\\
+currBid\_mSpread &  218.71 & 91.9\%\\
+currBid\_spread     &  215.76 & 90.7\%\\
+\midrule
+currAsk                  &  214.00 & 90.0\%\\
+currAsk\_mSpread &  214.53 &90.2\%\\
+currAsk\_spread    &  215.38 & 90.6\%\\
+\midrule
+S\&L: 5         	      & 237.75 & 100.0\%\\
+MarketOrder          & 737.58 & 310.2\%\\
+\bottomrule
+\end{tabular}	
+		} 
+	\caption{Evaluating the impact of different limit base levels.}
+	\small Results stem from applying the respective strategies on all 537 orderbook\\ windows recorded between Nov, 10th 2016 and Nov, 30th 2016.
+	\label{fig:actionlimitmapping}
+\end{table}
+
+While buy orders, forcing agents to cross the bid-ask-spread (\ie \lstinline!currBid*!), typically benefit from the two market variables \lstinline!spread! and \lstinline!marketSpread!, this is not necessarily the case for agents which have the limit base fixed to the opposing best price (\ie \lstinline!currAsk*!). As the latter agents consistently showed better performance, the limit base is henceforth fixed to the best price of the corresponding trading direction.
+
 
 
 
 
 \subsection{Additional Market Variables}
 \label{chap:exp:additionalmarketvars}
-In addition to the market variables proposed in \Cref{chap:actionspace}, the following orderbook features have been examined:
+In addition to the originally proposed market variables (see \Cref{chap:statespace}), the following orderbook features have been examined:
 
 \begin{description}
 \item[marketPrice*] describes the relative difference between current center price and the worst price that must be paid (or is received) in case of simple market orders.
@@ -141,9 +128,9 @@ In addition to the market variables proposed in \Cref{chap:actionspace}, the fol
 \item[sharecount\_*] quotes the number of Bitcoins, immediately available for $70.000\$$.\\
 \lstinline!sharecount_buy! is tantamount to the originally proposed \lstinline!ImmCost! (See \Cref{chap:backwardalgorithm:discussion:subjectTrade}).
 
-\item[center\_price] was added as a consequence of \Cref{fig:runningmean}: Apparently, as the ratio between current Bitcoin price and the investable $70.000\$$ increases, an optimal strategy may have to place less aggressive order limits.
+\item[center\_price] was added as a consequence of the findings from \Cref{chap:experiments:baseline}, \Cref{fig:runningmean}: Apparently, as the ratio between current Bitcoin price and the investable $70.000\$$ increases, an optimal strategy may have to place less aggressive order limits.
 
-\item[\_a*\_effects] quotes the minimum volume immediately obtainable by individual actions. The value is a lower bound of the truly obtainable volume, because only the current orderbook is retrievable. New opportunities, arising within the forthcoming \lstinline!trading_period! are unacquainted and not included. Results are shown in \Cref{chap:eval:additionalMarketVariables:actioneffects}.
+\item[\_a*\_effects] quotes the minimum volume immediately obtainable by individual actions. The value is a lower bound of the truly obtainable volume, because only the current orderbook is retrievable. New opportunities, arising within the forthcoming \lstinline!trading_period! are unacquainted and not included.
 \end{description}
 
 
@@ -345,7 +332,7 @@ MarketOrder                    &    277.49 &  246.48 &  158.66 &   +79.14\% &   
 
 \end{table}
 
-The backward sampling phase is modified, such that prior to the actual trade simulations, the supposedly consumed trading volume is removed from the masterbook. The trading volume affected is matched and removed from the masterbook evenly along the elapsed time, as is indicated in \Cref{fig:differingmasterbooks:SimEq}.\\
+The backward sampling phase is modified, such that prior to the actual trade simulations, the supposedly consumed trading volume is removed from the masterbook. The trading volume affected is matched and removed from the masterbook evenly along the elapsed time, as is indicated in \Cref{chap:backwardapproach:precedingTrades}, \Cref{fig:differingmasterbooks:SimEq}.\\
 
 
 \Cref{tab:eval:additionalMarketVariables:simulatedTrades} attests a clear improvement over the original sampling method, if preceding trades are incorporated into the \ac{OTS} masterbook. \Cref{fig:heatmap:VolTimeSimpre} shows, how the plain \lstinline!VolTime!-agent becomes slightly more aggressive,  which improves the performance over the optimal \ac{SL} strategy from $-2.76\%$ to $-4.55\%$.\\
@@ -378,7 +365,7 @@ The best performing \lstinline!VolTimeSpread_disc5!-agent now undercuts costs in
 
 \Cref{tab:eval:additionalMarketVariables:_a_} evaluates the impact of adding (lower bound) knowledge about consequences of individual actions to the state space. That way, \lstinline!_a_4_! quotes the minimum volume immediately obtainable by a limit order placed $+0.4\%$ above the current ask price.\\
 
-Potentially due to coarse discretization, these variables cause no major impact. All \lstinline!_a*_!-agents perform worse than the underlying \lstinline!VolTime_simulatedTrades!-agent.
+Potentially due to coarse discretization, these variables cause no major impact. Almost all \lstinline!_a*_!-agents perform worse than the underlying \lstinline!VolTime_simulatedTrades!-agent.
 
 \begin{table}[ht]
 	\centering
@@ -419,6 +406,7 @@ MarketOrder &    277.49 &  246.48 &  158.66 &  +79.14\% &   +57.33\% &    0.00\%
 
 
 \subsection{Function Approximation: BatchTree}
+\label{chap:experiment:functionApprox}
 In the next step the look-up table is replaced by an approximation thereof. This eliminates any need for discretization, avoids the cost scaling problem and as such, potentially helps to exploit the underlying sample transitions better. Various \ac{BT}-Agents are trained on the sample transitions collected by the improved backward collection process (see \Cref{chap:exp:simulatedTrades}). Results are shown in \Cref{tab:eval:BatchTree:simPreTrades}.\\
 
 \begin{table}[ht]
@@ -482,15 +470,15 @@ Conversely, a \ac{BT}-agent trained on all fifteen \lstinline!_a*_effects!-varia
 
 
 
-\section{Forward Sampling Experiments}
+\section{Forward Learning Experiments}
 \label{chap:experiments:forward}
-Based on the same training data and simulator settings as used in the Backward Sampling Experiments, the novel forward sampling approach (see \Cref{chap:forwardlearning}) is applied.\\
+Based on the same training data and simulator settings as used in the preceding Backward Learning Experiments, the novel forward sampling approach (see \Cref{chap:forwardlearning}) is examined.\\
 
-A \ac{BT}-agent samples from the previously shuffled training data, following an $\epsilon$-greedy strategy. In each exploration phase the respective orderbook window is run through up to 60 times, while only disparate paths are traced. After every 256 exploration phases, the underlying RandomForestRegressor is retrained from scratch, using all transition samples collected to this point. Intermediate models are stored, to document the learning progress over time. The continuous state space consists of both private variables and fifteen minimum-consequence-variables (\ie \lstinline!_a*_!) as introduced in \Cref{chap:exp:additionalmarketvars}.\\
+The \lstinline!BT_Forward!-agent samples from the previously shuffled training data, following an $\epsilon$-greedy strategy. In each exploration phase the respective orderbook window is run through up to 60 times, while only disparate paths are traced. After every 256 exploration phases, the underlying RandomForestRegressor is retrained from scratch, using all transition samples collected to this point. Intermediate models are stored, to document the learning progress over time. The continuous state space consists of both private variables and the fifteen action-effect-variables \lstinline!_a*_!, as introduced in \Cref{chap:exp:additionalmarketvars}.\\
 
 The performance of all sixteen intermediate models is shown in \Cref{tab:eval:ForwardSampling:BT}. Starting vaguely halfway through the training data, the \lstinline!BT_Forward!-agent outperforms all previously examined agents, before the final model constitutes the overall winner with an improvement of $-11.41\%$ over the optimal \ac{SL} strategy.\\
 
-\begin{table}[ht]
+\begin{table}[h!]
 	\centering
 	\scalebox{0.6}{
 \rowcolors{1}{}{black!5}
@@ -530,7 +518,7 @@ MarketOrder                    &    277.49 &  246.48 &  158.66 &   +79.14\% &   
 
 \Cref{fig:BTForward:performance} visualized the \lstinline!BT_Forward!-agents performance evolution over the training phase. The horizontal lines refer to baselines and previously achieved performances.\\
 
-\begin{figure}[ht]
+\begin{figure}[h!]
 	\centering
 	\includegraphics[width=0.8\textwidth]{content/drawings/BT_Forward_Performance}
 	\caption{The \lstinline!BT_Forward!-agent performance on the test period.}
