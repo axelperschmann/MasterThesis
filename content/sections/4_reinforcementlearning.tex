@@ -32,9 +32,11 @@ In case of the market situation as shown in \Cref{table:orderbook:example:again}
 
 \begin{table}
 \centering
-\begin{tabular}{lrlrrr}
+	\scalebox{0.8}{
+\rowcolors{1}{}{black!5}
+\begin{tabular}{|RRcRRR|}
 \toprule
-{} &  Amount &    Type &  Volume &  VolumeAcc &  norm\_Price \\
+{} &  \text{Amount} &    Type &  \text{Volume} &  \text{VolumeAcc} &  \text{norm\_Price} \\
 \midrule
 31.00 &   200.0 &     ask &  6200.0 &     8425.0 &    1.074533 \\
 30.00 &    50.0 &     ask &  1500.0 &     2225.0 &    1.039871 \\
@@ -45,6 +47,7 @@ In case of the market situation as shown in \Cref{table:orderbook:example:again}
 28.00 &   300.0 &     bid &  8400.0 &    16990.0 &    0.970546 \\
 \bottomrule
 \end{tabular}
+}
 \caption{Action $a=1.4$ translates into $limit=28.7 + 1.4 = 30.1$.}
 \label{table:orderbook:example:again}
 \end{table}

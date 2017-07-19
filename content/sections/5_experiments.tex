@@ -62,7 +62,8 @@ As mentioned in \Cref{chap:backwardalgorithm:discussion:actionspace}, it seems p
 	%\begin{subfigure}[b]{0.40\textwidth}
         %		\centering
 		\scalebox{0.7}{
-\begin{tabular}{lrr}
+\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRR|}
 \toprule
 {} &           slippage & performance \\
 \midrule
@@ -155,7 +156,8 @@ Disappointing is the futility of \lstinline!center_price!. For a discretization 
 \begin{table}[ht]
 	\centering
 	\scalebox{0.6}{
-\begin{tabular}{lRRR|RRRR}
+	\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRRR|RRRR|}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
 \midrule
@@ -170,7 +172,7 @@ sharecount\_buy\_disc5         &    160.73 &   37.78 &  449.22 &    +3.76\% &   
 sharecount\_imbalance\_disc5   &    148.03 &   40.49 &  372.86 &   -4.44\% &  -16.07\% &  -46.65\% &       -1.73\% \\
 sharecount\_sell\_disc5        &    151.50 &   47.49 &  425.35 &   -2.20\% &  -14.10\% &  -45.40\% &        +0.58\% \\
 sharecount\_spread\_disc5      &    148.93 &   40.84 &  352.12 &   -3.86\% &  -15.56\% &  -46.33\% &       -1.13\% \\
-spread\_disc3                 &    147.41 &   35.48 &  370.96 &   \cellcolor{black!15}-4.84\% &  -16.42\% &  -46.88\% &       -2.14\% \\
+spread\_disc3                 &    147.41 &   35.48 &  370.96 &   \cellcolor{black!20}-4.84\% &  -16.42\% &  -46.88\% &       -2.14\% \\
 spread\_disc5                 &    \cellcolor{green!25}141.07 &   \cellcolor{green!25}37.39 &  \cellcolor{green!25}349.72 &   \cellcolor{green!25}-8.93\% &  \cellcolor{green!25}-20.02\% &  \cellcolor{green!25}-49.16\% &       \cellcolor{green!25}-6.34\% \\
 spread\_disc9                 &    142.80 &   36.69 &  364.76 &   -7.81\% &  -19.03\% &  -48.54\% &       -5.20\% \\
 \midrule
@@ -200,11 +202,12 @@ In order to proof the algorithms general ability to find costs reducing strategi
 \begin{table}[ht]
 	\centering
 	\scalebox{0.6}{
-\begin{tabular}{lRRR|RRRR}
+	\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRRR|RRRR|}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
 \midrule
-ob\_direction\_disc5           &     61.99 &   97.52 &  319.84 &  \cellcolor{black!15}-59.98\% &  -64.85\% &  -77.66\% &      \cellcolor{black!15}-58.84\% \\
+ob\_direction\_disc5           &     61.99 &   97.52 &  319.84 &  \cellcolor{black!20}-59.98\% &  -64.85\% &  -77.66\% &      \cellcolor{black!20}-58.84\% \\
 future\_center5\_disc5         &    141.61 &   41.79 &  389.58 &   -8.58\% &  -19.71\% &  -48.97\% &       -5.98\% \\
 future\_center15\_disc5        &    133.78 &   40.90 &  405.88 &  -13.63\% &  -24.15\% &  -51.79\% &      -11.18\% \\
 future\_center60\_disc5        &    131.85 &   47.63 &  391.46 &  \cellcolor{green!25}-14.88\% &  -25.25\% &  -52.49\% &      \cellcolor{green!25}-12.47\% \\
@@ -232,7 +235,8 @@ The findings from the look-ahead features encouraged for a supplementary experim
 \begin{table}[ht]
 	\centering
 	\scalebox{0.6}{
-\begin{tabular}{lRRR|RRRR}
+	\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRRR|RRRR|}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
 \midrule
@@ -241,7 +245,7 @@ center\_orig\_disc5            &    150.37 &   47.01 &  422.14 &   -2.92\% &  -1
 marketPrice\_buy\_worst\_disc5  &    150.74 &   50.15 &  402.13 &   -2.69\% &  -14.54\% &  -45.68\% &        +0.07\% \\
 marketPrice\_sell\_worst\_disc5 &    157.56 &   43.95 &  379.33 &    +1.72\% &  -10.66\% &  -43.22\% &        +4.61\% \\
 marketPrice\_spread\_disc5     &    152.19 &   53.07 &  398.10 &   -1.75\% &  -13.71\% &  -45.15\% &        +1.04\% \\
-marketPrice\_imbalance\_disc5      &    147.16 &   47.03 &  383.19 &   -5.00\% &  -16.57\% &  -46.97\% &       \cellcolor{black!15}-2.30\% \\
+marketPrice\_imbalance\_disc5      &    147.16 &   47.03 &  383.19 &   -5.00\% &  -16.57\% &  -46.97\% &       \cellcolor{black!20}-2.30\% \\
 sharecount\_buy\_disc3         &    149.57 &   46.15 &  420.14 &   -3.44\% &  -15.19\% &  -46.10\% &       -0.70\% \\
 sharecount\_buy\_disc5         &    150.37 &   47.01 &  422.14 &   -2.92\% &  -14.74\% &  -45.81\% &       \cellcolor{red!25}-0.17\% \\
 sharecount\_imbalance\_disc5   &    152.44 &   53.41 &  400.89 &   -1.59\% &  -13.57\% &  -45.06\% &        +1.20\% \\
@@ -274,6 +278,7 @@ As described in \Cref{chap:backwardalgorithm:discussion:markovianassumption}, th
 \begin{table}[ht]
 	\centering
 	\scalebox{0.6}{
+	\rowcolors{1}{}{black!5}
 \begin{tabular}{|lRRR|RRRRR}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
@@ -378,7 +383,8 @@ Potentially due to coarse discretization, these variables cause no major impact.
 \begin{table}[ht]
 	\centering
 	\scalebox{0.6}{
-\begin{tabular}{lRRR|RRRR}
+	\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRRR|RRRR|}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
 \midrule
@@ -418,16 +424,17 @@ In the next step the look-up table is replaced by an approximation thereof. This
 \begin{table}[ht]
 	\centering
 	\scalebox{0.6}{
-\begin{tabular}{lRRR|RRRR}
+\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRRR|RRRR|}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
 \midrule
 BT\_VolTime\_a4\_   &    163.21 &   25.48 &  466.45 &   +5.36\% &   -7.46\% &  -41.18\% &        +8.35\% \\
 \cellcolor{green!25}BT\_VolTime\_a*\_       &    \cellcolor{green!25}143.24 &   38.53 &  373.35 &  \cellcolor{green!25}-7.53\% &  -18.78\% &  -48.38\% &       -4.90\% \\
-BT\_VolTime &    151.08 &   47.39 &  391.02 &  \cellcolor{black!15}-2.47\% &  -14.34\% &  -45.55\% &        +0.30\% \\
+BT\_VolTime &    151.08 &   47.39 &  391.02 &  \cellcolor{black!20}-2.47\% &  -14.34\% &  -45.55\% &        +0.30\% \\
 \cellcolor{red!25}BT\_VolTimeSpread &    \cellcolor{red!25}249.07 &  237.29 &  142.11 & \cellcolor{red!25}+60.79\% &   +41.22\% &  -10.24\% &       +65.36\% \\
 \midrule
-VolTime\_simulatedTrades &    147.86 &   42.10 &  346.17 &   \cellcolor{black!15}-4.55\% &  -16.17\% &  -46.72\% &       -1.84\% \\
+VolTime\_simulatedTrades &    147.86 &   42.10 &  346.17 &   \cellcolor{black!20}-4.55\% &  -16.17\% &  -46.72\% &       -1.84\% \\
 VolTime          &    150.63 &   33.83 &  358.66 &  -2.76\% &  -14.60\% &  -45.72\% &        0.00\% \\
 2                &    154.90 &   68.62 &  389.15 &   0.00\% &  -12.17\% &  -44.18\% &        +2.84\% \\
 4                &    176.37 &  141.66 &  273.58 &  +13.86\% &    0.00\% &  -36.44\% &       +17.09\% \\
@@ -486,9 +493,11 @@ The performance of all sixteen intermediate models is shown in \Cref{tab:eval:Fo
 \begin{table}[ht]
 	\centering
 	\scalebox{0.6}{
-\begin{tabular}{lRRR|RRRR}
+\rowcolors{1}{}{black!5}
+\begin{tabular}{|lRRR|RRRR|}
 \toprule
 {} &  \text{slippage} &     \text{med} &     \text{std} &   \text{perf\_2} &   \text{perf\_4} &   \text{perf\_M} & \text{perf\_VolTime} \\
+\midrule
 BT\_Forward\_samples\_025.078  &    143.72 &   74.69 &  300.93 &   -7.22\% &  -18.52\% &  -48.21\% &       -4.59\% \\
 BT\_Forward\_samples\_043.334  &    147.92 &   82.24 &  310.49 &   -4.51\% &  -16.13\% &  -46.69\% &       -1.80\% \\
 BT\_Forward\_samples\_061.103  &    149.56 &   77.33 &  288.56 &   -3.45\% &  -15.20\% &  -46.10\% &       -0.71\% \\
@@ -496,7 +505,7 @@ BT\_Forward\_samples\_079.809  &    146.67 &   77.20 &  277.43 &   -5.31\% &  -1
 BT\_Forward\_samples\_097.615  &    143.45 &   73.18 &  281.71 &   -7.40\% &  -18.67\% &  -48.31\% &       -4.77\% \\
 BT\_Forward\_samples\_116.008 &    144.26 &   77.94 &  285.80 &   -6.87\% &  -18.21\% &  -48.01\% &       -4.23\% \\
 BT\_Forward\_samples\_134.011 &    138.22 &   73.30 &  269.71 &  -10.77\% &  -21.63\% &  -50.19\% &       -8.24\% \\
-BT\_Forward\_samples\_152.352 &    \cellcolor{black!15}136.90 &   69.59 &  264.95 &  \cellcolor{black!15}-11.62\% &  -22.38\% &  -50.66\% &       \cellcolor{black!15}-9.11\% \\
+BT\_Forward\_samples\_152.352 &    136.90 &   69.59 &  264.95 &  -11.62\% &  -22.38\% &  -50.66\% &       -9.11\% \\
 BT\_Forward\_samples\_170.605 &    137.75 &   77.50 &  261.17 &  -11.07\% &  -21.90\% &  -50.36\% &       -8.55\% \\
 BT\_Forward\_samples\_188.224 &    137.64 &   73.71 &  253.37 &  -11.14\% &  -21.96\% &  -50.40\% &       -8.62\% \\
 BT\_Forward\_samples\_206.409 &    137.10 &   74.22 &  257.54 &  -11.49\% &  -22.27\% &  -50.59\% &       -8.98\% \\
@@ -505,7 +514,7 @@ BT\_Forward\_samples\_242.342 &    129.85 &   74.43 &  239.96 &  -16.17\% &  -26
 BT\_Forward\_samples\_261.018 &    137.98 &   75.69 &  248.07 &  -10.92\% &  -21.77\% &  -50.27\% &       -8.39\% \\
 BT\_Forward\_samples\_279.347 &    138.79 &   75.28 &  258.49 &  -10.40\% &  -21.31\% &  -49.98\% &       -7.86\% \\
 BT\_Forward\_samples\_298.020 &    \cellcolor{green!25}137.23 &   \cellcolor{green!25}78.71 &  \cellcolor{green!25}242.88 &  \cellcolor{green!25}-11.41\% &  \cellcolor{green!25}-22.19\% &  \cellcolor{green!25}-50.55\% &       \cellcolor{green!25}-8.89\% \\
-\toprule
+\midrule
 VolTime                        &    150.63 &   33.83 &  358.66 &   -2.76\% &  -14.60\% &  -45.72\% &        0.00\% \\
 2                              &    154.90 &   68.62 &  389.15 &    0.00\% &  -12.17\% &  -44.18\% &        +2.84\% \\
 4                              &    176.37 &  141.66 &  273.58 &   +13.86\% &    0.00\% &  -36.44\% &       +17.09\% \\
