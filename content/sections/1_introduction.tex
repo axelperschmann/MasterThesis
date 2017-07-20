@@ -56,7 +56,7 @@ In its simplest form, the problem of optimized trade execution is defined by a p
 
 This problem constitutes an ideal playground for reinforcement learning approaches, which aim to learn optimal behavior based on observed states. Regularly monitoring trade progress and market situations, reinforcement learning agents hold the potential to automatically unwind large orders over time in an advantageous way.\\
 
-The scope of this thesis is to examine and improve the reinforcement learning approach proposed by Nevmyvaka \etal\cite{Nevmyvaka:2006}. While the authors derived valuable strategies from a discretized state space in a brute force manner, a novel forward learning algorithm is proposed, which samples from a continuous state space and outperforms the foremost algorithm. As reinforcement learning requires interacting with an environment, a trading simulation framework is implemented. The accrued \acf{OTS} provides a full-featured reinforcement learning environment, that simulates the execution of orders on historic data and returns vital feedback to steer the agent towards optimal decisions.\\
+The scope of this thesis is to examine and improve the reinforcement learning approach proposed by Nevmyvaka \etal\cite{Nevmyvaka:2006}. While the authors derived valuable strategies from a discretized state space in a brute force manner, a novel forward learning algorithm is proposed, which samples from a continuous state space and outperforms the foremost algorithm. As reinforcement learning requires interacting with an environment, a trading simulation framework is implemented. The accrued \acf{OTS} provides a full-featured reinforcement learning environment, that simulates the execution of orders on historic \ac{LOB} data and returns vital feedback to steer the agent towards optimal decisions.\\
 
 While most research is performed on traditional stock markets with expensive, proprietary data sources, this was simply out of budget for this work. Instead, the relatively young market of bitcoin trading is assessed, as it offers inexpensive access to real-time prices through publicly retrievable interfaces. Snapshots of the current market situations are retrieved on a low-resolution, minute-scale basis from the open bitcoin exchange platform Poloniex\footnote{\url{http://www.poloniex.com}}. Consequently, the usability of the retrieved dataset is analyzed.
 
@@ -64,21 +64,30 @@ While most research is performed on traditional stock markets with expensive, pr
 
 \section{Related Work}
 \label{sec:relatedwork}
-bla
+Much research has been performed to study the optimal execution of buy and sell orders in exchange markets.\\
+
+In 1970 Fama published his \emph{efficient market hypothesis} \Cite{Fama70efficientcapital}, that assumed news to spread so fast, that all relevant informations are incorporated into the respective assets price without delay, making it impossible to profit from optimized trade execution deliberately. By the start of the twenty-first century, many statisticians and financial economists started to believe in (partially) predictability of stock prices. In 2003 Malkiel \Cite{TheEfficentMarketHypothesisAndItsCritics} examined the attacks on the efficient market hypothesis and delivered empirically and theoretically proof that the efficient market hypothesis is only valid under certain preconditions. While the paper concludes that most markets are very (not extremely!) efficient and that prices are far less predictable than some (at that time) recent academic papers claimed, there remains a certain degree at which asset prices are indeed predictable.\\
+
+Parlour (1998) \Cite{PriceDynamicsinLimitOrderMarkets} and Rosu (2009) \Cite{Rosu:adynamic} both proposed equilibrium models of price formation in limit order markets and showed that price evolutions in exchange markets are rather complex and depend critically on the state of the \ac{LOB}. Cont, Stoikov \& Talreja (2010) \Cite{Cont10theprice} showed empirically, that over short time intervals, stock price changes are mainly driven by imbalances between supply and demand and as such partially predictable. In 2011 Stokov, Avellaneda \& Reed \Cite{Stoikov10contents} proposed a stochastic model, that computes the probability of an upward move in the price, conditional on the level 1-quotes, such as best bid/ask sizes. The price impact of unexecuted orders, given the current \ac{LOB}, was studied inter alia by Bertsimas \& Lo (1998) \Cite{bertsimas1998:optimalControl}, Almgren \& Chriss (2000) \Cite{almgren2000:optimalExecution}, Alfonsi \& Fruth (2010) \Cite{alfonsi2009:optimalExecutionStrategies} and Cont \& Larrard (2011) \Cite{Cont:pricedynamics} who proposed another stochastic model that exploits the state of the \ac{LOB}. Maglaras, Moallemi \& Zheng (2015) \Cite{optimalExecutionInALimitOrderBook} modeled \ac{LOB}s as multi-class queueing systems under fluid dynamics to optimize how to execute a block of shares over a predetermined time horizon.\\
+
+While most approaches are base on stochastic methods, relatively little literature about machine learning approaches to the problem of optimal order execution has been published. In 2006 Nevmyvaka, Feng \& Kearns \Cite{Nevmyvaka:2006} used reinforcement learning to unwind large orders over time though a mixture of limit and market orders. Park \& Van Roy (2012) \Cite{2012arXiv1207.6423P} used reinforcement learning to explore and learn a price impact model alongside trading. Kercheval \& Zhang (2015) \Cite{modellingHighFrequencyLOBdynamicsSVM} used support vector machines to capture the dynamics of high frequency \ac{LOB}s and predict future price movements. Kempf \& Korn (1998) \Cite{marketDepthOrderSizeNN} used neural networks and found that the assumption of a linear impact of orders on the price is highly questionable. Fletcher \& Shawe-Taylor (2013) \Cite{Fletcher2013} used fisher kernel learning for the prediction of currency exchange rates and achieved an average accuracy of $55\%$ when classifying the direction of price movements for a 200s predictive time horizon.\\
+
+In 2016 Sirignano \Cite{2016arXiv160101987S} developed a new neural network architecture for modeling spatial distributions of \ac{LOB}s. Deep learning models are used to model the joint distribution of the state of the \ac{LOB} at a future time conditional on its current state. The proposed models were trained and tested on nearly 50 terabytes of raw \ac{LOB} data and run on a cluster with 50 GPUs, outperforming naive empirical models, logistic regression and standard neural network architectures.
+
 
 
 
 \section{Contributions}
 \label{sec:contributions}
 The following contributions to the problem of optimized trade execution have been made by this work:
-\begin{itemize}
-\item With the \ac{OTS}, a full-featured reinforcement learning environment for the simulation of trade execution is presented. It simulates the execution of orders on historic orderbook data and returns vital feedback to steer reinforcement learning agents towards optimal decisions.
+\begin{enumerate}
+\item With the \ac{OTS}, a full-featured reinforcement learning environment for the simulation of trade execution is presented. It simulates the execution of orders on historic orderbook data and returns vital feedback to steer reinforcement learning agents towards optimal decisions. Additionally, it serves as a backtesting framework in order to evaluate the cost reducing capabilities of different trading strategies.
 
-\item An existing reinforcement learning approach, deriving valuable strategies from a discretized state space in a brute force manner, has been examined and was improved in detail. As an example, the proposed backward-sampling method neglected the agents own impact on the market situation. It was found, that the agents cost reducing capabilities may be further improved, if this impact is incorporated properly.
+\item An existing reinforcement learning approach, deriving valuable strategies from a discretized state space in a brute force manner, has been examined and was improved in detail. As an example, the proposed backward-sampling method neglected the agents own impact on the market situation. It was found, that the agents cost reducing capabilities may be further improved, if this self-induces impact is incorporated properly.
 
 \item A novel reinforcement learning approach is presented, that applies growing batch reinforcement learning on the problem of optimal trade execution. The proposed forward-sampling method samples from a more realistic, continuous state space and outperforms the foremost algorithm.
 
-\end{itemize}
+\end{enumerate}
 
 \section{Outline of Contents}
 \label{sec:outline}
@@ -88,7 +97,7 @@ The remainder of this thesis is structured as follows:
 \item[\Cref{chap:background}] gives a general introduction into the vocabulary of financial computing, the machine learning techniques employed and the problem of optimized trade execution.
 \item[\Cref{chap:simulator}] describes the \acl{OTS}, that provides a full-featured reinforcement learning environment.
 \item[\Cref{chap:reinforcementlearning}] describes and discusses both reinforcement learning approaches, \ie the original brute-force method and the novel forward learning method.
-\item[\Cref{chap:orderbookagents}] evaluates the performance of several trading agents.
+\item[\Cref{chap:orderbookagents}] describes various experiments, that have been conducted in order to improve the reinforcement learning approaches and as such to find better trading strategies.
 \item[\Cref{chap:conclusion}] closes with a conclusion and discussion. 
 
 \end{description}

@@ -39,11 +39,13 @@ The highest of all bids is called the \emph{bid price}, the lowest of all offers
 The difference between bid price and ask price is called \emph{bid-ask spread}, often abbreviated to \emph{spread}.
 
 \subsection{Limit Order Book and Market Depth}
-A limit orderbook reflects supply (asks) and demand (bids) for a particular financial instrument. It is usually maintained by the trading venue and lists the number of shares being bid or offered, organized by price levels in two opposing books. Incoming orders are constantly appended to this highly dynamic list, while a matching engine cautiously resolves any inconsistencies (\ie overlaps) between asks and bids by mediating between the involved parties.\\
+A \acf{LOB} reflects supply (asks) and demand (bids) for a particular financial instrument. It is usually maintained by the trading venue and lists the number of shares being bid or offered, organized by price levels in two opposing books. Incoming orders are constantly appended to this highly dynamic list, while a matching engine cautiously resolves any inconsistencies (\ie overlaps) between asks and bids by mediating between the involved parties.\\
 
-It is usually not before the matching engine has arranged an actual trade, that a trading venue claims a certain percentage of the turnover as a service fee. To encourage active market participation, the pure submission, revision and cancelation of orders is typically free of charge.\\
+It is usually not before the matching engine has arranged an actual trade, that a trading venue claims a certain percentage of the turnover as a service fee. To encourage active market participation, the pure submission, revision and cancelation of orders is typically free of charge.
 
-\begin{table}
+\pagebreak
+
+\begin{table}[h!]
 \centering
 	\scalebox{0.6}{
 \rowcolors{1}{}{black!5}
@@ -62,7 +64,7 @@ It is usually not before the matching engine has arranged an actual trade, that 
 \end{tabular}}
 \caption[Exemplary snapshot of a limit orderbook]{Exemplary snapshot of a limit orderbook for stocks of AIWC\protect\footnotemark.}
 \label{table:orderbook:example}
-\end{table}
+\end{table}\bigskip
 
 
 \Cref{table:orderbook:example} shows a limit orderbook snapshot up to a market depth of 3, as seen by market participants. Here Alice offers {\color{red}25} shares per 29\$, Bob and Cedar offer {\color{mygreen}20 and 30} shares respectively per 30\$ and David offers {\color{mymauve}200} shares per 31\$\footnotetext{Acme Internet Widget Company}.\\
@@ -141,15 +143,15 @@ Bitcoin is a highly volatile currency, capable of massive price changes towards 
 
 
 
-\section{Supervised Learning}
-Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vector $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.\\
+%\section{Supervised Learning}
+%Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vector $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.\\
 
-A supervised learning algorithms seeks to find a general function $g_\theta()$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
+%A supervised learning algorithms seeks to find a general function $g_\theta()$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
 
-{\color{red}Keep or Remove?! Or Move below \Cref{chap:RLfunctionapproximation}}
+%{\color{red}Keep or Remove?! Or Move below \Cref{chap:RLfunctionapproximation}}
 
-\subsection{Random Forest}
-bla
+%\subsection{Random Forest}
+%bla
 
 
 
@@ -365,7 +367,11 @@ More formally $V$ and $Q$ are replaced as follows:
 \begin{equation}
      Q(s, a) = \hat{Q}(s, a; \theta)
 \end{equation}
-where $\theta$ refers to function parameters, that must be learned through supervised learning methods.
+where $\theta$ refers to function parameters, that must be learned through supervised learning methods\footnote{
+Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vector $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.\\
+
+A supervised learning algorithms seeks to find a general function $g_\theta()$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
+}.
 
 
 \subsection{Batch Reinforcement Learning}
