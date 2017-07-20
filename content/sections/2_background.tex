@@ -369,6 +369,7 @@ where $\theta$ refers to function parameters, that must be learned through super
 
 
 \subsection{Batch Reinforcement Learning}
+\label{chap:basics:batchreinforcementlearning}
 In the general reinforcement learning problem, the agent observes a state $s_t$, executes an action $a_t$ and incrementally improves its policy $\pi$ in conformity with the obtained reward $r_t$ and successor state $s'_t$ in an infinite loop. In \emph{batch reinforcement learning} \Cite{Lange_batchreinforcement}, an optimal strategy should be learned out of a fixed set of known transition samples $D=\{(s,a,r,s'), \dots{}| t=1..n\}$. As shown in \Cref{fig:batchlearning}, the samples are collected a priori in an exploration phase, that is not part of the actual batch learning task.
 
 \begin{figure}[ht]

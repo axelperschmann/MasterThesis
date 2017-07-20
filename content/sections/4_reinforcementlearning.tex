@@ -1,6 +1,6 @@
 \chapter{Reinforcement Learning Approaches}
 \label{chap:reinforcementlearning}
-This chapter describes two \ac{RL} approaches used to tackle the important problem of optimized trade execution. Based upon the \ac{RL} formulation, as described by Nevmyvaka \etal \cite{Nevmyvaka:2006}, Q-learning and dynamic programming are fused to find an optimal, state-based strategy from a training set of historic orderbook data. While sampling the discretized state space\footnote{The state space describes actual trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) as well as current market situation.} in a backward, brute force manner, the authors achieved an impressive 50\% gain over the more simple Submit \& Leave Strategy (see \Cref{chap:tradingstrategies}). The novel, forward-learning approach proposed in this work, outperforms the original method, as it samples from the continuous state space through forward exploration in order to generate more realistic transitions.\\
+This chapter describes two \ac{RL} approaches used to tackle the important problem of optimized trade execution. Based upon the \ac{RL} formulation described by Nevmyvaka \etal \cite{Nevmyvaka:2006}, Q-learning and dynamic programming are fused to find an optimal, state-based strategy from a training set of historic orderbook data. While sampling the discretized state space\footnote{The state space describes actual trade progress (\ie \emph{remaining time} and \emph{remaining inventory}) as well as current market situation.} in a backward, brute force manner, the authors achieved an impressive 50\% gain over the more simple Submit \& Leave Strategy (see \Cref{chap:tradingstrategies}). The novel, forward-learning approach proposed in this work, outperforms the original method, as it samples from the continuous state space through forward exploration in order to generate more realistic transitions.\\
 
 Some of the assumptions made in the original, backward approach deserve a closer look and motivate for modifications. As the authors assessed a rather large, proprietary dataset of 1.5 years of millisecond time-scale limit order data from \acs{NASDAQ}, it is furthermore intriguing to evaluate its performance on a smaller, self-recorded dataset of limited resolution.
 
@@ -29,7 +29,7 @@ Each \lstinline!state! $s \in <volume, time, o_1, o_2, ...>$ forms a vector of a
 
 Except for \emph{Immediate Market Order Cost}, the market variables originally exploited basically stem from market level 1 data only. In addition to the above mentioned market variables, the impact of additional market level 2 features, describing potential imbalances between ask and bid book and forecasting estimated action consequences is examined.
 \begin{description}
-\item[marketPrice] : Relative difference between current center price and the worst price that must be paid (or is received) in case of simple market orders.
+\item[marketPrice] : Relative difference between the current center price and the worst price that must be paid (or is received) in case of simple market orders.
 
 \item[sharecount] : Number of Bitcoins, immediately available for the specified amount of cash.
 
@@ -71,14 +71,14 @@ In case of the exemplary market situation shown in \Cref{table:orderbook:example
 
 The employed number of selectable actions and their actual value range was not further specified.\\
 
-As the proposed mapping method do not necessarily fit well to the bitcoin data at hand, two modifications are made: On the one hand, Bitcoin prices have burst from roughly 700\$ to more than 2.000\$ in the period of recording (see \Cref{fig:ploniexPriceHistory}), \ie interpreting actions as the absolute difference to the current best prices, maps to significantly different levels of aggression as time passes. On the other hand, the large volatility of Bitcoins (see \Cref{fig:bitcoinvolatility}) causes rapid fluctuations in the bid-ask spread as a side effect. Fixing the limit base to the opposing best price, the spread must no longer be crossed and action $a=0$ now generally refers to the first action that causes a guaranteed execution volume larger than zero.\\
+As the proposed mapping method does not necessarily fit well to the bitcoin data at hand, two modifications are made: On the one hand, Bitcoin prices have burst from roughly 700\$ to more than 2.000\$ in the period of recording (see \Cref{fig:ploniexPriceHistory}), \ie interpreting actions as the absolute difference to the current best prices, maps to significantly different levels of aggression as time passes. On the other hand, the large volatility of Bitcoins (see \Cref{fig:bitcoinvolatility}) causes rapid fluctuations in the bid-ask spread as a side effect. Fixing the limit base to the opposing best price, the spread must no longer be crossed and action $a=0$ now generally refers to the first action that causes a guaranteed execution volume larger than zero.\\
 
 
 The mapping functions are thus redefined as follows:\\
 \lstinline!limit_buy = ask * (1 + (a/1000))! instead of \lstinline!limit_buy = bid + a!\\
 \lstinline!limit_sell = bid * (1 - (a/1000))! instead of \lstinline!limit_sell = ask - a!\\
 
-Typically the following set of fifteen actions is used: $L=[-4,-3,..,9,10]$, where \eg action $a=4$ translates into $limit = ask * 1.004 = ask + 0.4\%$. 
+Typically the following set of fifteen actions is used: $L=[-4,-3,..,9,10]$, where \eg a buy order with action $a=4$ translates into $limit = ask * 1.004 = ask + 0.4\%$. 
 
 
 \subsection{Costs}
@@ -101,15 +101,15 @@ Since the complete trade execution happens within a finite time horizon and full
 	\label{fig:nonlinearcosts}
 \end{wrapfigure}
 
-While discretization of market variables mainly affects the strategies explanatory power, the resolution of private variable \lstinline!volume! leads to considerable rounding issues in regards to the cost function employed. As observed successor states $x_{t-1}$ must be discretized equally to allow looking up the corresponding minimal costs, the immediate costs, as computed in \Cref{eq:imcost}, must be scaled accordingly. Simply replacing \lstinline!volume_traded! with \lstinline!round(volume_traded)! falsifies the actual costs, as they correlate to the accomplished trade volume in an  unpredictable, non-linear manner as indicated in \Cref{fig:nonlinearcosts}.\\
+While discretization of market variables mainly affects the strategies explanatory power, the resolution of private variable \lstinline!volume! leads to considerable rounding issues in regards to the cost function employed. As observed successor states $x_{t-1}$ must be discretized equally to allow looking up the corresponding minimal costs, the immediate costs, as computed in \Cref{eq:imcost}, must be scaled accordingly. Simply replacing \lstinline!volume_traded! with \lstinline!round(volume_traded)! falsifies the actual costs, as they correlate to the accomplished trade volume in an unpredictable, non-linear manner as indicated in \Cref{fig:nonlinearcosts}.\\
 
-Nevmyvaka \etal \Cite{Nevmyvaka:2006} did not mention this problematic and presumably did not perform any cost scaling at all. Despite the non-linear relationship between trading volume and observed costs, this simple, but imprecise approach of \emph{linear cost scaling} is used in all discrete state spaces examined.
+Nevmyvaka \etal \Cite{Nevmyvaka:2006} did not mention this problematic and presumably did not perform any cost scaling at all. Despite the non-linear relationship between trading volume and observed costs, this simple, but imprecise approach of \emph{linear cost scaling} is used in all discrete state spaces examined. In continuous state spaces, this problem is void.
 
 \subsection{Subject of Trade}
 \label{chap:backwardalgorithm:discussion:subjectTrade}
-Nevmyvaka \etal \cite{Nevmyvaka:2006} tackled the problem of trading a certain amount of shares within a fixed time period. A more practicable problem definition must distinguish between the concrete trading direction. While their problem definition fits to the case of selling shares that are in the investors possessions, it does not mirror the opposite case properly. If the subject of trade is to obtain shares, it is more realistic to define a fixed amount of disposable \emph{cash}, rather than the number of \emph{shares}, that shall be acquired. Subsequently, all experiments in buy direction are instructed to commute a fixed amount of cash into as many shares as possible.\\
+Nevmyvaka \etal \cite{Nevmyvaka:2006} tackled the problem of trading a certain amount of shares within a fixed time period. A more practicable problem definition must distinguish between the concrete trading direction. While the original problem definition fits to the case of selling shares that are in the investors possessions, it does not mirror the opposite case properly. If the subject of trade is to obtain shares, it is more realistic to define a fixed amount of disposable \emph{cash}, rather than the number of \emph{shares}, that shall be acquired. Subsequently, all experiments in buy direction are instructed to commute a fixed amount of cash into as many shares as possible.\\
  
-If cash is the subject of trade, the optional market variable \emph{Immediate Market Order Cost}  (\eg $72.321\$$) becomes meaningless, and is replaced by \emph{Immediate Market Order Shares} (\eg 92 BTC), displaying the number of shares acquirable through an immediate market order.
+If cash is the subject of trade, the optional market variable \emph{Immediate Market Order Cost}  (\eg $72.321\$$) becomes meaningless, and is replaced by \emph{Immediate Market Order Shares} (\eg 92 BTC), quoting the number of shares acquirable through an immediate market order.
 
 
 
@@ -168,7 +168,7 @@ Knowing the optimal state-action values for all states with $t=1$, all informati
 	\label{fig:heatmap:t2}
 \end{figure}
 
-After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, has been found. The annotated q values (right) denote the corresponding minimum over all available actions. The visualized state-action function was trained over orderbook snapshots from Nov, 10th 2017 10am to May, 31st 2017, partitioned into 4.154 orderbook windows of 60 minutes length each. Over a trading horizon of $T=4$ \lstinline!trading_periods!, $70.000\$$ cash (discretized in $I=8$ intervals) had to be traded into Bitcoins. The state space included the two private variables \lstinline!time! and \lstinline!volume! only, while the action space comprised $L=15$ actions. As such, a total of $4.154 * 4 * 8 * 15 = 1.993.920$ transition tuples were generated.
+After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, has been found. The annotated q values (right) denote the corresponding minimum over all available actions. The visualized state-action function was trained over orderbook snapshots from Nov, 10th 2017 10am to April, 30st 2017, partitioned into 4.154 orderbook windows of 60 minutes length each. Over a trading horizon of $T=4$ \lstinline!trading_periods!, $70.000\$$ cash (discretized in $I=8$ intervals) had to be traded into Bitcoins. The state space included the two private variables \lstinline!time! and \lstinline!volume! only, while the action space comprised $L=15$ actions. As such, a total of $4.154 * 4 * 8 * 15 = 1.993.920$ transition tuples were generated.
 
 \begin{figure}[ht]
 	\centering
@@ -182,7 +182,7 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 
 \subsection{Incorporating preceding trades}
 \label{chap:backwardapproach:precedingTrades}
-In order to strengthen the Markov Property, \ie the assumption that states capture all relevant information from the history, the preceding trade history  (\ie the self-induced market impact) must be taken into account. \Cref{fig:differingmasterbooks} shows differing masterbook shapes, that can build the base of a simulated \lstinline!trading_period!, \eg if starting at $t=45min$ and a remaining trade volume of 17.500\$. \ref{fig:differingmasterbooks:NoSim} shows the original orderbook, as if no orders had been matched by our strategy. This version of the masterbook is queried by the original backward algorithm, potentially resulting in more passive trading aggressions, as it does not account for the self-induced impact on the market at all. \ref{fig:differingmasterbooks:SimMarketOrder} and \ref{fig:differingmasterbooks:SimEq} show two ideas, how the market impact can be incorporated. Both lead to different masterbook shapes and as such to different subsets of attainable prices.\\
+In order to strengthen the Markov Property, \ie the assumption that states capture all relevant information from the history, the preceding trade history  (\ie the self-induced market impact) must be taken into account. \Cref{fig:differingmasterbooks} shows differing masterbook shapes, that can build the base of a simulated \lstinline!trading_period!, \eg if starting at $t=45min$ and a remaining trade volume of 17.500\$. \ref{fig:differingmasterbooks:NoSim} shows the original orderbook, as if no orders had been matched by our strategy. This version of the masterbook is queried by the original backward algorithm, potentially resulting in more passive trading aggressions, as it does not account for the self-induced impact on the market at all. \ref{fig:differingmasterbooks:SimMarketOrder} and \ref{fig:differingmasterbooks:SimEq} show two ideas, how the market impact of the supposedly consumed trading volume of $70.000\$-17.500\$ = 52.500\$$ may be incorporated. Both lead to different masterbook shapes and as such to different subsets of attainable prices.\\
 
 \begin{figure}[ht]
 	\centering
@@ -210,7 +210,7 @@ In order to strengthen the Markov Property, \ie the assumption that states captu
 	\label{fig:differingmasterbooks}
 \end{figure}
 
-\Cref{alg:bruteforceimproved:pseudocode} shows a modified version of the original backward-learning algorithm. Prior to the actual trade simulations, the supposedly consumed trading volume is removed from the masterbook. The orders affected, are matched and removed from the masterbook evenly along the elapsed time, as indicated in \Cref{fig:differingmasterbooks:SimEq}.\\
+\Cref{alg:bruteforceimproved:pseudocode} shows a modified version of the original backward-learning algorithm. Prior to the actual trade simulations, the supposedly consumed trading volume is removed from the masterbook. The orders affected are matched and removed from the masterbook evenly along the elapsed time, as indicated in \Cref{fig:differingmasterbooks:SimEq}.\\
 
 \begin{algorithm}[H] 
  \caption{Optimal\_strategy, improved.}
@@ -244,7 +244,7 @@ In order to strengthen the Markov Property, \ie the assumption that states captu
 
 
 \subsection{Separation of Sampling \& Learning Phases}
-The process of sampling from training data and learning optimal state-action values is split into two independent phases, mostly due to performance\footnote{The backward sampling phase for the example mentioned in \Cref{chap:backwardlearning}, took roughly 10 hours, even though the work load was distributed among 24 CPU's.} reasons. In the \emph{sampling phase}, all possible combinations of actions and private variables are evaluated and stored as 5-tuples $sample=(state, action, cost, timestamp, new\_state)$. As market variables are supposedly not influenced by the agents behavior (see \Cref{chap:statespace}), it suffices to remember the orderbooks time point, to allow adjacent substitution of market variables.\\
+The process of sampling from training data and learning optimal state-action values is split into two independent phases, mostly due to performance\footnote{The backward sampling phase for the example mentioned in \Cref{chap:backwardlearning}, took roughly 10 hours, even though the work load was distributed among 24 CPU's.} reasons. In the \emph{exploration phase}\footnote{See \emph{Batch Reinforcement Learning} in \Cref{chap:basics:batchreinforcementlearning}, \Cref{fig:batchlearning}.}, all possible combinations of actions and private variables are evaluated and stored as 5-tuples $sample=(state, action, cost, timestamp, new\_state)$. As market variables are supposedly not influenced by the agents behavior (see \Cref{chap:statespace}), it suffices to remember the orderbooks time point, to allow adjacent substitution of market variables.\\
 
 Samples are stored as DataFrame and may be exported and reused by other agents\footnote{Agents should refer to the same environment settings, as samples collected from different environments (\eg trading horizon of $H=8min$ vs. $H=60min$) may not be compatible.}, as wished. This allows to skip the time consuming process of backward sampling. Before the action learning phase starts, the collected samples may be enhanced by a variety of market variables, discretized or untouched. The helper function \lstinline!addMarketFeatures_toSamples()! retrospectively adds market variables to the agents samples DataFrame.\\
 
@@ -256,7 +256,7 @@ The learning phase starts hereinafter, whereas two types of \emph{orderbook agen
 
 \begin{description}
 \item[QTable\_Agent] : Dynamic Programming as described in \Cref{chap:backwardlearning}.\\
-Expected state-values are stored in a simple lookup table, hence discretization of the state space is required. For each state, a vector of length $L=num\_actions$ is maintained, of which the first argmin refers to the optimal action. The \emph{QTable} does not generalize to previously unobserved states and returns the very first action (here -4) by default. For proper cost-updates an additional \emph{NTable} is maintained, referencing the particular number of observations made.\\
+Expected state-values are stored in a simple lookup table, hence discretization of the state space is required. For each state, a vector of length $L=num\_actions$ is maintained, of which the first argmin refers to the optimal action. The \emph{QTable} does not generalize to previously unobserved states and returns the very first action (here $-4$) by default. For proper cost-updates an additional \emph{NTable} is maintained, referencing the particular number of observations made.\\
 QTable and NTable entries are computed in an iterative manner. In the first round, all samples with \lstinline!time_left=1! are evaluated, in the second round all samples with \lstinline!time_left=2!, \etc The private variable \lstinline!volume! is discretized according to the specified resolution and linear cost scaling (see \Cref{chap:costs}) is performed.
 
 \item[BatchTree\_Agent]: Tree-Based Batch Mode Reinforcement Learning \Cite{Ernst:2005:TreeBasedBatchModeRL}.\\
@@ -266,7 +266,7 @@ The state space is enlarged by an extra dimension for the chosen action. Predict
 
 Each \emph{orderbook agents} inherits some commonly shared functionality from the super class \lstinline!class RL_Agent_Base!. This base class provides a consistent framework, allowing to swap the logic behind \lstinline!learn_from_samples! and \lstinline!predict! only, while general functionality like \lstinline!load!, \lstinline!save!, \lstinline!plot_heatmap_Q! and \lstinline!collect_samples! may be reused.\\
 
-An \emph{orderbook agent} holds the environment parameters, used to initialize the \ac{OTS}. As such, different definitions for the optimal trading problem require different orderbook agents.
+An \emph{orderbook agent} holds the environment parameters, used to initialize the \ac{OTS}. As such, different definitions of the optimal trading problem require different orderbook agents.
 
 
 
@@ -275,14 +275,14 @@ An \emph{orderbook agent} holds the environment parameters, used to initialize t
 
 \section{Forward Learning}
 \label{chap:forwardlearning}
-In order to collect more realistic transition samples, an alternative, \emph{forward sampling} method is presented.
+In order to collect more realistic transition samples, an alternative, \emph{forward sampling} method is presented. In a growing batch reinforcement learning approach\footnote{See \Cref{chap:basics:batchreinforcementlearning}, \Cref{fig:growingbatchlearning}.} the trained agent alternates between exploration and learning phase on a regular basis.
 
 \subsection{Forward Sampling \& Learning}
 Rather than examining all available actions on the great variety of combinational possibilities the state space has to offer, the forward approach repeatedly simulates trades in their entirety. The once again utilized \ac{OTS} always starts with $V=100\%$, but may be initialized at random start points (\eg \lstinline!t=0, t=15, t=30, t=45!) and keeps going until the full trade is executed.\\
 
 As such, the obtained transitions stem from a more natural and furthermore fully continuous environment. Only actually attainable states, that could arise in the (simulated) reality, are used as transition start points, potentially increasing their significance. As major disadvantage, this forward sampling approach does not assure exhaustive exploration of the state space. A thorough exploration is not self-evident and must be supervised.\\
 
-The pseudo-code of the forward sampling approach is shown in \Cref{alg:forward:pseudocode}. The algorithm iterates over the training data, starts $E$ exploration phases per orderbook window and follows an $\epsilon$-greedy exploration strategy. Each exploration phase starts with $\epsilon=1.0$ which finally decays to $\epsilon=0.05$ according to $\epsilon=0.05^{e/E}$.\\
+The pseudo-code of the forward sampling approach is shown in \Cref{alg:forward:pseudocode}. The algorithm iterates over the training data, starts $E$ exploration phases per orderbook window and follows an $\epsilon$-greedy exploration strategy. Each exploration phase starts with $\epsilon=1.0$ which slowly decays to $\epsilon=0.05$ according to $\epsilon=0.05^{e/E}$.\\
 
 \begin{algorithm}[H] 
  \caption{Forward sampling and learning approach.}
@@ -314,7 +314,7 @@ Init OTS(orderbook\_window, V, H, T, L)\;
 \label{alg:forward:pseudocode}
 \end{algorithm}\bigskip
 
-If $\epsilon$-greedy proposes an actions, that previously led to an end state (\ie trade completed), an alternative action is sampled according to a gaussian distribution with its peak at the originally proposed action. Before the actual random draw, probabilities of all dead-end-actions are set to zero, to forestall pointless resampling. In case of repeatedly running into dead-ends (\eg \lstinline!max_dead_ends=4!) the exploration phase is aborted and continues with the next orderbook.\\
+If $\epsilon$-greedy proposes an actions, that previously led to an end state (\ie trade completed), an alternative action is sampled according to a gaussian distribution with its peak at the originally proposed action. Before the actual random draw, probabilities of all known dead-end-actions are set to zero, to forestall pointless resampling. In case of repeatedly running into dead-ends (\eg \lstinline!max_dead_ends=4!) the exploration phase is aborted and continues with the next orderbook.\\
 
 After every \lstinline!retrain! exploration phases, the new samples are fit into the agents model (\eg \lstinline!retrain=256!) and the updated model is used for future $\epsilon$-greedy exploration. Prior to the sampling phase, the training set is shuffled.\\
 
