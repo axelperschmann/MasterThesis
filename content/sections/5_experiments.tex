@@ -136,7 +136,7 @@ In addition to the originally proposed market variables (see \Cref{chap:statespa
 
  \Cref{tab:eval:additionalMarketVariables} shows the performance of individual QTable agents trained on both private variables plus one discretized market variable attached at a time. While observed trading costs undercut those induced by simple market orders by $-49.16\%$, the gain in comparison to the optimal \ac{SL} strategy lies at $-8.93\%$.\\
  
-Adding the market variable \lstinline!spread! yields a notable improvement of $-4.84\%$ over the plain \lstinline!VolTime!-agent. By increasing the discretization level to 5, the performance can be further improved to $-6.34\%$, verifying the findings of Nevmyvaka \etal \Cite{Nevmyvaka:2006}. However, in contrast to their reported results, the market variable \lstinline!sharecount_buy! falls flat with a worsening of $+6.70\%$ (compared to $-4.26\%$).\\
+Adding the market variable \lstinline!spread! yields a notable improvement of $-2.14\%$ over the plain \lstinline!VolTime!-agent. By increasing the discretization level to 5, the performance can be further improved to $-6.34\%$, verifying the findings of Nevmyvaka \etal \Cite{Nevmyvaka:2006}. However, in contrast to their reported results, the market variable \lstinline!sharecount_buy! falls flat with a worsening of $+6.70\%$ (compared to $-4.26\%$).\\
  
 Disappointing is the futility of \lstinline!center_price!. For a discretization level of 5, the corresponding agent underperforms the plain \lstinline!VolTime!-agent by $+7.35\%$. Potentially, this may be explained by a compulsorily underexploited training set: Due to generally rising Bitcoin prices, the majority of prices in the test period will map to the highest discretization value available, which, in a simple lookup-table, resembles only a fraction of the assessed training set.\\
 
@@ -159,7 +159,7 @@ sharecount\_buy\_disc5         &    160.73 &   37.78 &  449.22 &    +3.76\% &   
 sharecount\_imbalance\_disc5   &    148.03 &   40.49 &  372.86 &   -4.44\% &  -16.07\% &  -46.65\% &       -1.73\% \\
 sharecount\_sell\_disc5        &    151.50 &   47.49 &  425.35 &   -2.20\% &  -14.10\% &  -45.40\% &        +0.58\% \\
 sharecount\_spread\_disc5      &    148.93 &   40.84 &  352.12 &   -3.86\% &  -15.56\% &  -46.33\% &       -1.13\% \\
-spread\_disc3                 &    147.41 &   35.48 &  370.96 &   \cellcolor{black!20}-4.84\% &  -16.42\% &  -46.88\% &       -2.14\% \\
+spread\_disc3                 &    147.41 &   35.48 &  370.96 &   -4.84\% &  -16.42\% &  -46.88\% &       \cellcolor{black!20}-2.14\% \\
 spread\_disc5                 &    \cellcolor{green!25}141.07 &   \cellcolor{green!25}37.39 &  \cellcolor{green!25}349.72 &   \cellcolor{green!25}-8.93\% &  \cellcolor{green!25}-20.02\% &  \cellcolor{green!25}-49.16\% &       \cellcolor{green!25}-6.34\% \\
 spread\_disc9                 &    142.80 &   36.69 &  364.76 &   -7.81\% &  -19.03\% &  -48.54\% &       -5.20\% \\
 \midrule

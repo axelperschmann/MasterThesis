@@ -13,7 +13,7 @@ A costless alternative exists in open cryptocurrencies, like bitcoins (see \Cref
 
 On Nov, 10th 2016, 10:00 am, a daemon was started, to fetch orderbook snapshots up to a market depth of $5.000$ from Poloniex via HTTP GET requests (see \Cref{lst:PoloniexFetch}). The volume of recorded orderbook snapshots for nine distinct currency pairs\footnote{Recorded currency pairs include USDT/BTC, BTC/ETH, BT/XMR, BTC/XRP, BTC/FCT, BTC/NAV, BTC/DASH, BTC/MAID, BTC/ZEC} has since grown to roughly 100GB (as per 2017-06-20). This thesis is based on a condensed version of the currency pair USDT/Bitcoin.
 
-\begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Data fetched from Poloniex via HTTP GET request, label=lst:PoloniexFetch]
+\begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=Data fetched from Poloniex via HTTP GET request., label=lst:PoloniexFetch]
 # https://poloniex.com/public?command=returnOrderBook&currencyPair=USDT_BTC&depth=5000
 {"asks" :[[ "705.450000" ,2.772181], [ "705.450196", 0.139212] ,["706.170000" ,0.052838] , ... ], "bids":[["705.000000",0.158232],["703.700000" ,0.001250], ... ], "isFrozen": 0, "seq": 63413296}
 \end{lstlisting}
@@ -38,10 +38,10 @@ The python \lstinline!class OrderbookContainer! aggregates all informations cont
 
  \[ 
   \begin{rcases}
-    0.139212 * 705.450000\\
-    2.632969 * 705.450196\\
+    0.139212 * 705.450000\$\\
+    2.632969 * 705.450196\$\\
   \end{rcases} 
-  = 2.772181 * 705.45
+  = 2.772181 * 705.45\$
 \]
 \item Market depth is capped just above the threshold of 100 bitcoins, roughly corresponding to a market depth of 100-140 prices levels in both books. This threshold allows to simulate trades up to a market order price of $70.000\$$ at any time throughout the whole recording period.
 
@@ -49,11 +49,11 @@ The python \lstinline!class OrderbookContainer! aggregates all informations cont
 
 \end{itemize}
 
-These measurements reduce the average individual orderbook snapshots size from 30KB to approximately 6.6KB. As for the december 2016, this results into $44.640$ snapshots with a total size of 295MB instead of 1.35GB, clearly reducing the memory consumption.\\
+These measurements reduce the average individual orderbook snapshots size from 30KB to approximately 6.6KB. As for december 2016, this results into $44.640$ snapshots with a total size of 295MB instead of 1.35GB, clearly reducing the memory consumption.\\
 
 \Cref{lst:OrderbookContainer} shows the most important functions, provided by the OrderbookContainer class. OrderbookContainer instances are vigorously used by the \ac{OTS}. \Cref{fig:orderbook} shows a plain visualization of an individual orderbook snapshot.
 
-\begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=OrderbookContainer, label=lst:OrderbookContainer]
+\begin{lstlisting}[frame=single, breaklines=true, basicstyle=\scriptsize, caption=OrderbookContainer., label=lst:OrderbookContainer]
 ob = OrderbookContainer(timestamp="2016-11-08T10:00",
                         bids=pd.DataFrame([200., 100., 300.],
                         columns=['Amount'], index=[28.7, 28.5, 28]),
@@ -112,7 +112,7 @@ Defines which of multiple cost functions to use in the reports returned.
 
 \Cref{fig:orderbookwindow} visualizes a 60 minutes long orderbook window, where the solid red lines mark the \emph{average} (\ref{fig:orderbookwindow:avg}) and \emph{worst} (\ref{fig:orderbookwindow:worst}) price, that has to be paid at a given time point, in case of an immediate market order of $100$, $75$, $50$ and $25$ bitcoins respectively. Analogously, the solid green lines represent achieved prices for sale orders of $-25$, $-50$, $-75$ and $-100$ bitcoins respectively.\\
 
-As can be seen in this graph, ask prices (red) deviate slightly more from the center price than bid prices (green) do. An plausible inference is, that imbalances between demand and supply might serve as a valuable indicator for future price trends.
+As can be seen in this graph, ask prices (red) deviate slightly more from the center price than bid prices (green) do. A plausible inference is, that imbalances between demand and supply serve as a valuable indicator for future price trends.
 
 \begin{figure}[ht]
 	\centering
@@ -136,7 +136,7 @@ As can be seen in this graph, ask prices (red) deviate slightly more from the ce
 \subsection{Masterbook}
 During instantiation, the \ac{OTS} creates a copy of the first orderbook, called the \emph{masterbook}. Hereinafter, executed trades do only affect this internal \emph{masterbook}. The remaining orderbooks are then converted into \emph{deltabooks}, containing only changes between subsequent orderbooks.\\
 
-The \ac{OTS} may be reset to its initial state at any time via \lstinline!ots.reset()!. This avoids computational overhead, when testing out multiple strategies on the same \emph{window}, as only \emph{masterbook} and \emph{history} are reset, while \emph{deltabooks} need not be recomputed and \emph{orderbooks} need not be retransferred. \lstinline!ots.reset()! provides optional parameters for modifying the simulators start conditions. As such the simulator might be instructed to start at a \lstinline!custom_starttime! or with a \lstinline!custom_startvolume!, to simplify the exploration of possible strategies.
+The \ac{OTS} may be reset to its initial state at any time via \lstinline!ots.reset()!. This avoids computational overhead, when testing out multiple strategies on the same \emph{window}, as only \emph{masterbook} and \emph{history} are reset, while \emph{deltabooks} need not be recomputed and \emph{orderbooks} need not be retransferred. \lstinline!ots.reset()! provides optional parameters for modifying the simulators start conditions. As such, the simulator might be instructed to start at a \lstinline!custom_starttime! or with a \lstinline!custom_startvolume!, to simplify the exploration of possible strategies.
 
 \subsection{Trade execution}
 \label{chap:tradeexecution}
@@ -153,9 +153,9 @@ In case of order size reductions\footnote{Order size may be reduced due to order
 	\item \lstinline!master += diff(ob[t] - ob[t-1])!, drop negative share counts.
 	\item perform trade: buy until given limit
 	\item \lstinline!master -= bought bitcoins!
-	\item done if \lstinline!volume==0! or $t==T-1$ (\lstinline!forced=True! a)
+	\item done, if \lstinline!volume==0! or $t==T-1$ (\lstinline!forced=True! a)
 	\end{enumerate}
-	\caption{The circuit of masterbook adjustments}
+	\caption{The circuit of masterbook adjustments.}
 	\label{fig:masterbookadjustments}
 \end{figure}
 
@@ -192,12 +192,12 @@ The second subplot displays trade executions and declining trade volume over tim
 	\label{fig:tradingstrategy17good}
 \end{figure}
 
-A total slippage of $340.86\$$ was generated, whereas a simple market order would have cost $784.32\$$.
+A total slippage of $340.85\$$ was generated, whereas a simple market order would have cost $784.32\$$.
 
 
 \subsection{Model correctness}
 \label{chap:modelcorrectness}
-The presented model does not account for market reactions, induced by the currently executed trading strategy. It moronically follows the market trend, as it would have evolved without any intervention. Some sources of troubles are pictures below:
+The presented model does not account for market reactions induced by the currently executed trading strategy. It moronically follows the market trend, as it would have evolved without any intervention. Some sources of troubles are pictures below:
 
 \begin{itemize}
 \item As stated in \Cref{chap:tradeexecution}, the presented model can not distinguish between a limit order being removed from the market makers orderbook and a limit order essentially only being updated to another price level. In the latter case, the order presumably wouldn't have reappeared in the orderbooks after the simulator matched it.
@@ -212,11 +212,11 @@ The presented model does not account for market reactions, induced by the curren
 %\end{figure}
 
 \item Orderbooks on a minutely basis miss a great part of the markets volatility. \\
-In addition to orderbook snapshots, professional data providers typically grant access to market level 2 data (see \Cref{sec:marketdata:levels}) in form of log files as well. The log files consist of timestamped orderbook updates (typically of type \emph{remove} and \emph{modify}), which allow the reconstruction of the orderbook for an arbitrary time point. As mentioned in \Cref{chap:dataorigin}, Poloniex push API, to receive live order book updates and trades, was rather error-prone and occasionally failed to report important orderbook updates. As the valid reconstruction of orderbooks is highly vulnerable to missing logs, inconsistencies arose and the decision was made, to query orderbooks on a minutely basis only.
+In addition to orderbook snapshots, professional data providers typically grant access to market level 2 data (see \Cref{sec:marketdata:levels}) in form of log files as well. The log files consist of timestamped orderbook updates (typically of type \emph{remove} and \emph{modify}), which allow the reconstruction of the orderbook for an arbitrary time point. As mentioned in \Cref{chap:dataorigin}, Poloniex push API to receive live order book updates and trades was rather error-prone and occasionally failed to report important orderbook updates. As the valid reconstruction of orderbooks is highly vulnerable to missing logs, inconsistencies arose and the decision was made, to query orderbooks on a minutely basis only.
 \item Hidden Orders, as introduced in \Cref{chap:ordertypes}, are not accounted for.
 \end{itemize}
 
-As a consequence, trading on the masterbook can only be seen as an rough approximation of true market behaviour. Curious masterbook shapes, resulting from the described simulation process, encourage to perform actual feature extraction on the original orderbooks, examining the market as it would have evolved without any interventions.
+As a consequence, trading on the masterbook can only be seen as a rough approximation of true market behaviour. Curious masterbook shapes, resulting from the described simulation process, encourage to perform actual feature extraction on the original orderbooks, examining the market as it would have evolved without any interventions.
 
 
 

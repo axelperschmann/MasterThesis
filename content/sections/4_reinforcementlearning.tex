@@ -174,7 +174,7 @@ After $T$ iterations a globally optimal policy, as shown in \Cref{fig:heatmap}, 
 	\centering
    \includegraphics[width=0.8\textwidth]{content/drawings/heatmap_3months}
 	\caption{Final State-Action function.}
-	$T=4$ (60min), $I=8$ (70.000\$), L=15 ([-4, -3, \ldots{}, 9, 10])
+	\small $T=4$ (60min), $I=8$ (70.000\$), L=15 ([-4, -3, \ldots{}, 9, 10])
 	\label{fig:heatmap}
 \end{figure}
 
@@ -206,7 +206,7 @@ In order to strengthen the Markov Property, \ie the assumption that states captu
     	\end{subfigure}%
 
 	\caption{Different shaped masterbooks at \lstinline!t=45!.}
-	The shapes differ, depending on the preceding trade history.
+	\small The shapes differ, depending on the preceding trade history.
 	\label{fig:differingmasterbooks}
 \end{figure}
 
@@ -244,12 +244,12 @@ In order to strengthen the Markov Property, \ie the assumption that states captu
 
 
 \subsection{Separation of Sampling \& Learning Phases}
-The process of sampling from training data and learning optimal state-action values is split into two independent phases, mostly due to performance\footnote{The backward sampling phase for the example mentioned in \Cref{chap:backwardlearning}, took roughly 10 hours, even though the work load was distributed among 24 CPU's.} reasons. In the \emph{exploration phase}\footnote{See \emph{Batch Reinforcement Learning} in \Cref{chap:basics:batchreinforcementlearning}, \Cref{fig:batchlearning}.}, all possible combinations of actions and private variables are evaluated and stored as 5-tuples $sample=(state, action, cost, timestamp, new\_state)$. As market variables are supposedly not influenced by the agents behavior (see \Cref{chap:statespace}), it suffices to remember the orderbooks time point, to allow adjacent substitution of market variables.\\
+The process of sampling from training data and learning optimal state-action values is split into two independent phases, mostly due to performance\footnote{The backward sampling phase for the example mentioned in \Cref{chap:backwardlearning}, took roughly 10 hours, even though the work load was distributed among 24 CPU's.} reasons. In the \emph{exploration phase} all possible combinations of actions and private variables are evaluated and stored as 5-tuples $sample=(state, action, cost, timestamp, new\_state)$. As market variables are supposedly not influenced by the agents behavior (see \Cref{chap:statespace}), it suffices to remember the orderbooks time point, to allow adjacent substitution of market variables.\\
 
 Samples are stored as DataFrame and may be exported and reused by other agents\footnote{Agents should refer to the same environment settings, as samples collected from different environments (\eg trading horizon of $H=8min$ vs. $H=60min$) may not be compatible.}, as wished. This allows to skip the time consuming process of backward sampling. Before the action learning phase starts, the collected samples may be enhanced by a variety of market variables, discretized or untouched. The helper function \lstinline!addMarketFeatures_toSamples()! retrospectively adds market variables to the agents samples DataFrame.\\
 
 If desired, features are discretized according to their individual value range.\\
-\Eg a chosen resolution of 3, evenly transforms feature $o_m$ into $o_{m\_disc3}$, according to automatically determined boundaries: \\
+\Eg a chosen resolution of 3 evenly transforms feature $o_m$ into $o_{m\_disc3}$, according to automatically determined boundaries: \\
 0 (if $o_m< 1/3$ quantile), 1 (if $1/3 \leq o_m < 2/3$ quantile) and 2 (if $o_m \geq 2/3$ quantile). Boundaries arise from the training data and are applied to test data unaltered.\\
 
 The learning phase starts hereinafter, whereas two types of \emph{orderbook agents} have been implemented and experimented with, each of which employ different techniques:
@@ -264,7 +264,7 @@ An ensemble of 400 decision trees, with a maximum allowed depth of 15 is fed wit
 The state space is enlarged by an extra dimension for the chosen action. Predicting the optimal action to choose for a given state, the ensemble must predict $L=num\_actions$ q-values, from which the argmin refers to the optimal action.
 \end{description}\bigskip
 
-Each \emph{orderbook agents} inherits some commonly shared functionality from the super class \lstinline!class RL_Agent_Base!. This base class provides a consistent framework, allowing to swap the logic behind \lstinline!learn_from_samples! and \lstinline!predict! only, while general functionality like \lstinline!load!, \lstinline!save!, \lstinline!plot_heatmap_Q! and \lstinline!collect_samples! may be reused.\\
+Each \emph{orderbook agents} inherits some commonly shared functionality from the super class \lstinline!RL_Agent_Base!. This base class provides a consistent framework, allowing to swap the logic behind \lstinline!learn_from_samples! and \lstinline!predict! only, while general functionality like \lstinline!load!, \lstinline!save!, \lstinline!plot_heatmap_Q! and \lstinline!collect_samples! may be reused.\\
 
 An \emph{orderbook agent} holds the environment parameters, used to initialize the \ac{OTS}. As such, different definitions of the optimal trading problem require different orderbook agents.
 
@@ -275,7 +275,7 @@ An \emph{orderbook agent} holds the environment parameters, used to initialize t
 
 \section{Forward Learning}
 \label{chap:forwardlearning}
-In order to collect more realistic transition samples, an alternative, \emph{forward sampling} method is presented. In a growing batch reinforcement learning approach\footnote{See \Cref{chap:basics:batchreinforcementlearning}, \Cref{fig:growingbatchlearning}.} the trained agent alternates between exploration and learning phase on a regular basis.
+In order to collect more realistic transition samples, an alternative, \emph{forward sampling} method is presented. In a growing batch reinforcement learning approach the trained agent alternates between exploration and learning phase on a regular basis.
 
 \subsection{Forward Sampling \& Learning}
 Rather than examining all available actions on the great variety of combinational possibilities the state space has to offer, the forward approach repeatedly simulates trades in their entirety. The once again utilized \ac{OTS} always starts with $V=100\%$, but may be initialized at random start points (\eg \lstinline!t=0, t=15, t=30, t=45!) and keeps going until the full trade is executed.\\
@@ -318,7 +318,7 @@ If $\epsilon$-greedy proposes an actions, that previously led to an end state (\
 
 After every \lstinline!retrain! exploration phases, the new samples are fit into the agents model (\eg \lstinline!retrain=256!) and the updated model is used for future $\epsilon$-greedy exploration. Prior to the sampling phase, the training set is shuffled.\\
 
-In contrast to the backward sampling method, market variables may be queried on the go, such that they entail the strategies impact. Because sample trajectories stem from a continuous state space function approximations prove handy. In this work, a RandomForestRegressor (\ie \ac{BT}) is utilized and retrained from scratch every \lstinline!retrain! exploration phases. The alternative approach of exploiting Neural Fitted Q-iteration \Cite{Riedmiller:2005:NFQ}, has been postphoned to future experiments.\\
+In contrast to the backward sampling method, market variables may be queried on the go, such that they entail the strategies impact. Because sample trajectories stem from a continuous state space, function approximations prove handy. In this work, a RandomForestRegressor (\ie \ac{BT}) is utilized and retrained from scratch every \lstinline!retrain! exploration phases. The alternative approach of exploiting Neural Fitted Q-iteration \Cite{Riedmiller:2005:NFQ}, has been postphoned to future experiments.\\
 
 
 
