@@ -3,7 +3,7 @@
 This chapter gives a general introduction into the vocabulary of financial computing and the machine learning techniques employed.
 
 \section{Trading Basics}
-In order to understand the objective of this thesis, fundamental knowledge about the domain of financial computing is obligatory. This chapter provides a quick overview.
+In order to understand the objective of this thesis, fundamental knowledge about the domain of financial computing is obligatory. This section provides a quick overview.
 
 \subsection{Financial Instruments}
 Financial instruments represent legal agreements of monetary value between parties and can be traded as assets. These assets span from  actual cash, through evidence of entity or share ownership, to contractual rights to receive or deliver another type of financial instrument.
@@ -33,7 +33,7 @@ Specialized exchanges concentrate on certain sub-types of financial instruments 
 In the past, exchanges were physical locations. In many cases, these physical locations have been replaced by fully electronically organized markets, accessible through the internet. As a result, more traders can execute orders in a higher frequency.
 
 \subsection{Ask and Bid}
-Most exchange markets function after the so called auction market model \Cite{Klemperer99auctiontheory}, where the exchange acts as a mediator between buyers and sellers to ensure fair trading. Here buyers can \emph{bid} a price they are willing to pay for a certain number of shares and sellers can \emph{ask} a price they are aiming to make with a number of shares.
+Most exchange markets function after the so called auction market model \Cite{Klemperer99auctiontheory}, where the exchange acts as a mediator between buyers and sellers to ensure fair trading. Here, buyers can \emph{bid} a price they are willing to pay for a certain number of shares and sellers can \emph{ask} a price they are aiming to make with a number of shares.
 The highest of all bids is called the \emph{bid price}, the lowest of all offers is called the \emph{ask price}. Together they represent the current price at which an instrument is traded.\\
 
 The difference between bid price and ask price is called \emph{bid-ask spread}, often abbreviated to \emph{spread}.
@@ -94,7 +94,7 @@ Investors can execute orders of different types, of which the most common ones a
 \begin{description}
 \item[Market Orders] are the most simple form of orders. Here, the investor only specifies the number of shares he want's to buy/sell and the full order is executed immediately, at any price. Especially for large-scale traders or traders with level 1 data access only, these simple market orders are rather hazardous, since the achieved price can significantly differ from the expected price due to sparse supply and demand.
 
-\item[Limit Orders] additionally feature a worst price, \ie the highest price a buyer is willing to pay per share or respectively the lowest price a seller is willing to make per share. Limit orders are immediately placed into the orderbook and (partially) executed, once the matching engine finds a corresponding trade in the opposing book.\\
+\item[Limit Orders] additionally feature a worst price, \ie the highest price a buyer is willing to pay per share or respectively the lowest price a seller is willing to make per share. Limit orders are immediately placed into the \ac{LOB} and (partially) executed, once the matching engine finds a corresponding trade in the opposing book.\\
 Limit orders reduce the risk of slippage, but do not guarantee execution.
 
 \item[Hidden Orders] are placed into the market makers internal orderbook, but not displayed to other market participants with level 2 market data access. They represent a simple solution to large-scale investors seeking anonymity in the market, aiming to obfuscate their trading intention from other market participants.
@@ -180,7 +180,7 @@ Bitcoin is a highly volatile currency, capable of massive price changes towards 
      \path [line] (Environment.190) --++ (-6em,0em) |- node [near start] {New state  $s_{t+1}$} (Agent.170);
      \path [line] (Environment.170) --++ (-4.25em,0em) |- node [near start, right] {Reward $r_{t+1}$} (Agent.190);
 \end{tikzpicture}
-	\caption{The discrete \ac{RL} scenario defined by Sutton and Barto\Cite{Sutton98reinforcementlearning}}
+	\caption{The discrete \ac{RL} scenario defined by Sutton and Barto\Cite{Sutton98reinforcementlearning}.}
 	\label{fig:rlagent}
 \end{figure}
 
@@ -369,13 +369,13 @@ More formally $V$ and $Q$ are replaced as follows:
 \end{equation}
 where $\theta$ refers to function parameters, that must be learned through supervised learning methods\footnote{
 Supervised learning is a subdomain of machine learning, where a function is learned from labeled training data $\{ (x_1, y_1), ..., (x_N, y_N) \} $. Each training sample maps a feature vector $x_i \in X$ to a desired target value or label $y_i \in Y$. Target values may either be categorial, making the learning task a \emph{classification} problem, or continuous, making the learning task a \emph{regression} problem.\\
-A supervised learning algorithms seeks to find a general function $g_\theta()$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
+A supervised learning algorithms seeks to find a general function $g_\theta$ (or it's parameters $\theta$), such that $g_\theta(x_i) \approx y_i | i \leq N$. The learned function should ideally avoid overfitting by finding a generalization to previously unseen data.
 }.
 
 
 \subsection{Batch Reinforcement Learning}
 \label{chap:basics:batchreinforcementlearning}
-In the general reinforcement learning problem, the agent observes a state $s_t$, executes an action $a_t$ and incrementally improves its policy $\pi$ in conformity with the obtained reward $r_t$ and successor state $s'_t$ in an infinite loop. In \emph{batch reinforcement learning} \Cite{Lange_batchreinforcement}, an optimal strategy should be learned out of a fixed set of known transition samples $D=\{(s,a,r,s'), \dots{}| t=1..n\}$. As shown in \Cref{fig:batchlearning}, the samples are collected a priori in an exploration phase, that is not part of the actual batch learning task.
+In the general reinforcement learning problem, the agent observes a state $s_t$, executes an action $a_t$ and incrementally improves its policy $\pi$ in conformity with the obtained reward $r_t$ and successor state $s'_t$ in an infinite loop. In \emph{batch reinforcement learning} \Cite{Lange_batchreinforcement}, an optimal strategy is learned from a fixed set of known transition samples $D=\{(s,a,r,s'), \dots{}| t=1..n\}$. As shown in \Cref{fig:batchlearning}, the samples are collected a priori in an exploration phase, that is not part of the actual batch learning task.
 
 \begin{figure}[ht]
 	\centering
@@ -393,7 +393,7 @@ In the general reinforcement learning problem, the agent observes a state $s_t$,
 	\label{fig:batchlearning}
 \end{figure}
 
-Because exploration has an important impact on the achieved policy quality, more modern \emph{growing batch reinforcement learning} approaches frequently alternate between exploration and learning phase as shown in \Cref{fig:growingbatchlearning}. In doing so, the agent gets a rough idea of a good policy in order to focus on \emph{interesting} regions of the state space.
+Because exploration has an important impact on the achieved strategy quality, more modern \emph{growing batch reinforcement learning} approaches frequently alternate between exploration and learning phase as shown in \Cref{fig:growingbatchlearning}. In doing so, the agent gets a rough idea of a good policy in order to focus on \emph{interesting} regions of the state space.
 
 \begin{figure}[ht]
 	\centering
@@ -437,7 +437,7 @@ Randomized decision trees can be used to approximate the parameters of $Q(s, a; 
 \section{Optimized Trade Execution}
 As outlined in \Cref{chap:objectives}, the problem of \emph{optimized trade execution} is defined by a particular financial instrument, which must be bought or sold within a fixed time horizon, while minimizing the expenditure (share price) for doing so. In order to achieve the best possible price, proper timing is crucial to reduce hidden costs like slippage (see \Cref{chap:slippage}).\\
 
-The general task of this thesis is to apply reinforcement learning to successfully learn state-based strategies for optimal order placements. Based on the observed market situation and trade progress the obtained \acl{SR} (see \Cref{chap:tradingstrategies}) may become more or less aggressive as time passes.\\
+The general task of this work is to apply reinforcement learning to successfully learn state-based strategies for optimal order placements. Based on the observed market situation and trade progress the obtained \acl{SR} (see \Cref{chap:tradingstrategies}) may become more or less aggressive as time passes.\\
 
 The examined agents derive their strategies from a (growing) batch of sample transitions stemming from interactions with a simulated trading environment, that is described in the next chapter.
 
