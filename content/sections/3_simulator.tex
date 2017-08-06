@@ -153,7 +153,7 @@ In case of order size reductions\footnote{Order size may be reduced due to order
 	\item \lstinline!master += diff(ob[t] - ob[t-1])!, drop negative share counts.
 	\item perform trade: buy until given limit
 	\item \lstinline!master -= bought bitcoins!
-	\item done, if \lstinline!volume==0! or $t==T-1$ (\lstinline!forced=True! a)
+	\item done, if \lstinline!volume==0! or $t==T-1$ (\lstinline!forced=True!)
 	\end{enumerate}
 	\caption{The circuit of masterbook adjustments.}
 	\label{fig:masterbookadjustments}
